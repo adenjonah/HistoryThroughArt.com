@@ -4,8 +4,8 @@ import './NavBar.css';
 function NavBar() {
   return (
     <nav className="navbar">
-      <div className="navbar-title">My App</div>
-      <button className="navbar-menu-button">Menu</button>
+      <button className="navbar-menu-button">&#9776;</button> {/* Unicode for hamburger menu icon */}
+      <div className="navbar-title">Korus' Corner</div>
     </nav>
   );
 }
