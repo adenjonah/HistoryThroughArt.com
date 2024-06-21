@@ -5,13 +5,22 @@
     padding: 10px 20px;
     background-color: var(--accent-color);
     color: var(--text-color);
-    height: 5vh
+    height: 5vh;
+    width: 100%;
+    position: fixed;
+}
+
+.spacer {
+    height: calc(5vh + 20px);
 }
 
 .navbar-title {
     font-size: 24px;
     margin-left: 20px;
     font-weight: bold;
+    color: var(--text-color);
+    text-decoration: none;
+
 }
 
 .navbar-menu-button {
@@ -24,4 +33,32 @@
 
 .navbar-menu-button:hover {
     color: var(--foreground-color);
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: calc(5vh + 20px);
+    left: -300px;
+    width: 250px;
+    height: 95vh;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    transition: left 0.3s ease;
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar-item {
+    padding: 15px 20px;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.sidebar-item:hover {
+    background-color: var(--foreground-color);
 }
