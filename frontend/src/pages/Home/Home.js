@@ -1,7 +1,20 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './Home.css';
 
 function Home() {
+
+    useEffect(() => {
+        fetch('http://localhost:5000/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+    }, []);
+
   return (
     <div className="home pagecontainer">
       <h1 className="home title">Welcome to Korus' Corner!</h1>

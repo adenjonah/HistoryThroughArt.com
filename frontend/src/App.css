@@ -11,18 +11,6 @@
   background-color: var(--background-color)
 }
 
-@media (min-width: 992px) {
-  .spaceopen{
-    margin-left: 200px;
-    transition: margin-left 0.45s;
-  }
-}
-
-.spaceclosed {
-  margin-left: 200px;
-  transition: margin-left 0.45s;
-}
-
 .title {
   font-size: 2.5rem;
   color: var(--text-color);

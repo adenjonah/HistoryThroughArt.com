@@ -8,7 +8,8 @@ function NavBar({menuOpened, setMenuOpened}) {
             sidebar.style.display = "none";
             setMenuOpened(false);
         } else { // Open menu
-            sidebar.className = "w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left sidebar spacerSidebar";
+            if(window.innerWidth <= 992)
+                sidebar.className = "w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left sidebar spacerSidebar";
             sidebar.style.display = "block";
             setMenuOpened(true);
         }
