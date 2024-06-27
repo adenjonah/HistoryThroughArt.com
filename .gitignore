@@ -114,3 +114,6 @@ public/
 # Temporary files
 *.tmp
 *.temp
+
+# Database files. MAC and Windows dont like each others
+*.db
