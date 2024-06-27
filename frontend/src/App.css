@@ -7,6 +7,10 @@
   --button-text-color: #55286F;
 }
 
+.body {
+  background-color: var(--background-color)
+}
+
 @media (min-width: 992px) {
   .spaceopen{
     margin-left: 200px;
