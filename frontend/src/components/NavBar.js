@@ -1,28 +1,36 @@
 import React, {useState} from 'react';
 import './NavBar.css';
-import {Link} from "react-router-dom";
 
-function NavBar() {
-
-    const [menuOpen, setMenuOpen] = useState(false);
+function NavBar({menuOpened, setMenuOpened}) {
 
     const toggleMenu = () => {
-        setMenuOpen(!menuOpen);
+        const sidebar = document.getElementById("mySidebar");
+        if (menuOpened) { // Close menu
+            sidebar.style.display = "none";
+            setMenuOpened(false);
+        } else { // Open menu
+            sidebar.className = "w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left sidebar spacerSidebar";
+            sidebar.style.display = "block";
+            setMenuOpened(true);
+        }
+
     }
 
     return (
       <div>
-          <nav className="navbar ">
-              <button className="navbar-menu-button" onClick={toggleMenu}>&#9776;</button>
-              <div><Link to="/" className="navbar-title">PK Schoolbus</Link></div>
-              <div className={`sidebar ${menuOpen ? 'open' : ''}`}>
-                  <a href="/" className="sidebar-item">Home</a>
-                  <a href="/about" className="sidebar-item">About</a>
-                  {/* Add new links here :D */}
-              </div>
-          </nav>
-          <div className="spacer"></div>
+          <div className="w3-container navbar-title">
+              <button className="w3-button w3-padding-small w3-xlarge w3-hide-large" onClick={toggleMenu}>&#9776; </button>
+              <span className="">Korus' Corner </span>
+          </div>
+          <div className="w3-sidebar w3-bar-block w3-collapse w3-card sidebar spacerSidebar" style={{width: '200px'}} id="mySidebar">
+              <a href="/" className="w3-bar-item w3-button">Home</a>
+              <a href="/about" className="w3-bar-item w3-button">About</a>
+              <a href="/art-gallery" className="w3-bar-item w3-button">Art Gallery</a>
+          </div>
+          <div className="spacerMain"/>
       </div>
-    ); }
+);
 
-    export default NavBar;
+}
+
+export default NavBar;

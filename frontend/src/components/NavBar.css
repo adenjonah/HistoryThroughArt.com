@@ -10,17 +10,24 @@
     position: fixed;
 }
 
-.spacer {
-    height: calc(5vh + 20px);
-}
 
+.spacerMain {
+    height: 60px;
+    margin-left: 50px;
+    width: +25%;
+}
 .navbar-title {
     font-size: 24px;
-    margin-left: 20px;
+    /*margin-left: 20px;*/
+    padding: 10px 20px;
+    height: 60px;
     font-weight: bold;
     color: var(--text-color);
+    background-color: var(--accent-color);
     text-decoration: none;
-
+    position: fixed;
+    width: 100%;
+    margin-bottom: 60px;
 }
 
 .navbar-menu-button {
@@ -36,16 +43,20 @@
 }
 
 .sidebar {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: calc(5vh + 20px);
-    left: -300px;
-    width: 250px;
-    height: 95vh;
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*position: fixed;*/
+    /*top: calc(5vh + 20px);*/
+    /*left: -300px;*/
+    /*width: 250px;*/
+    /*height: 95vh;*/
+    color: var(--foreground-color);
     background-color: var(--accent-color);
-    color: var(--text-color);
-    transition: left 0.3s ease;
+    margin-top: 60px;
+    margin-right: 200px;
+
+    /*color: var(--text-color);*/
+    /*transition: left 0.3s ease;*/
 }
 
 .sidebar.open {

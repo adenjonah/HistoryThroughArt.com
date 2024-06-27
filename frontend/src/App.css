@@ -6,3 +6,16 @@
   --button-color: #AE759F;
   --button-text-color: #55286F;
 }
+
+@media (min-width: 992px) {
+  .spaceopen{
+    margin-left: 200px;
+    transition: margin-left 0.45s;
+  }
+}
+
+.spaceclosed {
+  margin-left: 200px;
+  transition: margin-left 0.45s;
+}
+
