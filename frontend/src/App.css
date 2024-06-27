@@ -19,3 +19,29 @@
   transition: margin-left 0.45s;
 }
 
+.title {
+  font-size: 2.5rem;
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+.blurb {
+  font-size: 1.25rem;
+  color: var(--text-color);
+  max-width: 600px;
+}
+
+.pagecontainer{
+  background-color: var(--background-color);
+  height: calc(100vh - 55px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.button {
+  color: var(--background-color);
+  background: var(--button-color)
+}

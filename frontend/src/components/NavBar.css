@@ -1,33 +1,28 @@
 .navbar {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: var(--accent-color);
-    color: var(--text-color);
-    height: 5vh;
-    width: 100%;
+    height: 55px;
     position: fixed;
+    background-color: var(--accent-color);
+    height: 60px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    text-align: left;
 }
-
 
 .spacerMain {
     height: 60px;
     margin-left: 50px;
     width: +25%;
 }
+
 .navbar-title {
     font-size: 24px;
-    /*margin-left: 20px;*/
     padding: 10px 20px;
-    height: 60px;
     font-weight: bold;
     color: var(--text-color);
-    background-color: var(--accent-color);
     text-decoration: none;
-    position: fixed;
-    width: 100%;
-    margin-bottom: 60px;
 }
 
 .navbar-menu-button {

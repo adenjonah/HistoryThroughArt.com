@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import './NavBar.css';
 
 function NavBar({menuOpened, setMenuOpened}) {
@@ -18,14 +17,15 @@ function NavBar({menuOpened, setMenuOpened}) {
 
     return (
       <div>
-          <div className="w3-container navbar-title">
-              <button className="w3-button w3-padding-small w3-xlarge w3-hide-large" onClick={toggleMenu}>&#9776; </button>
-              <span className="">Korus' Corner </span>
+          <div className="w3-container navbar">
+            <button className="w3-button menu-button" onClick={toggleMenu}>&#9776; </button>
+            <span className="navbar-title">Korus' Corner </span>
           </div>
           <div className="w3-sidebar w3-bar-block w3-collapse w3-card sidebar spacerSidebar" style={{width: '200px'}} id="mySidebar">
               <a href="/" className="w3-bar-item w3-button">Home</a>
               <a href="/about" className="w3-bar-item w3-button">About</a>
-              <a href="/art-gallery" className="w3-bar-item w3-button">Art Gallery</a>
+              <a href="/museum" className="w3-bar-item w3-button">Pieces</a>
+              <a href="/map" className="w3-bar-item w3-button">Map</a>
           </div>
           <div className="spacerMain"/>
       </div>
