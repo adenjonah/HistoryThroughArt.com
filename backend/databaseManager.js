@@ -3,11 +3,6 @@ const sqlite3 = require('sqlite3').verbose();
 class DatabaseManager {
 
     constructor() {
-
-    }
-
-    initializeDatabase() {
-
         this.db = new sqlite3.Database('APArtHistory.db', (err) => {
             if (err) {
                 console.error('Error connecting to database:', err.message);
@@ -15,7 +10,9 @@ class DatabaseManager {
                 console.log('Connected to the database.');
             }
         });
+    }
 
+    initializeDatabase() {
 
         this.db.serialize(() => {
 
@@ -71,11 +68,17 @@ class DatabaseManager {
 
             //This puts Mona Lisa into the database. Only for Artworks table
             this.db.run(`INSERT OR IGNORE INTO Artworks (id, name, shortName, unit) Values (1, 'Mona Lisa', 'Mona', 1)`);
+            this.db.run(`INSERT OR IGNORE INTO Artworks (id, name, shortName, unit) Values (2, 'The Last Supper', 'Supper', 1)`);
 
         });
 
 
     }
+
+    fetchQueries(callback) {
+        this.db.all(`SELECT * FROM Artworks`, callback);
+    }
+
 }
 
 module.exports = DatabaseManager;

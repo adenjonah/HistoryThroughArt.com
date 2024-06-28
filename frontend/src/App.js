@@ -21,8 +21,8 @@ function App() {
     return (
         <>
             <NavBar menuOpened={menuOpened} setMenuOpened={setMenuOpened} />
-            <div className={menuOpened ? "spaceopen" : "spaceclosed"}>
-                <Routes>
+            <div className={`spacer ${menuOpened ? "spaceopen" : "spaceclosed"}`}>
+            <Routes>
                     <Route path='/' element={<Home />} />
                     <Route path='/about' element={<About />} />
                     <Route path='/exhibit' element={<Exhibit />} />
