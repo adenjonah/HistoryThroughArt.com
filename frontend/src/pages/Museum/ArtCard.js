@@ -5,7 +5,7 @@ function ArtCard() {
     const [stuff, setStuff] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/')
+    fetch('http://localhost:5000/museum')
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');

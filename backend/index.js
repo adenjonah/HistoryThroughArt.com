@@ -11,11 +11,11 @@ db.initializeDatabase();
 
 
 app.get('/', (req, res) => {
-
+  console.log("home");
 });
 
 app.get('/museum', (req, res) => {
-
+  console.log("museum");
   db.fetchQueries((err, rows) => {
     if(err) {
       res.status(500).send('Internal Server Error');
@@ -24,7 +24,7 @@ app.get('/museum', (req, res) => {
       res.json(rows);
     }
   });
-  console.log("Haiii");
+
 });
 
 app.listen(port, () => {
