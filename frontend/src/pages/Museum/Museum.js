@@ -11,8 +11,8 @@ function Museum() {
             <div className='contentBox'>
                 <ControlBar />
                 <ArtCard />
-                <ArtCard />
-                <ArtCard />
+                {/*<ArtCard />*/}
+                {/*<ArtCard />*/}
             </div>
             
         </div>
