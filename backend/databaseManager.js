@@ -69,16 +69,18 @@ class DatabaseManager {
             //This puts Mona Lisa into the database. Only for Artworks table
             this.db.run(`INSERT OR IGNORE INTO Artworks (id, name, shortName, unit) Values (1, 'Mona Lisa', 'Mona', 1)`);
             this.db.run(`INSERT OR IGNORE INTO Artworks (id, name, shortName, unit) Values (2, 'The Last Supper', 'Supper', 1)`);
+            this.db.run(`INSERT OR IGNORE INTO Artworks (id, name, shortName, unit) Values (3, 'The Starry Night', 'Night', 2)`);
+            this.db.run(`INSERT OR IGNORE INTO Artworks (id, name, shortName, unit) Values (4, 'The Persistence of Memory', 'Memory', 2)`);
 
         });
+    } //end of initializeDatabase
 
-
-    }
 
     fetchQueries(callback) {
         this.db.all(`SELECT * FROM Artworks`, callback);
-    }
 
-}
+    } //emd of fetchQueries
+
+} //end of DatabaseManager
 
 module.exports = DatabaseManager;

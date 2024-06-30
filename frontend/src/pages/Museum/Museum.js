@@ -7,7 +7,7 @@ function Museum() {
     return (
         <div className='museum pagecontainer'>
             <h1 className="title">Art Gallery</h1>
-            <p className='blurb'>Here are the 250 peices</p>
+            <p className='blurb'>Here are the 250 pieces</p>
             <div className='contentBox'>
                 <ControlBar />
                 <ArtCard />

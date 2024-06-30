@@ -7,8 +7,18 @@
   --button-text-color: #55286F;
 }
 
-.body {
-  background-color: var(--background-color)
+body, html {
+  background-color: var(--background-color);
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+body {
+  /*display: flex;*/
+  justify-content: center;
+  align-items: center;
+  /*background-color: var(--background-color);*/
 }
 
 .title {
@@ -24,13 +34,14 @@
 }
 
 .pagecontainer{
-  background-color: var(--background-color);
-  height: calc(100vh - 55px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
+  height: 100%;
+  width: 100%;
+  background-color: var(--background-color);
 }
 
 .button {

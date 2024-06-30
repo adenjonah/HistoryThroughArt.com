@@ -2,3 +2,18 @@
 .button {
     background: var(--button-color)
 }
+
+.body {
+    display: flex;
+}
+
+.pagecontainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: calc(100vh - 60px);
+    width: 100%;
+    background-color: var(--background-color);
+}
