@@ -28,9 +28,9 @@ function ArtCard() {
               <div className='w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity' key={index} onClick={() => {hiNum(index+1)}}>
                   <h3>{item.name}</h3>
                   <div>ID: {item.id}</div>
-                  <div>Museum: {item.museum}</div>
-                  <div>Artist/Culture: {item.artist_culture}</div>
-                  <div>Location: {item.location}</div>
+                  {item.museum !== "None" && <div>Museum: {item.museum}</div>}
+                  {item.artist_culture !== "None" && <div>Artist/Culture: {item.artist_culture}</div>}
+                  {item.location !== "None" && <div>Location: {item.location}</div>}
                   <p></p>
               </div>
           ))}
