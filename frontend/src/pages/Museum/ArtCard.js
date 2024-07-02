@@ -27,9 +27,11 @@ function ArtCard() {
           {artPiecesArray.map((item, index) => (
               <div className='w3-panel w3-card artCard' key={index} onClick={() => {hiNum(index+1)}}>
                   <h3>{item.name}</h3>
-                  <div>Short Name: {item.shortName}</div>
-                  <div>Unit: {item.unit}</div>
-                  <div>Index in DB: {index + 1}</div>
+                  <div>ID: {item.id}</div>
+                  <div>Museum: {item.museum}</div>
+                  <div>Artist/Culture: {item.artist_culture}</div>
+                  <div>Location: {item.location}</div>
+
                   <p></p>
               </div>
           ))}
