@@ -25,13 +25,12 @@ function ArtCard() {
   return (
       <div>
           {artPiecesArray.map((item, index) => (
-              <div className='w3-panel w3-card artCard' key={index} onClick={() => {hiNum(index+1)}}>
+              <div className='w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity' key={index} onClick={() => {hiNum(index+1)}}>
                   <h3>{item.name}</h3>
                   <div>ID: {item.id}</div>
                   <div>Museum: {item.museum}</div>
                   <div>Artist/Culture: {item.artist_culture}</div>
                   <div>Location: {item.location}</div>
-
                   <p></p>
               </div>
           ))}
