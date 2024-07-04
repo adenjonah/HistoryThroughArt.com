@@ -17,7 +17,7 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
         })
         .then(data => setArtPiecesArray(data))
         .catch(error => console.error('Error:', error));
-  });
+  }, []);
 
   artPiecesArray = artPiecesArray.filter((item) => {
       return item.name.toLowerCase().includes(search.toLowerCase())
