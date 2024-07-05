@@ -347,6 +347,10 @@ class DatabaseManager {
 
     } //emd of fetchQueries
 
+    fetchExhibit(id) {
+        this.db.all(`SELECT * FROM ARTWORKS WHERE id = ?`, id);
+    }
+
 } //end of DatabaseManager
 
 module.exports = DatabaseManager;

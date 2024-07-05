@@ -27,6 +27,22 @@ app.get('/museum', (req, res) => {
 
 });
 
+app.get('/exhibit', (req, res) => {
+  console.log("exhibit");
+  const id = req.query.id;
+  console.log(id);
+  db.fetchExhibit(id, (err, rows) => {
+    if(err) {
+      res.status(500).send('Internal Server Error');
+    }
+    else {
+      res.json(rows);
+    }
+  });
+
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

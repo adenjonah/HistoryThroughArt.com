@@ -1,11 +1,9 @@
 import React, {useEffect} from 'react'
-
-function hiNum(item) {
-    console.log("hello " + item.id);
-
-}
+import {useNavigate} from "react-router-dom";
 
 function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
+
+    const navigate = useNavigate();
 
   useEffect(() => {
     fetch('http://localhost:5000/museum')
@@ -17,7 +15,7 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
         })
         .then(data => setArtPiecesArray(data))
         .catch(error => console.error('Error:', error));
-  }, []);
+  }, [setArtPiecesArray]);
 
   artPiecesArray = artPiecesArray.filter((item) => {
       return item.name.toLowerCase().includes(search.toLowerCase())
@@ -30,7 +28,7 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
   return (
       <div>
           {artPiecesArray.map((item, index) => (
-              <div className='w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity' key={index} onClick={() => {hiNum(item)}}>
+              <div className='w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity' key={index} onClick={() =>  navigate(`/exhibit?id=${item.id}`)}>
                   <h3>{item.name}</h3>
                   <div>ID: {item.id}</div>
                   {item.museum !== "None" && <div>Museum: {item.museum}</div>}
