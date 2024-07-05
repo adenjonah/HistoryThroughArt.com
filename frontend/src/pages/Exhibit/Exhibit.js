@@ -10,7 +10,7 @@ function Exhibit() {
         const urlParam = new URLSearchParams(window.location.search);
         const exhibitID = urlParam.get('id');
 
-        fetch(`http://localhost:5000/exhibit?id=${exhibitID}`)
+        fetch(`http://localhost:5001/exhibit?id=${exhibitID}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
