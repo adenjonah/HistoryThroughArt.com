@@ -347,8 +347,8 @@ class DatabaseManager {
 
     } //emd of fetchQueries
 
-    fetchExhibit(id) {
-        this.db.all(`SELECT * FROM ARTWORKS WHERE id = ?`, id);
+    fetchExhibit(id, callback) {
+        this.db.all(`SELECT * FROM ARTWORKS WHERE id = ?`, id, callback);
     }
 
 } //end of DatabaseManager

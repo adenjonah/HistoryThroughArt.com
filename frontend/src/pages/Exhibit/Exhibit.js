@@ -1,6 +1,8 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 
 function Exhibit() {
+
+    const [artPiece, setArtPiece] = useState('');
 
     useEffect(() => {
 
@@ -15,13 +17,17 @@ function Exhibit() {
                 }
                 return response.json();
             })
-            .then(data => console.log(data))
+            .then(data => setArtPiece(data[0]))
             .catch(error => console.error('Error:', error));
     }, []);
+
+
+    console.log(artPiece);
     return (
         <div className='about pagecontainer'>
-            <h1 className="title">Exhibit</h1>
-            <p className='blurb'>Here is a deep dive into a single piece</p>
+            <h1 className="title">{artPiece.name}</h1>
+            <p className='blurb'>ID: {artPiece.id}, Artist/Culture: {artPiece.artist_culture}</p>
+            <p className='blurb'>More information on the '{artPiece.name}' here:</p>
         </div>
     )
 }

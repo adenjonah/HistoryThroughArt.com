@@ -28,9 +28,9 @@ app.get('/museum', (req, res) => {
 });
 
 app.get('/exhibit', (req, res) => {
-  console.log("exhibit");
   const id = req.query.id;
-  console.log(id);
+  console.log(`exhibit, id: ${id}`);
+
   db.fetchExhibit(id, (err, rows) => {
     if(err) {
       res.status(500).send('Internal Server Error');
