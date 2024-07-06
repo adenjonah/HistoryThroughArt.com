@@ -1,9 +1,20 @@
 import React, {useEffect} from 'react'
 import {useNavigate} from "react-router-dom";
 
+const images = require.context('../../artImages', false, /\.png$/);
+
 function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
 
     const navigate = useNavigate();
+
+    const getImagePath = (imageName) => {
+        try {
+            return images(`./${imageName}`);
+        } catch (e) {
+            console.error(`Cannot find image: ${imageName}`);
+            return '';
+        }
+    };
 
   useEffect(() => {
     fetch('http://localhost:5001/museum')
@@ -19,11 +30,11 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
 
   artPiecesArray = artPiecesArray.filter((item) => {
       return item.name.toLowerCase().includes(search.toLowerCase())
-          || item.museum.toLowerCase().includes(search.toLowerCase())
           || item.artist_culture.toLowerCase().includes(search.toLowerCase())
           || item.location.toLowerCase().includes(search.toLowerCase())
           || item.id.toString().toLowerCase().includes(search.toLowerCase());
   });
+  console.log(artPiecesArray);
 
   return (
       <div>
@@ -31,7 +42,7 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
               <div className='w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity' key={index} onClick={() =>  navigate(`/exhibit?id=${item.id}`)}>
                   <h3>{item.name}</h3>
                   <div>ID: {item.id}</div>
-                  {item.museum !== "None" && <div>Museum: {item.museum}</div>}
+                  <img src={getImagePath(item.image)} alt="nope"></img>
                   {item.artist_culture !== "None" && <div>Artist/Culture: {item.artist_culture}</div>}
                   {item.location !== "None" && <div>Location: {item.location}</div>}
                   <p></p>
