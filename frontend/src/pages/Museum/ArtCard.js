@@ -6,7 +6,7 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
     const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:5000/museum')
+    fetch('http://localhost:5001/museum')
         .then(response => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
