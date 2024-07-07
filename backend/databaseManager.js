@@ -1007,10 +1007,14 @@ class DatabaseManager {
     }
 
 
-    fetchQueries(callback) {
-        this.db.all(`SELECT * FROM Artworks JOIN Images USING (id)`, callback);
+    fetchArtworks(callback) {
+        this.db.all(`SELECT * FROM Artworks`, callback);
 
     } //emd of fetchQueries
+
+    fetchArtworkImages(callback) {
+        this.db.all(`SELECT * FROM Images`, callback);
+    }
 
     fetchExhibit(id, callback) {
         this.db.all(`SELECT * FROM ARTWORKS WHERE id = ?`, id, callback);

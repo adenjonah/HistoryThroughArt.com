@@ -16,7 +16,21 @@ app.get('/', (req, res) => {
 
 app.get('/museum', (req, res) => {
   console.log("museum");
-  db.fetchQueries((err, rows) => {
+  db.fetchArtworks((err, rows) => {
+    if(err) {
+      res.status(500).send('Internal Server Error');
+    }
+    else {
+      res.json(rows);
+    }
+  });
+
+});
+
+app.get('/museum-images', (req, res) => {
+  console.log("museum-images");
+
+  db.fetchArtworkImages((err, rows) => {
     if(err) {
       res.status(500).send('Internal Server Error');
     }

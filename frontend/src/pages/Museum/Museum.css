@@ -23,6 +23,18 @@
 .artCard {
     background-color: green;
     margin: 50px;
+    display: table;
+}
+
+.column {
+    float: left;
+    width: 50%;
+}
+.images {
+    align-items: center;
+    display: flex;
+    max-width: 500px;
+    max-height: 500px;
 }
 
 
