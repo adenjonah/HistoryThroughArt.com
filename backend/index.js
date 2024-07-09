@@ -66,6 +66,7 @@ app.get('/exhibit-images', (req, res) => {
       }
       else {
         res.json(rows);
+        console.log(rows);
       }
     });
 

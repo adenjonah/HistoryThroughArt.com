@@ -42,7 +42,6 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
             .catch(error => console.error('Error:', error));
     }, []);
 
-    console.log(imagesArray);
 
   artPiecesArray = artPiecesArray.filter((item) => {
       return item.name.toLowerCase().includes(search.toLowerCase())
@@ -50,7 +49,6 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
           || item.location.toLowerCase().includes(search.toLowerCase())
           || item.id.toString().toLowerCase().includes(search.toLowerCase());
   });
-  // console.log(artPiecesArray);
 
   return (
       <div>
@@ -58,18 +56,16 @@ function ArtCard( {artPiecesArray, search, setArtPiecesArray}) {
               <div className='w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity' key={index}
                    onClick={() => navigate(`/exhibit?id=${item.id}`)}>
                   <div className='column'>
-                      {imagesArray.map((imageItem, imageIndex) => {
+                      {imagesArray.map((imageItem, index) => {
                           if (imageItem.id === item.id)
                               return <img className='images' src={getImagePath(imageItem.image)}
-                                          alt="nope"></img>
+                                          key={index} alt="nope"></img>
                           return null;
                       })}
                   </div>
                   <div className='column'>
                   <h3>{item.name}</h3>
                   <div>ID: {item.id}</div>
-
-                  {/*<img className='images' src={getImagePath(item.image)} alt="nope" ></img>*/}
                   {item.artist_culture !== "None" && <div>Artist/Culture: {item.artist_culture}</div>}
                   {item.location !== "None" && <div>Location: {item.location}</div>}
                   <p></p></div>
