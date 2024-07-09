@@ -56,6 +56,35 @@ app.get('/exhibit', (req, res) => {
 
 });
 
+app.get('/exhibit-images', (req, res) => {
+    const id = req.query.id;
+    console.log(`exhibit-images, id: ${id}`);
+
+    db.fetchSpecificArtworkImages(id, (err, rows) => {
+      if(err) {
+        res.status(500).send('Internal Server Error');
+      }
+      else {
+        res.json(rows);
+      }
+    });
+
+});
+
+app.get('/exhibit-videos', (req, res) => {
+  const id = req.query.id;
+  console.log(`exhibit-videos, id: ${id}`);
+
+  db.fetchVideos(id, (err, rows) => {
+    if(err) {
+      res.status(500).send('Internal Server Error');
+    }
+    else {
+      res.json(rows);
+    }
+  });
+});
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
