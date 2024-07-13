@@ -108,11 +108,13 @@
     min-width: 300px; /* Minimum width */
     min-height: 200px;
     max-height: 80vh;
+    position: relative;
+    margin: auto;
 }
 
 /* Individual Image Container */
 .image-container {
-    position: relative;
+    position: absolute;
     width: 100%;
     max-width: 1000px; /* Maximum width */
     min-width: 300px; /* Minimum width */

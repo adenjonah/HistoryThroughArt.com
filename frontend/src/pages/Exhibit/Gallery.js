@@ -61,7 +61,7 @@ function Gallery({ id }) {
     };
 
     return (
-        <div className="slideshow-container gallery-container">
+        <div className="gallery-container">
             {artImages.map((imageItem, index) => (
                 <div className="image-container" key={index}>
                     <img
