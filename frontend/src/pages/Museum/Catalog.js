@@ -38,7 +38,7 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
     return (
         <div className={`catalog ${layout}`}>
             {filteredArtPieces.map((item, index) => (
-                <Card key={index} className={`artCard ${layout}`} item={item} imagesArray={imagesArray} />
+                <Card key={index} className={`artCard ${layout}`} item={item} imagesArray={imagesArray} layout={layout} />
             ))}
         </div>
     );

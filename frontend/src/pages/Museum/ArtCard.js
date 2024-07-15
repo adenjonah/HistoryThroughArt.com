@@ -12,22 +12,26 @@ const getImagePath = (imageName) => {
     }
 };
 
-function ArtCard({ item, imagesArray }) {
+function ArtCard({ item, imagesArray, layout }) {
     const navigate = useNavigate();
 
     // Get the first image for the item
     const imageItem = imagesArray.find(image => image.id === item.id);
 
     return (
-        <div className='w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity' onClick={() => navigate(`/exhibit?id=${item.id}`)}>
+        <div className={`w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity ${layout}`} onClick={() => navigate(`/exhibit?id=${item.id}`)}>
             <div className='spotlight-container'>
                 {imageItem && <img className='spotlight-image' src={getImagePath(imageItem.image)} alt="Art Piece"></img>}
             </div>
             <div className='identifier'>
                 <h3>{item.name}</h3>
-                <div>ID: {item.id}</div>
-                {item.artist_culture !== "None" && <div>Artist/Culture: {item.artist_culture}</div>}
-                {item.location !== "None" && <div>Location: {item.location}</div>}
+                {layout !== 'table' && (
+                    <>
+                        <div>ID: {item.id}</div>
+                        {item.artist_culture !== "None" && <div>Artist/Culture: {item.artist_culture}</div>}
+                        {item.location !== "None" && <div>Location: {item.location}</div>}
+                    </>
+                )}
             </div>
         </div>
     );

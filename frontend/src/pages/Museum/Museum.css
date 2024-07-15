@@ -76,7 +76,7 @@
 
 .catalog.table .artCard {
     width: calc(25% - 40px); /* 4 items per row with margin for spacing */
-    height: auto;
+    height: 25vh;
     flex-direction: column; /* Stack image and text vertically */
 }
 
@@ -120,4 +120,7 @@
     padding-left: 0;
     padding: 10px;
     text-align: center; /* Center align text */
+    white-space: normal; /* Allow text to wrap */
+    overflow: visible; /* Allow visible overflow */
+    text-overflow: clip; /* No ellipsis */
 }
