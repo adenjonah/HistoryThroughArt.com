@@ -23,10 +23,15 @@
     background-color: var(--button-color); /* Blue background color */
     color: var(--text-color); /* Text color */
     padding: 10px 15px;
+    
     border-radius: 8px; /* Rounded corners */
     cursor: pointer;
     transition: background-color 0.3s;
     margin-right: 10px; /* Add space between items */
+}
+
+.layout-toggle {
+    width: 200px;
 }
 
 .cb-Item:hover, .layout-toggle:hover {

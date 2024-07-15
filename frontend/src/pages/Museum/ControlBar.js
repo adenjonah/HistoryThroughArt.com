@@ -22,7 +22,7 @@ function ControlBar({ search, setSearch, layout, setLayout }) {
                 onChange={handleSearchChange} 
             />
             <button className='layout-toggle' onClick={toggleLayout}>
-                {layout === 'column' ? 'Switch to Table View' : 'Switch to Column View'}
+                {layout === 'column' ? 'Switch View' : 'Switch View'}
             </button>
         </div>
     );
