@@ -23,19 +23,44 @@
 .artCard {
     background-color: green;
     margin: 50px;
-    display: table;
-}
-
-.column {
-    float: left;
-    width: 50%;
-}
-.images {
-    align-items: center;
     display: flex;
-    max-width: 500px;
-    max-height: 500px;
+    flex-direction: row;
+    width: 60%;
+    height: 20vh;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    box-sizing: border-box; /* Ensures padding and border are included in the total width and height */
 }
 
+.spotlight-container {
+    width: 50%; /* This ensures the image container takes up the left half */
+    display: flex;
+    justify-content: center; /* Center the image horizontally within the container */
+    align-items: center; /* Center the image vertically within the container */
+    overflow: hidden; /* Ensure no overflow */
+    height: 100%; /* Ensure the container takes up the full height of the art card */
+}
 
+.spotlight-image {
+    max-width: 100%; /* Ensure the image doesn't exceed the container width */
+    max-height: 90%; /* Ensure the image doesn't exceed the container height */
+    object-fit: contain; /* Ensure the image fits within the container */
+    width: auto; /* Maintain aspect ratio */
+    height: auto; /* Maintain aspect ratio */
+}
 
+.identifier {
+    width: 50%;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.catalog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
