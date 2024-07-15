@@ -9,34 +9,35 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between; /* Distribute items evenly */
     margin-top: 10px;
     margin-bottom: 50px;
     width: 90%;
     background-color: var(--foreground-color);
     padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
-.cb-Item {
-    background-color: var(--button-color);
-    color: var(--text-color);
+.cb-Item, .layout-toggle {
+    background-color: var(--button-color); /* Blue background color */
+    color: var(--text-color); /* Text color */
     padding: 10px 15px;
-    border-radius: 5px;
+    border-radius: 8px; /* Rounded corners */
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-right: 10px; /* Add space between items */
 }
 
-.cb-Item:hover {
-    background-color: #0056b3;
+.cb-Item:hover, .layout-toggle:hover {
+    background-color: #0056b3; /* Darker blue on hover */
 }
 
 .search-input {
     padding: 10px;
     border: 1px solid #ced4da;
-    border-radius: 5px;
-    width: 200px;
+    border-radius: 8px; /* Rounded corners */
+    width: 500px;
     transition: border-color 0.3s;
 }
 
@@ -46,10 +47,23 @@
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
+.catalog.column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.catalog.table {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
 .artCard {
     background-color: var(--foreground-color);
     border-radius: 20px;
-    margin: 50px;
+    margin: 20px;
     display: flex;
     flex-direction: row;
     width: 90%;
@@ -60,6 +74,12 @@
     box-sizing: border-box; /* Ensures padding and border are included in the total width and height */
 }
 
+.catalog.table .artCard {
+    width: calc(25% - 40px); /* 4 items per row with margin for spacing */
+    height: auto;
+    flex-direction: column; /* Stack image and text vertically */
+}
+
 .spotlight-container {
     width: 50%; /* This ensures the image container takes up the left half */
     display: flex;
@@ -67,6 +87,11 @@
     align-items: center; /* Center the image vertically within the container */
     overflow: hidden; /* Ensure no overflow */
     height: 100%; /* Ensure the container takes up the full height of the art card */
+}
+
+.catalog.table .spotlight-container {
+    width: 100%; /* Full width in table view */
+    height: 50%; /* Top half of the card */
 }
 
 .spotlight-image {
@@ -84,11 +109,15 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: hidden; /* Prevent overflow */
+    text-overflow: ellipsis; /* Add ellipsis (...) for overflowing text */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    box-sizing: border-box; /* Ensure padding and border are included in the total width */
 }
 
-.catalog {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.catalog.table .identifier {
+    width: 100%; /* Full width in table view */
+    padding-left: 0;
+    padding: 10px;
+    text-align: center; /* Center align text */
 }

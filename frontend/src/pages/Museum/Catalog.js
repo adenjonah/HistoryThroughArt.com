@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from './ArtCard';
 
-function Catalog({artPiecesArray, search, setArtPiecesArray}) {
-
+function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
     const [imagesArray, setImagesArray] = useState([]);
 
     useEffect(() => {
@@ -37,9 +36,9 @@ function Catalog({artPiecesArray, search, setArtPiecesArray}) {
     });
 
     return (
-        <div className='catalog'>
+        <div className={`catalog ${layout}`}>
             {filteredArtPieces.map((item, index) => (
-                <Card key={index} className={"artcard"} item={item} imagesArray={imagesArray} />
+                <Card key={index} className={`artCard ${layout}`} item={item} imagesArray={imagesArray} />
             ))}
         </div>
     );
