@@ -3,9 +3,11 @@ import Card from './ArtCard';
 
 function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
     const [imagesArray, setImagesArray] = useState([]);
-    const [pageNumber, setPageNumber] = useState(1);
+    const [currPageNumber, setCurrPageNumber] = useState(1);
     const [prevPageNumber, setPrevPageNumber] = useState(1);
+    const [isSearchEmpty, setIsSearchEmpty] = useState(true);
 
+    //Call to get art piece information
     useEffect(() => {
         fetch('http://localhost:5001/museum')
             .then(response => {
@@ -18,6 +20,7 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
             .catch(error => console.error('Error:', error));
     }, [setArtPiecesArray]);
 
+    //Call to get image names
     useEffect(() => {
         fetch('http://localhost:5001/museum-images')
             .then(response => {
@@ -30,6 +33,7 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
             .catch(error => console.error('Error:', error));
     }, []);
 
+    //Filter out the search from search bar
     const filteredArtPieces = artPiecesArray.filter((item) => {
         return item.name.toLowerCase().includes(search.toLowerCase())
             || item.artist_culture.toLowerCase().includes(search.toLowerCase())
@@ -37,27 +41,41 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
             || item.id.toString().toLowerCase().includes(search.toLowerCase());
     });
 
-    const itemsPerPage = 50; // Set your items per page here
-    const startIndex = (pageNumber - 1) * itemsPerPage;
+    const itemsPerPage = 50;
+    const startIndex = (currPageNumber - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentArtPieces = filteredArtPieces.slice(startIndex, endIndex);
 
     useEffect(() => {
-        if (search.trim() === '') {
-            setPageNumber(prevPageNumber);
+        if (search.trim() === '') { //If search is empty
+
+            setCurrPageNumber(prevPageNumber);
+            setIsSearchEmpty(true); //The search is empty
+
         } else {
-            setPrevPageNumber(pageNumber);
-            setPageNumber(1);
+
+            if(isSearchEmpty){ //If search is empty set the previous page number to the current
+                setPrevPageNumber(currPageNumber);
+            }
+            setIsSearchEmpty(false); //Change that the search is full.
+            //We never want to change the prev page number when the search is full.
+
+            setCurrPageNumber(1); //Go to the first page of the searched elements
         }
+        //This disables a stupid warning:
+        // eslint-disable-next-line
     }, [search]);
 
 
-
-
-    console.log(currentArtPieces.length);
+    console.log("Previous: " + prevPageNumber + "\tCurrent : " +currPageNumber);
     const handlePageClick = (pageNum) => {
-        setPageNumber(pageNum);
-        setPrevPageNumber(pageNumber);
+
+        if(isSearchEmpty) { //If search is empty set previous page number to current page number
+            setPrevPageNumber(currPageNumber);
+        }
+        setCurrPageNumber(pageNum); //Change current page to selected page
+
+
     };
 
     return (
@@ -70,8 +88,10 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
                 {filteredArtPieces.length === 0 && <h3>No results found</h3>}
             </div>
             <div className="w3-bar">
-                {[...Array(Math.ceil(filteredArtPieces.length / itemsPerPage)).keys()].map(pageNum => (
-                    <a key={pageNum} href={`#${pageNum + 1}`} className="w3-button" onClick={() => handlePageClick(pageNum + 1)}>
+                {[...Array(Math.ceil(filteredArtPieces.length / itemsPerPage)).keys()].map(pageNum => ( //This is confusing :|
+                    <a key={pageNum} href={`#${pageNum + 1}`}
+                       className={`w3-button ${currPageNumber === pageNum + 1 ? "w3-grey" : ""}`} //Change color of selected page number here
+                       onClick={() => handlePageClick(pageNum + 1)}>
                         {pageNum + 1}
                     </a>
                 ))}
