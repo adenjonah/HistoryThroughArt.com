@@ -29,7 +29,8 @@ function ArtCard({ item, imagesArray, layout }) {
                     <>
                         <div>ID: {item.id}</div>
                         {item.artist_culture !== "None" && <div>Artist/Culture: {item.artist_culture}</div>}
-                        {item.location !== "None" && <div>Location: {item.location}</div>}
+                        {item.location !== "None" && <div>Location Made: {item.location}</div>}
+                        {item.date !== "None" && <div>Date: {item.date}</div>}
                     </>
                 )}
             </div>

@@ -80,7 +80,7 @@
 }
 
 .catalog.table .artCard {
-    width: calc(25% - 40px); /* 4 items per row with margin for spacing */
+    width: calc(50% - 40px); /* 4 items per row with margin for spacing */
     height: 25vh;
     flex-direction: column; /* Stack image and text vertically */
 }

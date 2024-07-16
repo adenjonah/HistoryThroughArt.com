@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Exhibit.css';
 
 const images = require.context('../../artImages', false, /\.png$/);
@@ -29,11 +29,7 @@ function Gallery({ id }) {
             .catch(error => console.error('Error:', error));
     }, [id]);
 
-    useEffect(() => {
-        showSlides(slideIndex);
-    }, [slideIndex, artImages]);
-
-    const showSlides = (n) => {
+    const showSlides = useCallback((n) => {
         if (slideRefs.current.length === 0) return;
 
         let i;
@@ -52,7 +48,11 @@ function Gallery({ id }) {
         if (slideRefs.current[slideIndex - 1]) {
             slideRefs.current[slideIndex - 1].style.display = 'block';
         }
-    };
+    }, [slideIndex]);
+
+    useEffect(() => {
+        showSlides(slideIndex);
+    }, [slideIndex, artImages, showSlides]);
 
     const pushSlides = (n) => {
         return () => {
@@ -66,7 +66,7 @@ function Gallery({ id }) {
                 <div className="image-container" key={index}>
                     <img
                         src={getImagePath(imageItem.image)}
-                        alt="Art Image"
+                        alt={`Art piece ${index + 1}`}
                         ref={(el) => (slideRefs.current[index] = el)}
                         style={{ display: index === 0 ? 'block' : 'none' }}
                     />
