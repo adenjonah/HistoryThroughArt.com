@@ -72,7 +72,9 @@ function Gallery({ id }) {
                     />
                 </div>
             ))}
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
             {artImages.length > 1 && <a className="prev" onClick={pushSlides(-1)}>&#10094;</a>}
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
             {artImages.length > 1 && <a className="next" onClick={pushSlides(1)}>&#10095;</a>}
         </div>
     );

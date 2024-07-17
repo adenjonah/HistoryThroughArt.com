@@ -890,8 +890,6 @@ class DatabaseManager {
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (184, "303_Jowo Rinpoche, enshrined in the Jokhang Temple.png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (185, "304_Dome of the Rock.png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (185, "305_Dome of the Rock.png")`);
-            this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (186, "306_Great Mosque (Masjid-e Jameh).png")`);
-            this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (186, "307_Great Mosque (Masjid-e Jameh).png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (186, "308_Great Mosque (Masjid-e Jameh).png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (186, "309_Great Mosque (Masjid-e Jameh).png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (186, "310_Great Mosque (Masjid-e Jameh).png")`);
