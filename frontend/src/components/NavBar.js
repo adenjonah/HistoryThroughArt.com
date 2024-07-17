@@ -19,7 +19,7 @@ function NavBar({menuOpened, setMenuOpened}) {
     return (
       <div>
           <div className="w3-container navbar">
-            <button className="w3-button menu-button" onClick={toggleMenu}>&#9776; </button>
+            <button className="w3-button navbar-menu-button" onClick={toggleMenu}>&#9776; </button>
             <span className="navbar-title">Korus' Corner </span>
           </div>
           <div className="w3-sidebar w3-bar-block w3-collapse w3-card sidebar spacerSidebar" style={{width: '200px'}} id="mySidebar">

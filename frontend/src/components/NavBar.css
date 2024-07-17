@@ -25,12 +25,10 @@
     text-decoration: none;
 }
 
-.navbar-menu-button {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-size: 30px;
-    cursor: pointer;
+@media (min-width: 992px) {
+    .navbar-menu-button {
+        display: none;
+    }
 }
 
 .navbar-menu-button:hover {
