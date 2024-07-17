@@ -66,8 +66,7 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
         // eslint-disable-next-line
     }, [search]);
 
-
-    console.log("Previous: " + prevPageNumber + "\tCurrent : " +currPageNumber);
+    
     const handlePageClick = (pageNum) => {
 
         if(isSearchEmpty) { //If search is empty set previous page number to current page number

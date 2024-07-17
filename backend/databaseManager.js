@@ -984,8 +984,8 @@ class DatabaseManager {
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (228, "391_Androgyne III.png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (229, "392_A Book from the Sky.png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (230, "393_Pink Panther.png")`);
-            this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (231, "394_Untitled (#228), from the History Portraits series.png")`);
-            this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (232, "395_Dancing at the Louvre, from the series The French Collection, Part I; #1.png")`);
+            this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (231, "394_Untitled (228) Cindy Sherman.png")`);
+            this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (232, "395_Dancing at the Louvre, from the series The French Collection, Part I.png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (233, "396_Trade (Gifts for Trading Land with White People).png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (234, "397_Earth’s Creation.png")`);
             this.db.run(`INSERT OR IGNORE INTO Images (id, image) VALUES (235, "398_Rebellious Silence, from the Women of Allah series.png")`);
