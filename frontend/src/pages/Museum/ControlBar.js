@@ -1,6 +1,19 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 function ControlBar({ search, setSearch, layout, setLayout }) {
+
+    useEffect(() => {
+        const handleResize = () => {
+            if(window.innerWidth <= 992) {
+                setLayout('table');
+            }
+            else {
+                setLayout('column');
+            }
+        }
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [setLayout]);
 
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
