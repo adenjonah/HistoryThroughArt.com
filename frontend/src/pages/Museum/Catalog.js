@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Card from './ArtCard';
 
-function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
+function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
     const [imagesArray, setImagesArray] = useState([]);
     const [currPageNumber, setCurrPageNumber] = useState(1);
     const [prevPageNumber, setPrevPageNumber] = useState(1);
@@ -69,6 +69,10 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
     
     const handlePageClick = (pageNum) => {
 
+        const scrollTop = () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        scrollTop();
         if(isSearchEmpty) { //If search is empty set previous page number to current page number
             setPrevPageNumber(currPageNumber);
         }
@@ -77,24 +81,54 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout }) {
 
     };
 
+    useEffect(() => { //Changes how the array is sorted based on user input from ControlBar sort
+
+        let sortedArtPieces = [...artPiecesArray]; //Shallow copy
+        if(sort === 'Name Descending') {
+            sortedArtPieces.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1);
+        }
+        else if(sort === 'Name Ascending') {
+            sortedArtPieces.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1);
+        }
+        else if(sort === 'Unit Descending') {
+            sortedArtPieces.sort((a, b) => a.unit < b.unit ? 1 : -1);
+        }
+        else if(sort === 'Unit Ascending') {
+            sortedArtPieces.sort((a, b) => a.unit > b.unit ? 1 : -1);
+        }
+        else if(sort === 'ID Descending') {
+            sortedArtPieces.sort((a,b) => a.id < b.id ? 1 : -1);
+        }
+        else if(sort === 'ID Ascending') {
+            sortedArtPieces.sort((a,b) => a.id > b.id ? 1 : -1);
+        }
+
+        setArtPiecesArray(sortedArtPieces); //Trigger re-render
+
+        // eslint-disable-next-line
+    }, [sort]);
+
     return (
         <div>
             <div className={`catalog ${layout}`}>
                 {currentArtPieces.map((item, index) => (
-                    <Card key={index} className={`artCard ${layout}`} item={item} imagesArray={imagesArray} layout={layout} />
+                    <Card key={index} className={`artCard ${layout}`} item={item} imagesArray={imagesArray}
+                          layout={layout}/>
                 ))}
 
-                {filteredArtPieces.length === 0 && <h3>No results found</h3>}
+                {filteredArtPieces.length === 0 &&
+                    <h3>No results found</h3>} {/*If no results are found display this message*/}
             </div>
             <div className="w3-bar">
                 {[...Array(Math.ceil(filteredArtPieces.length / itemsPerPage)).keys()].map(pageNum => ( //This is confusing :|
                     <a key={pageNum} href={`#${pageNum + 1}`}
-                       className={`w3-button ${currPageNumber === pageNum + 1 ? "w3-grey" : ""}`} //Change color of selected page number here
+                       className={`w3-button ${currPageNumber === pageNum + 1 ? "w3-gray" : ""}`} //Change color of selected page number here
                        onClick={() => handlePageClick(pageNum + 1)}>
                         {pageNum + 1}
                     </a>
                 ))}
             </div>
+            <br/>
         </div>
     );
 }

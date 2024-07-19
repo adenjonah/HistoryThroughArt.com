@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 
-function ControlBar({ search, setSearch, layout, setLayout }) {
+function ControlBar({ search, setSearch, layout, setLayout, setSort }) {
 
     useEffect(() => {
         const handleResize = () => {
@@ -23,9 +23,40 @@ function ControlBar({ search, setSearch, layout, setLayout }) {
         setLayout(layout === 'column' ? 'table' : 'column');
     }
 
+    const handleSortChange = (sort) => {
+        if(sort === 'Name Descending') {
+            setSort('Name Descending');
+        }
+        else if(sort === 'Name Ascending') {
+            setSort('Name Ascending');
+        }
+        else if(sort === 'Unit Descending') {
+            setSort('Unit Descending');
+        }
+        else if(sort === 'Unit Ascending') {
+            setSort('Unit Ascending');
+        }
+        else if(sort === 'ID Descending') {
+            setSort('ID Descending');
+        }
+        else if(sort === 'ID Ascending') {
+            setSort('ID Ascending');
+        }
+    }
+
     return (
         <div className='controlBar'>
-            <button className='cb-Item'>Sort</button>
+            <button className={`cb-Item w3-dropdown-hover `}>Sort
+                <div className={`w3-dropdown-content`} style={{ left: 0}}>
+                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Name Descending")}}>Name Descending</button>
+                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Name Ascending")}}>Name Ascending</button>
+                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Unit Descending")}}>Unit Descending</button>
+                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Unit Ascending")}}>Unit Ascending</button>
+                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("ID Descending")}}>ID Descending</button>
+                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("ID Ascending")}}>ID Ascending</button>
+
+                </div>
+            </button>
             <button className='cb-Item'>Filter</button>
             <button className='cb-Item'>Group</button>
             <form>
@@ -37,7 +68,7 @@ function ControlBar({ search, setSearch, layout, setLayout }) {
                 onChange={handleSearchChange}
                 />
             </form>
-            <button className='layout-toggle' onClick={toggleLayout}>
+            <button className='layout-toggle cb-Item' onClick={toggleLayout}>
                 {layout === 'column' ? 'Switch View' : 'Switch View'}
             </button>
         </div>

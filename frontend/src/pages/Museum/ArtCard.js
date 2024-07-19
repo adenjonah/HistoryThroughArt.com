@@ -24,13 +24,13 @@ function ArtCard({ item, imagesArray, layout }) {
                 {imageItem && <img className='spotlight-image' src={getImagePath(imageItem.image)} alt="Art Piece"></img>}
             </div>
             <div className='identifier'>
-                <h3>{item.name}</h3>
+                <h3>{item.id}. {item.name}</h3>
                 {layout !== 'table' && (
                     <>
-                        <div>ID: {item.id}</div>
                         {item.artist_culture !== "None" && <div>Artist/Culture: {item.artist_culture}</div>}
                         {item.location !== "None" && <div>Location Made: {item.location}</div>}
                         {item.date !== "None" && <div>Date: {item.date}</div>}
+                        <div>Unit: {item.unit}</div>
                     </>
                 )}
             </div>
