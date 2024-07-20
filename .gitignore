@@ -117,3 +117,8 @@ public/
 
 # Database files. MAC and Windows dont like each others
 *.db
+
+frontend/package-lock-DESKTOP-UODP4MO.json
+frontend/package-DESKTOP-UODP4MO.json
+package-DESKTOP-UODP4MO.json
+package-lock-DESKTOP-UODP4MO.json

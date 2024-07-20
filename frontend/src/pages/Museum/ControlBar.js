@@ -48,13 +48,12 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort }) {
         <div className='controlBar'>
             <button className={`cb-Item w3-dropdown-hover `}>Sort
                 <div className={`w3-dropdown-content`} style={{ left: 0}}>
-                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Name Descending")}}>Name Descending</button>
-                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Name Ascending")}}>Name Ascending</button>
-                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Unit Descending")}}>Unit Descending</button>
-                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Unit Ascending")}}>Unit Ascending</button>
-                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("ID Descending")}}>ID Descending</button>
-                    <button className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("ID Ascending")}}>ID Ascending</button>
-
+                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Name Descending")}}>Name Descending</div>
+                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Name Ascending")}}>Name Ascending</div>
+                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Unit Descending")}}>Unit Descending</div>
+                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Unit Ascending")}}>Unit Ascending</div>
+                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("ID Descending")}}>ID Descending</div>
+                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("ID Ascending")}}>ID Ascending</div>
                 </div>
             </button>
             <button className='cb-Item'>Filter</button>
