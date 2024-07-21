@@ -19,15 +19,22 @@ function VideoPlayer({id}) {
     }, [id]);
 
 
-  return (
-    <div>
-        {artVideos.map((video, index) => {
-            return (
-                <iframe src={video.videoLink} allowFullScreen="allowfullscreen" title={video.id} key={index}></iframe>
-            )
-        })}
-    </div>
-  );
+    return (
+        <div className="w3-container">
+            {artVideos.map((video, index) => (
+                <div key={index} className="w3-container w3-center w3-margin-bottom">
+                    <div className="w3-responsive w3-display-container video-player-wrapper">
+                        <iframe
+                            src={video.videoLink}
+                            allowFullScreen
+                            title={video.id}
+                            className={'video-player'}
+                        ></iframe>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
 }
 
 export default VideoPlayer

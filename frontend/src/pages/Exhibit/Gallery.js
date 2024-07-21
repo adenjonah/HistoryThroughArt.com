@@ -61,21 +61,30 @@ function Gallery({ id }) {
     };
 
     return (
-        <div className="gallery-container">
-            {artImages.map((imageItem, index) => (
-                <div className="image-container" key={index}>
-                    <img
-                        src={getImagePath(imageItem.image)}
-                        alt={`Art piece ${index + 1}`}
-                        ref={(el) => (slideRefs.current[index] = el)}
-                        style={{ display: index === 0 ? 'block' : 'none' }}
-                    />
+        <div className="w3-container w3-center">
+            <div className="w3-display-container image-container">
+                <div className={'image-wrapper'}>
+                    {artImages.map((imageItem, index) => (
+                        <div key={index} className={'image-slide'} style={{
+                            display: index === slideIndex - 1 ? 'block' : 'none'}}
+                             ref={(el) => (slideRefs.current[index] = el)}>
+                            <img
+                                src={getImagePath(imageItem.image)}
+                                alt={`Art piece ${index + 1}`}
+                                className="w3-image image"
+                            />
+                        </div>
+                    ))}
                 </div>
-            ))}
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-            {artImages.length > 1 && <a className="prev" onClick={pushSlides(-1)}>&#10094;</a>}
-            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-            {artImages.length > 1 && <a className="next" onClick={pushSlides(1)}>&#10095;</a>}
+                {artImages.length > 1 && (
+                    <div className={'selection-buttons-wrapper'}>
+                        <div className={'selection-buttons'}>
+                            <button className="w3-button w3-light-grey" onClick={pushSlides(-1)}>&#10094;</button>
+                            <button className="w3-button w3-light-grey" onClick={pushSlides(1)}>&#10095;</button>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

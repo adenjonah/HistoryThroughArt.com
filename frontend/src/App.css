@@ -30,7 +30,6 @@ body {
 .blurb {
   font-size: 1.25rem;
   color: var(--text-color);
-  max-width: 600px;
 }
 
 .pagecontainer{
