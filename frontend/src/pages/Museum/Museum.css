@@ -133,3 +133,7 @@
 .w3-card.ArtCard {
     background-color: var(--foreground-color);
 }
+
+.w3-card.ControlBar {
+    background-color: var(--foreground-color);
+}
