@@ -45,33 +45,57 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort }) {
     }
 
     return (
-        <div className='controlBar'>
-            <button className={`cb-Item w3-dropdown-hover `}>Sort
-                <div className={`w3-dropdown-content`} style={{ left: 0}}>
-                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Name Descending")}}>Name Descending</div>
-                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Name Ascending")}}>Name Ascending</div>
-                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Unit Descending")}}>Unit Descending</div>
-                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("Unit Ascending")}}>Unit Ascending</div>
-                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("ID Descending")}}>ID Descending</div>
-                    <div className={`w3-bar-item w3-button`} onClick={() => {handleSortChange("ID Ascending")}}>ID Ascending</div>
+        <div className='w3-container w3-card ControlBar w3-round-xlarge w3-padding-16'>
+            <div className='w3-row'>
+                <div className='w3-col s12 m12 l12 w3-margin-bottom'>
+                    <form className='w3-form'>
+                        <input
+                            type='text'
+                            className='w3-input w3-border w3-round-large'
+                            placeholder='Search...'
+                            value={search}
+                            onChange={handleSearchChange}
+                        />
+                    </form>
                 </div>
-            </button>
-            <button className='cb-Item'>Filter</button>
-            <button className='cb-Item'>Group</button>
-            <form>
-                <input
-                type='text'
-                className='search-input'
-                placeholder='Search...'
-                value={search}
-                onChange={handleSearchChange}
-                />
-            </form>
-            <button className='layout-toggle cb-Item' onClick={toggleLayout}>
-                {layout === 'column' ? 'Switch View' : 'Switch View'}
-            </button>
-        </div>
-    );
-}
 
-export default ControlBar;
+                <div className='w3-col s12 m4 l4'>
+                    <button className='w3-block w3-dropdown-hover w3-padding-large w3-round-large'>
+                        Sort
+                        <div className='w3-dropdown-content w3-bar-block w3-border w3-round-large' style={{left: 0}}>
+                            <div className='w3-bar-item w3-button'
+                                 onClick={() => handleSortChange("Name Descending")}>Name Descending
+                            </div>
+                            <div className='w3-bar-item w3-button'
+                                 onClick={() => handleSortChange("Name Ascending")}>Name Ascending
+                            </div>
+                            <div className='w3-bar-item w3-button'
+                                 onClick={() => handleSortChange("Unit Descending")}>Unit Descending
+                            </div>
+                            <div className='w3-bar-item w3-button'
+                                 onClick={() => handleSortChange("Unit Ascending")}>Unit Ascending
+                            </div>
+                            <div className='w3-bar-item w3-button' onClick={() => handleSortChange("ID Descending")}>ID
+                                Descending
+                            </div>
+                            <div className='w3-bar-item w3-button' onClick={() => handleSortChange("ID Ascending")}>ID
+                                Ascending
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+
+                <div className='w3-col s12 m4 l4 '>
+                    <button className=' w3-block w3-padding-large w3-round-large'>Filter</button>
+                </div>
+                <div className='w3-col s12 m4 l4 '>
+                    <button className=' w3-block w3-padding-large w3-round-large'>Group</button>
+                </div>
+
+                </div>
+            </div>
+            );
+            }
+
+            export default ControlBar;

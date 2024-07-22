@@ -122,7 +122,7 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
             <div className="w3-bar">
                 {[...Array(Math.ceil(filteredArtPieces.length / itemsPerPage)).keys()].map(pageNum => ( //This is confusing :|
                     <a key={pageNum} href={`#${pageNum + 1}`}
-                       className={`w3-button ${currPageNumber === pageNum + 1 ? "w3-gray" : ""}`} //Change color of selected page number here
+                       className={`w3-button w3-margin-left ${currPageNumber === pageNum + 1 ? "w3-blue" : "w3-light-gray"}`} //Change color of selected page number here
                        onClick={() => handlePageClick(pageNum + 1)}>
                         {pageNum + 1}
                     </a>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import VideoPlayer from './VideoPlayer'
-import Gallery from "./Gallery";
+import PhotoGallery from "./PhotoGallery";
 
 function Exhibit() {
 
@@ -58,7 +58,7 @@ function Exhibit() {
                     <VideoPlayer id={exhibitID}/>
                 </div>
                 <div className="w3-col s12 m5 l5 grid-item">
-                    <Gallery id={exhibitID}/>
+                    <PhotoGallery id={exhibitID}/>
                 </div>
             </div>
                 <div className={'w3-container w3-center'}>

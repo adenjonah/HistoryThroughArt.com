@@ -3,7 +3,7 @@ import './Exhibit.css';
 
 const images = require.context('../../artImages', false, /\.png$/);
 
-function Gallery({ id }) {
+function PhotoGallery({ id }) {
     const [artImages, setArtImages] = useState([]);
     const [slideIndex, setSlideIndex] = useState(1);
     const slideRefs = useRef([]);
@@ -79,8 +79,8 @@ function Gallery({ id }) {
                 {artImages.length > 1 && (
                     <div className={'selection-buttons-wrapper'}>
                         <div className={'selection-buttons'}>
-                            <button className="w3-button w3-light-grey" onClick={pushSlides(-1)}>&#10094;</button>
-                            <button className="w3-button w3-light-grey" onClick={pushSlides(1)}>&#10095;</button>
+                            <button className="w3-button w3-light-grey w3-ripple" onClick={pushSlides(-1)}>&#10094;</button>
+                            <button className="w3-button w3-light-grey w3-ripple" onClick={pushSlides(1)}>&#10095;</button>
                         </div>
                     </div>
                 )}
@@ -89,4 +89,4 @@ function Gallery({ id }) {
     );
 }
 
-export default Gallery;
+export default PhotoGallery;

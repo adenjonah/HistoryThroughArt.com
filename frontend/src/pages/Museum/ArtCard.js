@@ -42,20 +42,24 @@ function ArtCard({ item, imagesArray, layout }) {
 
 
     return (
-        <div className={`w3-panel w3-card artCard w3-hover-shadow w3-hover-opacity ${layout}`} onClick={() => navigate(`/exhibit?id=${item.id}`)}>
-            <div className='spotlight-container'>
-                {imageItem && <img className='spotlight-image' src={getImagePath(imageItem.image)} alt="Art Piece"></img>}
-            </div>
-            <div className='identifier'>
-                <h3>{item.id}. {item.name}</h3>
-                {layout !== 'table' && (
+        <div
+            className={`w3-card ArtCard w3-hover-shadow w3-hover-purple w3-margin w3-round-xlarge w3-padding-32 ${layout}`}
+            onClick={() => navigate(`/exhibit?id=${item.id}`)}>
+            <div className="w3-row">
+                <div className="w3-col s12 m5 l4 w3-display-container w3-padding-small">
+                    {imageItem &&
+                        <img className='w3-image w3-round-xlarge' src={getImagePath(imageItem.image)} alt="Art Piece"/>}
+                </div>
+                <div className="w3-col s12 m6 l8 w3-container">
+                    <h3 className="w3-text-theme">{item.id}. {item.name}</h3>
                     <>
-                        {item.artist_culture !== "None" && <div>Artist/Culture: {item.artist_culture}</div>}
-                        {item.location !== "None" && <div>Location Made: {item.location}</div>}
-                        {item.date !== "None" && <div>Date: {formatDate()}</div>}
-                        <div>Unit: {item.unit}</div>
+                        {item.artist_culture !== "None" &&
+                            <div className="w3-medium">Artist/Culture: {item.artist_culture}</div>}
+                        {item.location !== "None" && <div className="w3-medium">Location Made: {item.location}</div>}
+                        {item.date !== "None" && <div className="w3-medium">Date: {formatDate()}</div>}
+                        <div className="w3-medium">Unit: {item.unit}</div>
                     </>
-                )}
+                </div>
             </div>
         </div>
     );
