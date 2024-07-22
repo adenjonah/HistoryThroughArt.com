@@ -16,8 +16,6 @@ import Museum from './pages/Museum/Museum'
 function App() {
     const [menuOpened, setMenuOpened] = useState(false);
 
-
-
     return (
         <>
             <NavBar menuOpened={menuOpened} setMenuOpened={setMenuOpened} />
