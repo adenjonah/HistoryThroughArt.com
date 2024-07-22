@@ -129,3 +129,7 @@
     overflow: visible; /* Allow visible overflow */
     text-overflow: clip; /* No ellipsis */
 }
+
+.w3-card.ArtCard {
+    background-color: var(--foreground-color);
+}

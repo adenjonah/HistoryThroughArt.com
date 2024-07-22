@@ -3,7 +3,7 @@ import './Exhibit.css';
 
 const images = require.context('../../artImages', false, /\.png$/);
 
-function Gallery({ id }) {
+function PhotoGallery({ id }) {
     const [artImages, setArtImages] = useState([]);
     const [slideIndex, setSlideIndex] = useState(1);
     const slideRefs = useRef([]);
@@ -89,4 +89,4 @@ function Gallery({ id }) {
     );
 }
 
-export default Gallery;
+export default PhotoGallery;
