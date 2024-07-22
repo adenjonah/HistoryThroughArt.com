@@ -79,8 +79,8 @@ function Gallery({ id }) {
                 {artImages.length > 1 && (
                     <div className={'selection-buttons-wrapper'}>
                         <div className={'selection-buttons'}>
-                            <button className="w3-button w3-light-grey" onClick={pushSlides(-1)}>&#10094;</button>
-                            <button className="w3-button w3-light-grey" onClick={pushSlides(1)}>&#10095;</button>
+                            <button className="w3-button w3-light-grey w3-ripple" onClick={pushSlides(-1)}>&#10094;</button>
+                            <button className="w3-button w3-light-grey w3-ripple" onClick={pushSlides(1)}>&#10095;</button>
                         </div>
                     </div>
                 )}
