@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 
-function ControlBar({ search, setSearch, layout, setLayout, setSort }) {
+function ControlBar({ search, setSearch, layout, setLayout, setSort, unitFilters, setUnitFilters }) {
 
     useEffect(() => {
         const handleResize = () => {
@@ -23,32 +23,46 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort }) {
     //     setLayout(layout === 'column' ? 'table' : 'column');
     // }
 
-    const handleSortChange = (sort) => {
-        if(sort === 'Name Descending') {
-            setSort('Name Descending');
-        }
-        else if(sort === 'Name Ascending') {
-            setSort('Name Ascending');
-        }
-        else if(sort === 'Unit Descending') {
-            setSort('Unit Descending');
-        }
-        else if(sort === 'Unit Ascending') {
-            setSort('Unit Ascending');
-        }
-        else if(sort === 'ID Descending') {
-            setSort('ID Descending');
-        }
-        else if(sort === 'ID Ascending') {
-            setSort('ID Ascending');
+    const handleSortChange = (event) => {
+        switch (event.target.innerHTML) {
+            case 'Name Descending': {
+                setSort('Name Descending');
+                break;
+            }
+            case 'Name Ascending': {
+                setSort('Name Ascending');
+                break;
+            }
+            case 'Unit Descending': {
+                setSort('Unit Descending');
+                break;
+            }
+            case 'Unit Ascending': {
+                setSort('Unit Ascending');
+                break;
+            }
+            case 'ID Descending': {
+                setSort('ID Descending');
+                break;
+            }
+            case 'ID Ascending': {
+                setSort('ID Ascending');
+                break;
+            }
+            default:
+                setSort('ID Ascending');
         }
     }
 
+    const testing = (event) => {
+        console.log(event.target.innerHTML);
+    }
+
+    console.log(unitFilters);
     return (
         <div className='w3-container w3-card ControlBar w3-round-xlarge w3-padding-16'>
             <div className='w3-row'>
                 <div className='w3-col s12 m12 l12 w3-margin-bottom'>
-                    <form className='w3-form'>
                         <input
                             type='text'
                             className='w3-input w3-border w3-round-large'
@@ -56,7 +70,6 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort }) {
                             value={search}
                             onChange={handleSearchChange}
                         />
-                    </form>
                 </div>
 
                 <div className='w3-col s12 m4 l4'>
@@ -64,38 +77,79 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort }) {
                         Sort
                         <div className='w3-dropdown-content w3-bar-block w3-border w3-round-large' style={{left: 0}}>
                             <div className='w3-bar-item w3-button'
-                                 onClick={() => handleSortChange("Name Descending")}>Name Descending
+                                 onClick={handleSortChange}>Name Descending
                             </div>
                             <div className='w3-bar-item w3-button'
-                                 onClick={() => handleSortChange("Name Ascending")}>Name Ascending
+                                 onClick={handleSortChange}>Name Ascending
                             </div>
                             <div className='w3-bar-item w3-button'
-                                 onClick={() => handleSortChange("Unit Descending")}>Unit Descending
+                                 onClick={handleSortChange}>Unit Descending
                             </div>
                             <div className='w3-bar-item w3-button'
-                                 onClick={() => handleSortChange("Unit Ascending")}>Unit Ascending
+                                 onClick={handleSortChange}>Unit Ascending
                             </div>
-                            <div className='w3-bar-item w3-button' onClick={() => handleSortChange("ID Descending")}>ID
-                                Descending
+                            <div className='w3-bar-item w3-button'
+                                 onClick={handleSortChange}>ID Descending
                             </div>
-                            <div className='w3-bar-item w3-button' onClick={() => handleSortChange("ID Ascending")}>ID
-                                Ascending
+                            <div className='w3-bar-item w3-button'
+                                 onClick={handleSortChange}>ID Ascending
                             </div>
                         </div>
                     </button>
                 </div>
 
+                {/*filters */}
+                <div className='w3-col s12 m4 l4'>
+                    <button className='w3-block w3-dropdown-hover w3-padding-large w3-round-large'>
+                        Filter
+                        <div className='w3-dropdown-content w3-bar-block w3-border w3-round-large' style={{left: 0}}>
+                            <form>
+                                <div className='w3-bar-item'>
+                                    <input className='w3-check' type='checkbox' id='unit1'
+                                           onChange={setUnitFilters(!unitFilters.unit1)}/>
+                                    <label htmlFor='unit1'>Unit 1</label>
+                                </div>
+                                <div className='w3-bar-item'>
+                                    <input className='w3-check' type='checkbox' id='unit2' />
+                                    <label htmlFor='unit2'>Unit 2</label>
+                                </div>
+                                <div className='w3-bar-item'>
+                                    <input className='w3-check' type='checkbox' id='unit3' />
+                                    <label htmlFor='unit3'>Unit 3</label>
+                                </div>
+                                <div className='w3-bar-item'>
+                                    <input className='w3-check' type='checkbox' id='unit4' />
+                                    <label htmlFor='unit4'>Unit 4</label>
+                                </div>
+                                <div className='w3-bar-item'>
+                                    <input className='w3-check' type='checkbox' id='unit5' />
+                                    <label htmlFor='unit5'>Unit 5</label>
+                                </div>
+                                <div className='w3-bar-item'>
+                                    <input className='w3-check' type='checkbox' id='unit6' />
+                                    <label htmlFor='unit6'>Unit 6</label>
+                                </div>
+                                <div className='w3-bar-item'>
+                                    <input className='w3-check' type='checkbox' id='unit7' />
+                                    <label htmlFor='unit7'>Unit 7</label>
+                                </div>
+                                <div className='w3-bar-item'>
+                                    <input className='w3-check' type='checkbox' id='unit8' />
+                                    <label htmlFor='unit8'>Unit 8</label>
+                                </div>
 
-                <div className='w3-col s12 m4 l4 '>
-                    <button className=' w3-block w3-padding-large w3-round-large'>Filter</button>
+                            </form>
+                        </div>
+                    </button>
                 </div>
+
                 <div className='w3-col s12 m4 l4 '>
                     <button className=' w3-block w3-padding-large w3-round-large'>Group</button>
                 </div>
 
-                </div>
             </div>
-            );
-            }
+        </div>
+    );
+}
 
-            export default ControlBar;
+export default ControlBar;
