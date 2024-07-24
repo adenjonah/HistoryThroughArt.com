@@ -3,6 +3,7 @@
     "@types/mapbox-gl": "^3.1.0",
     "dotenv": "^16.4.5",
     "mapbox-gl": "^3.5.2",
+    "papaparse": "^5.4.1",
     "w3-css": "^4.1.0"
   }
 }
