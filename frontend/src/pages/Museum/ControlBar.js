@@ -19,9 +19,9 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort }) {
         setSearch(e.target.value);
     }
 
-    const toggleLayout = () => {
-        setLayout(layout === 'column' ? 'table' : 'column');
-    }
+    // const toggleLayout = () => {
+    //     setLayout(layout === 'column' ? 'table' : 'column');
+    // }
 
     const handleSortChange = (sort) => {
         if(sort === 'Name Descending') {

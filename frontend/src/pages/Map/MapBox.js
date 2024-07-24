@@ -33,7 +33,9 @@ const MapBox = ({ center, zoom, style, overlays }) => {
               coordinates: overlay.coordinates,
             },
             properties: {
+              id: overlay.id, // Include the id property
               name: overlay.name,
+              location: overlay.foundLocation,
             },
           })),
         };
@@ -55,21 +57,23 @@ const MapBox = ({ center, zoom, style, overlays }) => {
             'circle-color': [
               'step',
               ['get', 'point_count'],
-              '#51bbd6',
+              '#009688', // teal for small clusters
               100,
-              '#f1f075',
+              '#8BC34A', // light green for medium clusters
               750,
-              '#f28cb1',
+              '#FFC107', // amber for large clusters
             ],
             'circle-radius': [
               'step',
               ['get', 'point_count'],
-              20,
+              15,
               100,
-              30,
+              25,
               750,
-              40,
+              35,
             ],
+            'circle-stroke-color': '#fff',
+            'circle-stroke-width': 2,
           },
         });
 
@@ -81,7 +85,10 @@ const MapBox = ({ center, zoom, style, overlays }) => {
           layout: {
             'text-field': ['get', 'point_count_abbreviated'],
             'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-            'text-size': 12,
+            'text-size': 14,
+          },
+          paint: {
+            'text-color': '#ffffff',
           },
         });
 
@@ -91,9 +98,9 @@ const MapBox = ({ center, zoom, style, overlays }) => {
           source: 'points',
           filter: ['!', ['has', 'point_count']],
           paint: {
-            'circle-color': '#ff0000', // red color for unclustered points
+            'circle-color': '#e91e63', // pink for unclustered points
             'circle-radius': 10, // larger size for unclustered points
-            'circle-stroke-width': 1,
+            'circle-stroke-width': 2,
             'circle-stroke-color': '#fff',
           },
         });
@@ -118,7 +125,7 @@ const MapBox = ({ center, zoom, style, overlays }) => {
           map.getCanvas().style.cursor = 'pointer';
 
           const coordinates = e.features[0].geometry.coordinates.slice();
-          const { name } = e.features[0].properties;
+          const { id, name, location } = e.features[0].properties;
 
           while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
             coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
@@ -126,7 +133,7 @@ const MapBox = ({ center, zoom, style, overlays }) => {
 
           new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setHTML(`Name: ${name}`)
+            .setHTML(`${id}. ${name}<br>${location}`)
             .addTo(map);
         });
 
@@ -136,6 +143,12 @@ const MapBox = ({ center, zoom, style, overlays }) => {
           if (popups.length) {
             popups[0].remove();
           }
+        });
+
+        // Click event for unclustered points
+        map.on('click', 'unclustered-point', (e) => {
+          const { id } = e.features[0].properties;
+          window.location.href = `http://localhost:3000/exhibit?id=${id}`;
         });
 
         map.on('mouseenter', 'clusters', () => {
@@ -151,7 +164,7 @@ const MapBox = ({ center, zoom, style, overlays }) => {
     return () => map.remove();
   }, [center, zoom, style, overlays]);
 
-  return <div ref={mapContainerRef} style={{ width: '80%', height: '800px' }} />;
+  return <div ref={mapContainerRef} style={{ width: '80%', height: '600px' }} />;
 };
 
 export default MapBox;
