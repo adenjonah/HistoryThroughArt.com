@@ -1,0 +1,61 @@
+.button {
+    background: var(--button-color);
+}
+
+.body {
+    display: flex;
+}
+
+.pagecontainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: calc(100vh - 60px);
+    width: 100%;
+    background-color: var(--background-color);
+    font-family: Arial, sans-serif; /* Ensure the same font is used */
+}
+
+.title {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: var(--title-color, #0077cc); /* Fallback color if --title-color is not defined */
+}
+
+.blurb {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.team-cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin-bottom: 20px;
+}
+
+.team-card {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 10px;
+    width: 300px;
+}
+
+.headshot {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.team-card h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
