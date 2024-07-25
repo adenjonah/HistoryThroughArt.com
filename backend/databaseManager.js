@@ -1003,7 +1003,7 @@ class DatabaseManager {
 
     initVideos() {
         this.db.serialize(() => {
-            this.db.run(`INSERT OR IGNORE INTO Videos (id, videoLink) VALUES (2, 'https://www.youtube.com/embed/8yvUMn7DB-I')`);
+            this.db.run(`INSERT OR IGNORE INTO Videos (id, videoLink) VALUES (2, 'https://www.youtube.com/embed/8yvUMn7DB-I?enablejsapi=1')`);
             this.db.run(`INSERT OR IGNORE INTO Videos (id, videoLink) VALUES (3, 'https://www.youtube.com/embed/zgZg1wAKr4U')`);
             this.db.run(`INSERT OR IGNORE INTO Videos (id, videoLink) VALUES (4, 'https://www.youtube.com/embed/_0gWJ3zRcQI')`);
             this.db.run(`INSERT OR IGNORE INTO Videos (id, videoLink) VALUES (5, 'https://www.youtube.com/embed/k0KM85LiI-I')`);
