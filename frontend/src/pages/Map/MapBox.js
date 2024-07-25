@@ -64,7 +64,7 @@ const MapBox = ({ center, zoom, style }) => {
           data: geojsonData,
           cluster: true,
           clusterMaxZoom: 14,
-          clusterRadius: 50,
+          clusterRadius: 25,
         });
 
         map.addLayer({
@@ -153,7 +153,6 @@ const MapBox = ({ center, zoom, style }) => {
             <div>
               <img src="${imageUrl}" height="200" width="200" /><br/>
               ${id}. ${name}<br/>
-              ${location}
             </div>
           `;
 
