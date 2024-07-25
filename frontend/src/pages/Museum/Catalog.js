@@ -33,18 +33,28 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
             .catch(error => console.error('Error:', error));
     }, []);
 
-    //Filter out the search from search bar
-    const filteredArtPieces = artPiecesArray.filter((item) => {
-        return item.name.toLowerCase().includes(search.toLowerCase())
-            || item.artist_culture.toLowerCase().includes(search.toLowerCase())
-            || item.location.toLowerCase().includes(search.toLowerCase())
-            || item.id.toString().toLowerCase().includes(search.toLowerCase());
-    });
+
+    let filteredArtPieces = [];
+    if (artPiecesArray && artPiecesArray.length > 0){
+
+
+        //Filter out the search from search bar
+        filteredArtPieces = artPiecesArray.filter((item) => {
+            console.log(item.transcript + " item.transcript");
+            return item.name.toLowerCase().includes(search.toLowerCase())
+                || item.artist_culture.toLowerCase().includes(search.toLowerCase())
+                || item.location.toLowerCase().includes(search.toLowerCase())
+                || item.id.toString().toLowerCase().includes(search.toLowerCase())
+                || typeof item.transcript === "string" && item.transcript.toLowerCase().includes(search.toLowerCase());
+        });
+    }
+
 
     const itemsPerPage = 50;
     const startIndex = (currPageNumber - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentArtPieces = filteredArtPieces.slice(startIndex, endIndex);
+
 
     useEffect(() => {
         if (search.trim() === '') { //If search is empty
@@ -66,7 +76,8 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
         // eslint-disable-next-line
     }, [search]);
 
-    
+
+
     const handlePageClick = (pageNum) => {
 
         const scrollTop = () => {
@@ -80,6 +91,7 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
 
 
     };
+
 
     useEffect(() => { //Changes how the array is sorted based on user input from ControlBar sort
 
@@ -107,6 +119,7 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
 
         // eslint-disable-next-line
     }, [sort]);
+
 
     return (
         <div>
