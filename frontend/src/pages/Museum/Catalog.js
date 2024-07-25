@@ -132,6 +132,10 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
         setLocalArtPiecesArray(filteredArtPieces);
         setArtPiecesArray(filteredArtPieces);
 
+        if(currPageNumber > Math.ceil(filteredArtPieces.length / itemsPerPage)){
+            setCurrPageNumber(1);
+        }
+
         // eslint-disable-next-line
     }, [search, sort, unitFilters, fullArtPiecesArray]);
 
