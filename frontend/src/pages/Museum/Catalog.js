@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Card from './ArtCard';
 
-function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
+function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     const [imagesArray, setImagesArray] = useState([]);
     const [currPageNumber, setCurrPageNumber] = useState(1);
     const [prevPageNumber, setPrevPageNumber] = useState(1);
     const [isSearchEmpty, setIsSearchEmpty] = useState(true);
+    const [fullArtPiecesArray, setFullArtPiecesArray] = useState([]);
+    const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
 
     //Call to get art piece information
     useEffect(() => {
@@ -16,9 +18,14 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
                 }
                 return response.json();
             })
-            .then(data => setArtPiecesArray(data))
+            .then(data => {
+                setFullArtPiecesArray(data)
+                setLocalArtPiecesArray(data);
+            })
             .catch(error => console.error('Error:', error));
-    }, [setArtPiecesArray]);
+
+
+    }, []);
 
     //Call to get image names
     useEffect(() => {
@@ -40,6 +47,8 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
             || item.location.toLowerCase().includes(search.toLowerCase())
             || item.id.toString().toLowerCase().includes(search.toLowerCase());
     });
+    setArtPiecesArray(fullArtPiecesArray);
+
 
     const itemsPerPage = 50;
     const startIndex = (currPageNumber - 1) * itemsPerPage;
@@ -81,32 +90,51 @@ function Catalog({ artPiecesArray, search, setArtPiecesArray, layout, sort }) {
 
     };
 
-    useEffect(() => { //Changes how the array is sorted based on user input from ControlBar sort
+    // Filter art pieces based on search and filters
+    useEffect(() => {
 
-        let sortedArtPieces = [...artPiecesArray]; //Shallow copy
-        if(sort === 'Name Descending') {
-            sortedArtPieces.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1);
-        }
-        else if(sort === 'Name Ascending') {
-            sortedArtPieces.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1);
-        }
-        else if(sort === 'Unit Descending') {
-            sortedArtPieces.sort((a, b) => a.unit < b.unit ? 1 : -1);
-        }
-        else if(sort === 'Unit Ascending') {
-            sortedArtPieces.sort((a, b) => a.unit > b.unit ? 1 : -1);
-        }
-        else if(sort === 'ID Descending') {
-            sortedArtPieces.sort((a,b) => a.id < b.id ? 1 : -1);
-        }
-        else if(sort === 'ID Ascending') {
-            sortedArtPieces.sort((a,b) => a.id > b.id ? 1 : -1);
+        // Filter based on search bar input
+        let filteredArtPieces = fullArtPiecesArray.filter((item) => {
+            return item.name.toLowerCase().includes(search.toLowerCase())
+                || item.artist_culture.toLowerCase().includes(search.toLowerCase())
+                || item.location.toLowerCase().includes(search.toLowerCase())
+                || item.id.toString().toLowerCase().includes(search.toLowerCase());
+        });
+
+        switch (sort) {
+            case 'Name Descending':
+                filteredArtPieces.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1);
+                break;
+            case 'Name Ascending':
+                filteredArtPieces.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1);
+                break;
+            case 'Unit Descending':
+                filteredArtPieces.sort((a, b) => a.unit < b.unit ? 1 : -1);
+                break;
+            case 'Unit Ascending':
+                filteredArtPieces.sort((a, b) => a.unit > b.unit ? 1 : -1);
+                break;
+            case 'ID Descending':
+                filteredArtPieces.sort((a, b) => a.id < b.id ? 1 : -1);
+                break;
+            case 'ID Ascending':
+                filteredArtPieces.sort((a, b) => a.id > b.id ? 1 : -1);
+                break;
+            default:
+                filteredArtPieces.sort((a, b) => a.id > b.id ? 1 : -1);
         }
 
-        setArtPiecesArray(sortedArtPieces); //Trigger re-render
+        // Filter based on unit filters
+        if (!Object.values(unitFilters).every(value => value === false)) {
+            filteredArtPieces = filteredArtPieces.filter((item) => unitFilters[`unit${item.unit}`]);
+        }
+
+        setLocalArtPiecesArray(filteredArtPieces);
+        setArtPiecesArray(filteredArtPieces);
 
         // eslint-disable-next-line
-    }, [sort]);
+    }, [search, sort, unitFilters, fullArtPiecesArray]);
+
 
     return (
         <div>

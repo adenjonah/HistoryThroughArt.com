@@ -15,8 +15,8 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, unitFilters
         return () => window.removeEventListener('resize', handleResize);
     }, [setLayout]);
 
-    const handleSearchChange = (e) => {
-        setSearch(e.target.value);
+    const handleSearchChange = (event) => {
+        setSearch(event.target.value);
     }
 
     // const toggleLayout = () => {
@@ -54,11 +54,16 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, unitFilters
         }
     }
 
-    const testing = (event) => {
-        console.log(event.target.innerHTML);
+
+    // console.log(unitFilters);
+    const handleFilterChange = (event) => {
+        const { id, checked } = event.target;
+        setUnitFilters(items => ({
+            ...items, [id]: checked
+
+        }));
     }
 
-    console.log(unitFilters);
     return (
         <div className='w3-container w3-card ControlBar w3-round-xlarge w3-padding-16'>
             <div className='w3-row'>
@@ -106,35 +111,50 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, unitFilters
                             <form>
                                 <div className='w3-bar-item'>
                                     <input className='w3-check' type='checkbox' id='unit1'
-                                           onChange={setUnitFilters(!unitFilters.unit1)}/>
+                                           checked={unitFilters.unit1}
+                                           onChange={handleFilterChange}/>
                                     <label htmlFor='unit1'>Unit 1</label>
                                 </div>
                                 <div className='w3-bar-item'>
-                                    <input className='w3-check' type='checkbox' id='unit2' />
+                                    <input className='w3-check' type='checkbox' id='unit2'
+                                             checked={unitFilters.unit2}
+                                           onChange={handleFilterChange}/>
                                     <label htmlFor='unit2'>Unit 2</label>
                                 </div>
                                 <div className='w3-bar-item'>
-                                    <input className='w3-check' type='checkbox' id='unit3' />
+                                    <input className='w3-check' type='checkbox' id='unit3'
+                                             checked={unitFilters.unit3}
+                                           onChange={handleFilterChange}/>
                                     <label htmlFor='unit3'>Unit 3</label>
                                 </div>
                                 <div className='w3-bar-item'>
-                                    <input className='w3-check' type='checkbox' id='unit4' />
+                                    <input className='w3-check' type='checkbox' id='unit4'
+                                           checked={unitFilters.unit4}
+                                           onChange={handleFilterChange}/>
                                     <label htmlFor='unit4'>Unit 4</label>
                                 </div>
                                 <div className='w3-bar-item'>
-                                    <input className='w3-check' type='checkbox' id='unit5' />
+                                    <input className='w3-check' type='checkbox' id='unit5'
+                                           checked={unitFilters.unit5}
+                                           onChange={handleFilterChange}/>
                                     <label htmlFor='unit5'>Unit 5</label>
                                 </div>
                                 <div className='w3-bar-item'>
-                                    <input className='w3-check' type='checkbox' id='unit6' />
+                                    <input className='w3-check' type='checkbox' id='unit6'
+                                           checked={unitFilters.unit6}
+                                           onChange={handleFilterChange}/>
                                     <label htmlFor='unit6'>Unit 6</label>
                                 </div>
                                 <div className='w3-bar-item'>
-                                    <input className='w3-check' type='checkbox' id='unit7' />
+                                    <input className='w3-check' type='checkbox' id='unit7'
+                                           checked={unitFilters.unit7}
+                                           onChange={handleFilterChange}/>
                                     <label htmlFor='unit7'>Unit 7</label>
                                 </div>
                                 <div className='w3-bar-item'>
-                                    <input className='w3-check' type='checkbox' id='unit8' />
+                                    <input className='w3-check' type='checkbox' id='unit8'
+                                            checked={unitFilters.unit8}
+                                           onChange={handleFilterChange}/>
                                     <label htmlFor='unit8'>Unit 8</label>
                                 </div>
 
