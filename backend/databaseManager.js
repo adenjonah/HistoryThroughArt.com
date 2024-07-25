@@ -17,7 +17,7 @@ class DatabaseManager {
     }
 
     initializeDatabase() {
-        
+
         this.db.serialize(() => {
 
             //We will want to delete this later
