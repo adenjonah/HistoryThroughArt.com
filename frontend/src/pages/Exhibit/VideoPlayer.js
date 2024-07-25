@@ -97,6 +97,9 @@ function VideoPlayer({ id }) {
         }
     };
 
+    if(artVideos && artVideos.length > 0 && artVideos[0].transcript)
+        console.log(JSON.parse(artVideos[0].transcript));
+
     return (
         <div className="w3-container">
             {artVideos.length > 0 && (
@@ -125,14 +128,15 @@ function VideoPlayer({ id }) {
                     ))}
                 </div>
             )}
-            {transcript.length > 0 && (
+            {artVideos.length > 0 && (
                 <div className="w3-container w3-margin-top">
                     <div id="transcript" className="transcript-box">
-                        {transcript.map((entry, index) => (
+                        {JSON.parse(artVideos[0].transcript).map((entry, index) => (
                             <div key={index}>
-                                <a href="javascript:;" className="youtube-marker" onClick={() => handleTranscriptClick(entry.start)}>
+                                <a href="javascript:;" className="youtube-marker"
+                                   onClick={() => handleTranscriptClick(entry.start)}>
                                     {entry.text}
-                                </a><br />
+                                </a><br/>
                             </div>
                         ))}
                     </div>
