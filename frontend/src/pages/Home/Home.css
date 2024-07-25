@@ -3,10 +3,6 @@
     background: var(--button-color)
 }
 
-.body {
-    display: flex;
-}
-
 .pagecontainer {
     display: flex;
     flex-direction: column;
@@ -15,5 +11,54 @@
     text-align: center;
     min-height: calc(100vh - 60px);
     width: 100%;
-    background-color: var(--background-color);
+    /*background-color: var(--background-color);*/
+}
+.text {
+    z-index: 1;
+}
+
+.scrolling-background1, .scrolling-background2 {
+    position: absolute;
+    background-image: url("gandr-collage (2).jpg");
+    width: 200%;
+    height: 100%;
+    background-size: cover;
+    background-position: top left;
+    overflow: hidden;
+    opacity: .5;
+    z-index: 0;
+}
+
+.scrolling-background1 {
+    animation: scroll1 75s linear infinite;
+}
+
+.scrolling-background2 {
+    animation: scroll2 75s linear infinite;
+}
+
+@keyframes scroll1 {
+    0% {
+        transform: translateX(0%);
+    }
+    50% {
+        transform: translateX(-100%);
+    }
+    50.01% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+
+
+@keyframes scroll2 {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
 }

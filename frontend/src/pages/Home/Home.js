@@ -21,12 +21,17 @@ function Home() {
     };
 
     return (
-        <div className="home pagecontainer">
-            <h1 className="home title">Welcome to Korus' Corner!</h1>
-            <p className="home blurb">
-                This site is intended to be a learning aid for students exploring the content of the AP Art History curriculum.
-            </p>
-            <button onClick={handleFeelingLucky} className="w3-bar-item w3-button home button">I'm Feeling Lucky</button>
+        <div className="w3-container w3-display-container pagecontainer">
+            <div className="w3-display-middle text">
+                <h1 className="w3-xxlarge w3-text-white">Welcome to Korus' Corner!</h1>
+                <p className="w3-large w3-text-white">
+                    This site is intended to be a learning aid for students exploring the content of the AP Art History
+                    curriculum.
+                </p>
+                <button onClick={handleFeelingLucky} className="w3-button button w3-round">I'm Feeling Lucky</button>
+            </div>
+            <div className="scrolling-background1"></div>
+            <div className="scrolling-background2"></div>
         </div>
     );
 }
