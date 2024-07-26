@@ -25,11 +25,11 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, unitFilters
 
     const handleSortChange = (event) => {
         switch (event.target.innerHTML) {
-            case 'Name Descending': {
+            case 'Name: Z-A': {
                 setSort('Name Descending');
                 break;
             }
-            case 'Name Ascending': {
+            case 'Name: A-Z': {
                 setSort('Name Ascending');
                 break;
             }
@@ -82,23 +82,25 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, unitFilters
                         Sort
                         <div className='w3-dropdown-content w3-bar-block w3-border w3-round-large' style={{left: 0}}>
                             <div className='w3-bar-item w3-button'
-                                 onClick={handleSortChange}>Name Descending
-                            </div>
-                            <div className='w3-bar-item w3-button'
-                                 onClick={handleSortChange}>Name Ascending
-                            </div>
-                            <div className='w3-bar-item w3-button'
-                                 onClick={handleSortChange}>Unit Descending
-                            </div>
-                            <div className='w3-bar-item w3-button'
-                                 onClick={handleSortChange}>Unit Ascending
+                                 onClick={handleSortChange}>ID Ascending
                             </div>
                             <div className='w3-bar-item w3-button'
                                  onClick={handleSortChange}>ID Descending
                             </div>
                             <div className='w3-bar-item w3-button'
-                                 onClick={handleSortChange}>ID Ascending
+                                 onClick={handleSortChange}>Name: A-Z
                             </div>
+                            <div className='w3-bar-item w3-button'
+                                 onClick={handleSortChange}>Name: Z-A
+                            </div>
+                            <div className='w3-bar-item w3-button'
+                                 onClick={handleSortChange}>Unit Ascending
+                            </div>
+                            <div className='w3-bar-item w3-button'
+                                 onClick={handleSortChange}>Unit Descending
+                            </div>
+
+
                         </div>
                     </button>
                 </div>
