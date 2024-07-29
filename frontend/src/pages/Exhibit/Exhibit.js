@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import VideoPlayer from './VideoPlayer'
 import PhotoGallery from "./PhotoGallery";
+import MapBox from "../Map/MapBox";
 
 function Exhibit() {
 
@@ -68,6 +69,8 @@ function Exhibit() {
                     {artPiece.date !== "None" && <p className={'blurb'}>Year Created: {formatDate(artPiece.date)}</p>}
                     {artPiece.materials !== "None" && <p className={'blurb'}>Materials: {artPiece.materials}</p>}
                     <p className={'blurb'}>Unit: {artPiece.unit}</p>
+                    <MapBox center={[-74.5, 40]} zoom={5} style={'mapbox://styles/mapbox/streets-v11'}/>
+                    <br/>
                 </div>
 
 

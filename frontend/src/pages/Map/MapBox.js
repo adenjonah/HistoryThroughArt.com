@@ -16,7 +16,7 @@ const MapBox = ({ center, zoom, style }) => {
         const coordinates = item.Coordinates.split(',').map(Number);
         const imageUrlMatch = item.Description.match(/<img src="([^"]+)"/);
         const imageUrl = imageUrlMatch ? imageUrlMatch[1] : '';
-
+        console.log(index+1);
         return {
           id: index + 1,
           name: item.Name,
