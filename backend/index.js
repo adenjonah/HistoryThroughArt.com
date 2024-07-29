@@ -85,6 +85,18 @@ app.get('/exhibit-videos', (req, res) => {
   });
 });
 
+app.get('/displayed-locations', (req, res) => {
+    console.log("displayed-locations");
+
+    db.fetchDisplayedLocations((err, rows) => {
+        if(err) {
+        res.status(500).send('Internal Server Error');
+        }
+        else {
+        res.json(rows);
+        }
+    });
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

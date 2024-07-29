@@ -809,7 +809,7 @@ class DatabaseManager {
             this.db.run(`UPDATE Displayed SET latitude = -36.851354, longitude = 174.766237 WHERE id = 220`);
             this.db.run(`UPDATE Displayed SET latitude = 42.339381, longitude = -71.094048 WHERE id = 221`);
             this.db.run(`UPDATE Displayed SET latitude = 40.7794366, longitude = -73.963244 WHERE id = 222`);
-            this.db.run(`UPDATE Displayed SET latitude = -17.713371, longitude = 178.065032 WHERE id = 223`);
+            this.db.run(`UPDATE Displayed SET latitude = 40.7794, longitude = -73.9632 WHERE id = 223`);
             this.db.run(`UPDATE Displayed SET latitude = 40.782865, longitude = -73.965355 WHERE id = 224`);
             this.db.run(`UPDATE Displayed SET latitude = 38.891248, longitude = -77.047696 WHERE id = 225`);
             this.db.run(`UPDATE Displayed SET latitude = 34.054386, longitude = -118.250649 WHERE id = 226`);
@@ -1515,7 +1515,7 @@ class DatabaseManager {
     }
 
     fetchExhibit(id, callback) {
-        this.db.all(`SELECT * FROM ARTWORKS WHERE id = ?`, id, callback);
+        this.db.all(`SELECT * FROM Artworks JOIN Displayed USING (id) WHERE id = ?`, id, callback);
     }
 
     fetchSpecificArtworkImages(id, callback) {
@@ -1524,6 +1524,10 @@ class DatabaseManager {
 
     fetchVideos(id, callback) {
         this.db.all(`SELECT * FROM Videos WHERE id = ?`, id, callback);
+    }
+
+    fetchDisplayedLocations(callback) {
+        this.db.all(`SELECT * FROM Displayed JOIN Artworks USING (id)`, callback);
     }
 
 } //end of DatabaseManager

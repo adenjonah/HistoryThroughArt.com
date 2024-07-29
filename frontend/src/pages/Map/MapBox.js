@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import jsonData from './extracted_placemarks.json';
 
 // Your Mapbox access token
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
@@ -9,26 +8,23 @@ mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const MapBox = ({ center, zoom, style }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const [overlayData, setOverlayData] = useState([]);
 
   useEffect(() => {
-    const transformData = () => {
-      return jsonData.map((item, index) => {
-        const coordinates = item.Coordinates.split(',').map(Number);
-        const imageUrlMatch = item.Description.match(/<img src="([^"]+)"/);
-        const imageUrl = imageUrlMatch ? imageUrlMatch[1] : '';
-        console.log(index+1);
-        return {
-          id: index + 1,
-          name: item.Name,
-          imageUrl: imageUrl, // Add image URL to the data
-          coordinates: [coordinates[0], coordinates[1]],
-          description: item.Description.replace(/<[^>]+>/g, ''), // Remove HTML tags for plain text description
-        };
-      });
-    };
+    fetch('http://localhost:5001/displayed-locations')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setOverlayData(data);
+        })
+        .catch(error => console.error('Error:', error));
+  }, []);
 
-    const overlayData = transformData();
-
+  useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: style || 'mapbox://styles/mapbox/streets-v11',
@@ -42,19 +38,24 @@ const MapBox = ({ center, zoom, style }) => {
 
     map.on('load', () => {
       if (overlayData && overlayData.length > 0) {
+        // Filter out data with null coordinates
+        const filteredData = overlayData.filter(item =>
+            item.latitude && item.longitude
+        );
+
         const geojsonData = {
           type: 'FeatureCollection',
-          features: overlayData.map((overlay) => ({
+          features: filteredData.map((overlay) => ({
             type: 'Feature',
             geometry: {
               type: 'Point',
-              coordinates: overlay.coordinates,
+              coordinates: [overlay.longitude, overlay.latitude],
             },
             properties: {
               id: overlay.id,
               name: overlay.name,
-              location: overlay.foundLocation,
-              imageUrl: overlay.imageUrl, // Add image URL to properties
+              location: overlay.displayedLocation,
+              imageUrl: overlay.imageUrl || '', // Add image URL to properties
             },
           })),
         };
@@ -153,13 +154,14 @@ const MapBox = ({ center, zoom, style }) => {
             <div>
               <img src="${imageUrl}" height="200" width="200" /><br/>
               ${id}. ${name}<br/>
+              ${location}<br/>
             </div>
           `;
 
           new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(popupContent)
-            .addTo(map);
+              .setLngLat(coordinates)
+              .setHTML(popupContent)
+              .addTo(map);
         });
 
         map.on('mouseleave', 'unclustered-point', () => {
@@ -186,7 +188,7 @@ const MapBox = ({ center, zoom, style }) => {
     });
 
     return () => map.remove();
-  }, [center, zoom, style]);
+  }, [center, zoom, style, overlayData]);
 
   return <div ref={mapContainerRef} style={{ width: '80%', height: '600px' }} />;
 };

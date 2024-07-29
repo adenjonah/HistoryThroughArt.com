@@ -25,6 +25,8 @@ function Exhibit() {
             .catch(error => console.error('Error:', error));
     }, [exhibitID]);
 
+    console.log(artPiece);
+
 
     const formatDate = (date) => {
         let dateParts = date.split('/');
@@ -69,7 +71,7 @@ function Exhibit() {
                     {artPiece.date !== "None" && <p className={'blurb'}>Year Created: {formatDate(artPiece.date)}</p>}
                     {artPiece.materials !== "None" && <p className={'blurb'}>Materials: {artPiece.materials}</p>}
                     <p className={'blurb'}>Unit: {artPiece.unit}</p>
-                    <MapBox center={[-74.5, 40]} zoom={5} style={'mapbox://styles/mapbox/streets-v11'}/>
+                    <MapBox center={[artPiece.longitude, artPiece.latitude]} zoom={5} style={'mapbox://styles/mapbox/streets-v11'}/>
                     <br/>
                 </div>
 
