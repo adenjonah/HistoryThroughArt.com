@@ -4,11 +4,22 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Your Mapbox access token
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
+const images = require.context('../../artImages', false, /\.png$/);
+
 
 const MapBox = ({ center, zoom, style }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const [overlayData, setOverlayData] = useState([]);
+
+  const getImagePath = (imageName) => {
+    try {
+      return images(`./${imageName}`);
+    } catch (e) {
+      console.error(`Cannot find image: ${imageName}`);
+      return '';
+    }
+  };
 
   useEffect(() => {
     fetch('http://localhost:5001/displayed-locations')
@@ -55,7 +66,7 @@ const MapBox = ({ center, zoom, style }) => {
               id: overlay.id,
               name: overlay.name,
               location: overlay.displayedLocation,
-              imageUrl: overlay.imageUrl || '', // Add image URL to properties
+              imageUrl: getImagePath(overlay.image), // Add image URL to properties
             },
           })),
         };

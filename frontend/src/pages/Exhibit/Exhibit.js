@@ -25,9 +25,6 @@ function Exhibit() {
             .catch(error => console.error('Error:', error));
     }, [exhibitID]);
 
-    console.log(artPiece);
-
-
     const formatDate = (date) => {
         let dateParts = date.split('/');
 

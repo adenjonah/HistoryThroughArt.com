@@ -1527,7 +1527,7 @@ class DatabaseManager {
     }
 
     fetchDisplayedLocations(callback) {
-        this.db.all(`SELECT * FROM Displayed JOIN Artworks USING (id)`, callback);
+        this.db.all(`SELECT * FROM Displayed JOIN Artworks USING (id) JOIN Images USING (id) GROUP BY id`, callback);
     }
 
 } //end of DatabaseManager
