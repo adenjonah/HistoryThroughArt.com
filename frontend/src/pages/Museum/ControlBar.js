@@ -196,7 +196,7 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, sort, unitF
                 </div>
 
                 <div className='w3-col s12 m4 l4 '>
-                    <button className=' w3-block w3-padding-large w3-round-large'
+                    <button className='w3-button w3-padding-large w3-round-large'
                             disabled={clearFilters.current}
                             onClick={handleClearFilters}
                     >X Clear Filters</button>
