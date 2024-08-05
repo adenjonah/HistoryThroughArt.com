@@ -73,7 +73,7 @@ function Exhibit() {
                         center={[artPiece.longitude, artPiece.latitude]}
                         zoom={5}
                         style='mapbox://styles/mapbox/streets-v11'
-                        size={{ width: '100%', height: '500px' }}
+                        size={{ width: '50%', height: '500px' }}
                     />
                 </div>
                 <br />
