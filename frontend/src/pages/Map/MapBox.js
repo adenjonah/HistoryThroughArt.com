@@ -6,8 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const images = require.context('../../artImages', false, /\.png$/);
 
-
-const MapBox = ({ center, zoom, style }) => {
+const MapBox = ({ center, zoom, style, size }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const [overlayData, setOverlayData] = useState([]);
@@ -49,7 +48,6 @@ const MapBox = ({ center, zoom, style }) => {
 
     map.on('load', () => {
       if (overlayData && overlayData.length > 0) {
-        // Filter out data with null coordinates
         const filteredData = overlayData.filter(item =>
             item.latitude && item.longitude
         );
@@ -66,7 +64,7 @@ const MapBox = ({ center, zoom, style }) => {
               id: overlay.id,
               name: overlay.name,
               location: overlay.displayedLocation,
-              imageUrl: getImagePath(overlay.image), // Add image URL to properties
+              imageUrl: getImagePath(overlay.image),
             },
           })),
         };
@@ -201,7 +199,7 @@ const MapBox = ({ center, zoom, style }) => {
     return () => map.remove();
   }, [center, zoom, style, overlayData]);
 
-  return <div ref={mapContainerRef} style={{ width: '80%', height: '600px' }} />;
+  return <div ref={mapContainerRef} style={{ width: size?.width || '80%', height: size?.height || '600px' }} />;
 };
 
 export default MapBox;
