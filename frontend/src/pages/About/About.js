@@ -1,5 +1,6 @@
 import React from 'react';
 import '../Home/Home.css'; // Assuming the CSS file is shared
+import './About.css'
 
 function About() {
   return (
@@ -8,7 +9,7 @@ function About() {
       <p className='about blurb'>Get to know the amazing team behind this project!</p>
       <div className='team-cards'>
         <div className='team-card'>
-          <img src='path/to/headshot1.jpg' alt='Mrs. Korus' className='headshot' />
+          <img src='' alt='Mrs. Korus' className='headshot' />
           <h2>Mrs. Korus</h2>
           <p className='about blurb'>The passionate AP Art History teacher at North Central High School who inspires curiosity and a love for art in her students.</p>
         </div>
@@ -20,11 +21,11 @@ function About() {
         <div className='team-card'>
           <img src='path/to/headshot3.jpg' alt='Jonah Aden' className='headshot' />
           <h2>Jonah Aden</h2>
-          <p className='about blurb'>Another brilliant computer science major, currently at Columbia University. Jonah, also a former student of Mrs. Korus, graduated in 2022 and is the tech maestro who keeps our project running smoothly.</p>
+          <p className='about blurb'>Another computer science major, currently at Columbia University. Jonah, also a former student of Mrs. Korus, graduated in 2022.</p>
         </div>
       </div>
       <p className='about blurb'>We are thrilled to bring you an enriching experience, blending art history with cutting-edge technology.</p>
-      <p className='about blurb'>Have questions or feedback? Reach out to us at: <strong>info@ourartproject.com</strong></p>
+      <p className='about blurb'>Have questions or feedback? Reach out to us at: <strong>info@smartart.com</strong></p>
     </div>
   );
 }

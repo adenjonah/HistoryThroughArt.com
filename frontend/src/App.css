@@ -24,7 +24,7 @@ body {
 .title {
   font-size: 2.5rem;
   color: var(--text-color);
-  margin-bottom: 20px;
+  margin: 50px;
 }
 
 .blurb {
@@ -35,7 +35,7 @@ body {
 .pagecontainer{
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   height: 100%;
