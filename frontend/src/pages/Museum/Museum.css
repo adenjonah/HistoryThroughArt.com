@@ -137,3 +137,13 @@
 .w3-card.ControlBar {
     background-color: var(--foreground-color);
 }
+
+.ArtCard {
+    width: 100%; /* Make sure card takes full width of the container */
+}
+
+.responsive-image {
+    /* Ensure the image takes up the full width of its container */
+    max-height: 350px;
+    border-radius: 8px; /* Apply border radius to match card style */
+}
