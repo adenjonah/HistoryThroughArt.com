@@ -94,7 +94,7 @@ class DatabaseManager {
     }
 
     fetchExhibit(id, callback) {
-        this.db.all(`SELECT * FROM ARTWORKS WHERE id = ?`, id, callback);
+        this.db.all(`SELECT * FROM Artworks JOIN Displayed USING (id) WHERE id = ?`, id, callback);
     }
 
     fetchSpecificArtworkImages(id, callback) {
@@ -103,6 +103,10 @@ class DatabaseManager {
 
     fetchVideos(id, callback) {
         this.db.all(`SELECT * FROM Videos WHERE id = ?`, id, callback);
+    }
+
+    fetchDisplayedLocations(callback) {
+        this.db.all(`SELECT * FROM Displayed JOIN Artworks USING (id) JOIN Images USING (id) GROUP BY id`, callback);
     }
 
 } //end of DatabaseManager
