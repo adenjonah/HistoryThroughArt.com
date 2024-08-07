@@ -54,33 +54,41 @@ function Exhibit() {
         <div className="w3-container">
             <h1 className="w3-center title">{artPiece.name}</h1>
             <div className="w3-row-padding w3-margin-top">
-                <div className="w3-col s12 m7 l7 grid-item">
-                    <VideoPlayer id={exhibitID} />
-                </div>
-                <div className="w3-col s12 m5 l5 grid-item">
-                    <PhotoGallery id={exhibitID} />
+                <div className="w3-col s12">
+                    <VideoPlayer id={exhibitID}/>
                 </div>
             </div>
-            <div className={'w3-container w3-center'}>
-                <p className={'blurb'}>Here's some more information on {artPiece.name}:</p>
-                {artPiece.artist_culture !== "None" && <p className={'blurb'}>Artist/Culture: {artPiece.artist_culture}</p>}
-                {artPiece.location !== "None" && <p className={'blurb'}>Location Made: {artPiece.location}</p>}
-                {artPiece.date !== "None" && <p className={'blurb'}>Year Created: {formatDate(artPiece.date)}</p>}
-                {artPiece.materials !== "None" && <p className={'blurb'}>Materials: {artPiece.materials}</p>}
-                <p className={'blurb'}>Unit: {artPiece.unit}</p>
-                <div className='minimap'>
-                    <MapBox
-                        center={[artPiece.longitude, artPiece.latitude]}
-                        zoom={5}
-                        style='mapbox://styles/mapbox/streets-v11'
-                        size={{ width: '50%', height: '500px' }}
-                    />
+            <div className="w3-row-padding w3-margin-top">
+                <div className="w3-col s12 m6 l6 grid-item">
+                    <div className='minimap'>
+                        <MapBox
+                            center={[artPiece.longitude, artPiece.latitude]}
+                            zoom={5}
+                            style='mapbox://styles/mapbox/streets-v11'
+                            size={{width: '100%', height: '500px'}}
+                        />
+                    </div>
                 </div>
-                <br />
+                <div className="w3-col s12 m6 l6 grid-item">
+                    <PhotoGallery id={exhibitID}/>
+                </div>
             </div>
-
-
+            <div className="w3-row-padding w3-margin-top">
+            <div className="w3-col s12">
+                    <div className={'w3-container w3-center'}>
+                        <p className={'blurb'}>Here's some more information on {artPiece.name}:</p>
+                        {artPiece.artist_culture !== "None" &&
+                            <p className={'blurb'}>Artist/Culture: {artPiece.artist_culture}</p>}
+                        {artPiece.location !== "None" && <p className={'blurb'}>Location Made: {artPiece.location}</p>}
+                        {artPiece.date !== "None" &&
+                            <p className={'blurb'}>Year Created: {formatDate(artPiece.date)}</p>}
+                        {artPiece.materials !== "None" && <p className={'blurb'}>Materials: {artPiece.materials}</p>}
+                        <p className={'blurb'}>Unit: {artPiece.unit}</p>
+                    </div>
+                </div>
+            </div>
         </div>
+
     )
 
 }
