@@ -85,7 +85,7 @@ class DatabaseManager {
 
 
     fetchArtworks(callback) {
-        this.db.all(`SELECT id, name, location, artist_culture, date, materials, unit, transcript FROM Artworks LEFT JOIN Videos using (id)`, callback);
+        this.db.all(`SELECT id, name, location, artist_culture, date, materials, unit, transcript FROM Artworks LEFT JOIN Videos using (id) GROUP BY id`, callback);
 
     } //emd of fetchQueries
 
