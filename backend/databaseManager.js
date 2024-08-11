@@ -3,6 +3,7 @@ const videos = require('./initVideos.js');
 const images = require('./initImages.js');
 const artworks = require('./initArtworks.js');
 const displayed = require('./initDisplayed.js');
+const originatedLocations = require('./initOriginatedCoordinates.js');
 
 class DatabaseManager {
 
@@ -64,6 +65,14 @@ class DatabaseManager {
                 FOREIGN KEY (id) REFERENCES Artworks(id)
             )`);
 
+            this.db.run(`
+            CREATE TABLE IF NOT EXISTS OriginatedCoordinates (
+                id INTEGER,
+                longitude REAL,
+                latitude REAL,
+                FOREIGN KEY (id) REFERENCES Artworks(id)
+            )`);
+
         });
 
         //This puts all the artworks into the database.
@@ -79,6 +88,9 @@ class DatabaseManager {
 
         videos.initializeVideos(this.db);
         console.log("Finished Initializing Videos");
+
+        originatedLocations.initOriginatedCoordinates(this.db);
+        console.log("Finished Initializing Originated Coordinates");
 
 
     } //end of initializeDatabase
