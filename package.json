@@ -5,5 +5,8 @@
     "mapbox-gl": "^3.5.2",
     "papaparse": "^5.4.1",
     "w3-css": "^4.1.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
