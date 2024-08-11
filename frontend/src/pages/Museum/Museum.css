@@ -9,7 +9,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between; /* Distribute items evenly */
+    justify-content: space-between; /* Evenly space items */
     margin-top: 10px;
     margin-bottom: 50px;
     width: 90%;
@@ -23,15 +23,14 @@
     background-color: var(--button-color); /* Blue background color */
     color: var(--text-color); /* Text color */
     padding: 10px 15px;
-    
     border-radius: 8px; /* Rounded corners */
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-right: 10px; /* Add space between items */
+    margin-right: 10px; /* Space between items */
 }
 
 .layout-toggle {
-    width: 200px;
+    width: 200px; /* Width for the toggle button */
 }
 
 .cb-Item:hover, .layout-toggle:hover {
@@ -42,14 +41,14 @@
     padding: 10px;
     border: 1px solid #ced4da;
     border-radius: 8px; /* Rounded corners */
-    width: 500px;
+    width: 500px; /* Adjust width as necessary */
     transition: border-color 0.3s;
 }
 
 .search-input:focus {
-    border-color: #80bdff;
+    border-color: #80bdff; /* Focus color */
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Focus glow */
 }
 
 .catalog.column {
@@ -60,74 +59,58 @@
 }
 
 .catalog.table {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three columns */
+    gap: 20px; /* Spacing between grid items */
+    justify-content: center;
 }
 
-.artCard {
+.ArtCard {
     background-color: var(--foreground-color);
     border-radius: 20px;
     margin: 20px;
     display: flex;
-    flex-direction: row;
-    width: 90%;
-    height: 30vh;
-    justify-content: center;
+    flex-direction: column; /* Vertical stacking */
+    width: 100%; /* Adjusted to 100% to fit container width */
+    max-width: 400px; /* Maximum width */
+    height: 400px;
+    padding: 10px;
+    box-sizing: border-box;
     align-items: center;
+    text-align: center;
     overflow: hidden;
-    box-sizing: border-box; /* Ensures padding and border are included in the total width and height */
-}
-
-.catalog.table .artCard {
-    width: calc(50% - 40px); /* 4 items per row with margin for spacing */
-    height: 25vh;
-    flex-direction: column; /* Stack image and text vertically */
 }
 
 .spotlight-container {
-    width: 50%; /* This ensures the image container takes up the left half */
+    width: 300px; /* Image container width */
+    max-height: 40%;
     display: flex;
-    justify-content: center; /* Center the image horizontally within the container */
-    align-items: center; /* Center the image vertically within the container */
-    overflow: hidden; /* Ensure no overflow */
-    height: 100%; /* Ensure the container takes up the full height of the art card */
-}
-
-.catalog.table .spotlight-container {
-    width: 100%; /* Full width in table view */
-    height: 50%; /* Top half of the card */
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--border-color);
+    border-radius: 8px; /* Rounded corners for image */
+    margin-bottom: 10px; /* Space below image */
 }
 
 .spotlight-image {
-    border-radius: 20px;
-    max-width: 90%; /* Ensure the image doesn't exceed the container width */
-    max-height: 90%; /* Ensure the image doesn't exceed the container height */
-    object-fit: contain; /* Ensure the image fits within the container */
-    width: auto; /* Maintain aspect ratio */
-    height: auto; /* Maintain aspect ratio */
+    width: 100%; /* Fill container width */
+    height: 100%; /* Fill container height */
+    object-fit: contain; /* Preserve aspect ratio */
+    border-radius: 4px; /* Match container's rounded corners */
 }
 
 .identifier {
-    width: 50%;
-    padding-left: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden; /* Prevent overflow */
-    text-overflow: ellipsis; /* Add ellipsis (...) for overflowing text */
-    white-space: nowrap; /* Prevent text from wrapping to the next line */
-    box-sizing: border-box; /* Ensure padding and border are included in the total width */
+    width: 100%;
+    margin-top: 10px;
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Ellipsis for overflow text */
+    white-space: nowrap; /* No wrapping */
+    box-sizing: border-box; /* Include padding and borders in width/height */
 }
 
 .catalog.table .identifier {
-    width: 100%; /* Full width in table view */
-    padding-left: 0;
-    padding: 10px;
-    text-align: center; /* Center align text */
-    white-space: normal; /* Allow text to wrap */
-    overflow: visible; /* Allow visible overflow */
-    text-overflow: clip; /* No ellipsis */
+    white-space: normal; /* Allow wrapping in grid layout */
+    text-overflow: clip; /* No ellipsis in grid layout */
 }
 
 .w3-card.ArtCard {
@@ -136,14 +119,4 @@
 
 .w3-card.ControlBar {
     background-color: var(--foreground-color);
-}
-
-.ArtCard {
-    width: 100%; /* Make sure card takes full width of the container */
-}
-
-.responsive-image {
-    /* Ensure the image takes up the full width of its container */
-    max-height: 350px;
-    border-radius: 8px; /* Apply border radius to match card style */
 }

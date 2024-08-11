@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
 
 function ControlBar({ search, setSearch, layout, setLayout, setSort, sort, unitFilters, setUnitFilters }) {
-
     const [clearFilters, setClearFilters] = useState(true);
 
     const handleSearchChange = (event) => {
         setSearch(event.target.value);
-
-        // Enables clear filters button
-        if (event.target.value.length > 0 || Object.values(unitFilters).some(value => value === true) || sort !== 'ID Ascending') {
-            setClearFilters(false);
-        } else {
-            setClearFilters(true);
-        }
+        setClearFilters(event.target.value.length === 0 && Object.values(unitFilters).every(v => !v) && sort === 'ID Ascending');
     };
 
     const handleSortChange = (event) => {
@@ -60,8 +53,11 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, sort, unitF
         });
         setSort('ID Ascending');
         setSearch('');
-
         setClearFilters(true);
+    };
+
+    const toggleLayout = () => {
+        setLayout(layout === 'column' ? 'table' : 'column');
     };
 
     return (
@@ -78,29 +74,16 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, sort, unitF
                 </div>
 
                 <div className='w3-col s12 m4 l4'>
-                    <button className='w3-block w3-dropdown-hover w3-padding-large w3-round-large'>
-                        Sort
-                        <div className='w3-dropdown-content w3-bar-block w3-border w3-round-large' style={{ left: 0 }}>
-                            <div className={`w3-bar-item w3-button ${sort === 'ID Ascending' ? 'w3-blue' : ''}`}
-                                onClick={handleSortChange}>ID Ascending
-                            </div>
-                            <div className={`w3-bar-item w3-button ${sort === 'ID Descending' ? 'w3-blue' : ''}`}
-                                onClick={handleSortChange}>ID Descending
-                            </div>
-                            <div className={`w3-bar-item w3-button ${sort === 'Name Ascending' ? 'w3-blue' : ''}`}
-                                onClick={handleSortChange}>Name: A-Z
-                            </div>
-                            <div className={`w3-bar-item w3-button ${sort === 'Name Descending' ? 'w3-blue' : ''}`}
-                                onClick={handleSortChange}>Name: Z-A
-                            </div>
-                            <div className={`w3-bar-item w3-button ${sort === 'Unit Ascending' ? 'w3-blue' : ''}`}
-                                onClick={handleSortChange}>Unit Ascending
-                            </div>
-                            <div className={`w3-bar-item w3-button ${sort === 'Unit Descending' ? 'w3-blue' : ''}`}
-                                onClick={handleSortChange}>Unit Descending
-                            </div>
-                        </div>
-                    </button>
+                    <div className='w3-dropdown-hover w3-padding-large w3-round-large'>
+                        <select className='w3-select' value={sort} onChange={handleSortChange}>
+                            <option value="ID Ascending">ID Ascending</option>
+                            <option value="ID Descending">ID Descending</option>
+                            <option value="Name Ascending">Name: A-Z</option>
+                            <option value="Name Descending">Name: Z-A</option>
+                            <option value="Unit Ascending">Unit Ascending</option>
+                            <option value="Unit Descending">Unit Descending</option>
+                        </select>
+                    </div>
                 </div>
 
                 {/* filters */}
@@ -162,13 +145,18 @@ function ControlBar({ search, setSearch, layout, setLayout, setSort, sort, unitF
                     </button>
                 </div>
 
-                <div className='w3-col s12 m4 l4 '>
+                <div className='w3-col s12 m4 l4'>
                     <button className='w3-button w3-padding-large w3-round-large'
                         disabled={clearFilters}
                         onClick={handleClearFilters}
-                    >X Clear Filters</button>
+                    >Clear Filters</button>
                 </div>
 
+                <div className='w3-col s12 m4 l4'>
+                    <button className='w3-button w3-padding-large w3-round-large' onClick={toggleLayout}>
+                        {layout === 'column' ? 'Switch to Grid' : 'Switch to Column'}
+                    </button>
+                </div>
             </div>
         </div>
     );

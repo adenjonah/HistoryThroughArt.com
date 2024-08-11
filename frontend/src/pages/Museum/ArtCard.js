@@ -15,11 +15,8 @@ const getImagePath = (imageName) => {
 function ArtCard({ item, imagesArray, layout }) {
     const navigate = useNavigate();
 
-    // Get the first image for the item
     const imageItem = imagesArray.find(image => image.id === item.id);
 
-    //This formats date to BCE if necessary
-    //We can also make it add CE if we wanted
     const formatDate = () => {
         let date = item.date.split('/');
 
@@ -27,39 +24,38 @@ function ArtCard({ item, imagesArray, layout }) {
             return date.startsWith('-') ? (date.slice(1) + ' BCE') : date;
         }
 
-        if(date.length === 2) {
+        if (date.length === 2) {
             date[0] = toBCE(date[0]);
             date[1] = toBCE(date[1]);
             date = date.join(' - ');
-        }
-        else {
+        } else {
             date[0] = toBCE(date[0]);
             date = date[0];
         }
 
         return date;
-    }
-
+    };
 
     return (
         <div
-            className={`w3-card ArtCard w3-hover-shadow w3-hover-purple w3-margin w3-round-xlarge w3-padding-32 ${layout}`}
-            onClick={() => navigate(`/exhibit?id=${item.id}`)}>
-            <div className="w3-row">
-                <div className="w3-col s12 m5 l4 w3-display-container w3-padding-small">
-                    {imageItem &&
-                        <img className='w3-image w3-round-xlarge responsive-image' src={getImagePath(imageItem.image)} alt="Art Piece"/>}
-                </div>
-                <div className="w3-col s12 m7 l8 w3-container">
-                    <h3 className="w3-text-theme">{item.id}. {item.name}</h3>
-                    <>
-                        {item.artist_culture !== "None" &&
-                            <div className="w3-medium">Artist/Culture: {item.artist_culture}</div>}
-                        {item.location !== "None" && <div className="w3-medium">Location Made: {item.location}</div>}
-                        {item.date !== "None" && <div className="w3-medium">Date: {formatDate()}</div>}
-                        <div className="w3-medium">Unit: {item.unit}</div>
-                    </>
-                </div>
+            className={`w3-card ArtCard w3-hover-shadow w3-hover-purple w3-margin w3-round-xlarge ${layout}`}
+            onClick={() => navigate(`/exhibit?id=${item.id}`)}
+        >
+            <div className="spotlight-container">
+                {imageItem && (
+                    <img
+                        className='spotlight-image'
+                        src={getImagePath(imageItem.image)}
+                        alt="Art Piece"
+                    />
+                )}
+            </div>
+            <div className="identifier">
+                <h3 className="w3-text-theme">{item.id}. {item.name}</h3>
+                {item.artist_culture !== "None" && <div className="w3-medium">Artist/Culture: {item.artist_culture}</div>}
+                {item.location !== "None" && <div className="w3-medium">Location Made: {item.location}</div>}
+                {item.date !== "None" && <div className="w3-medium">Date: {formatDate()}</div>}
+                <div className="w3-medium">Unit: {item.unit}</div>
             </div>
         </div>
     );
