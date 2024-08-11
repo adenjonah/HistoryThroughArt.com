@@ -41,10 +41,12 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     // Filter art pieces based on search and filters
     useEffect(() => {
         let filteredArtPieces = fullArtPiecesArray.filter((item) => {
+            const transcriptText = item.transcript ? JSON.parse(item.transcript).map(t => t.text).join(' ').toLowerCase() : '';
             return item.name.toLowerCase().includes(search.toLowerCase())
                 || item.artist_culture.toLowerCase().includes(search.toLowerCase())
                 || item.location.toLowerCase().includes(search.toLowerCase())
-                || item.id.toString().toLowerCase().includes(search.toLowerCase());
+                || item.id.toString().toLowerCase().includes(search.toLowerCase())
+                || transcriptText.includes(search.toLowerCase());
         });
 
         switch (sort) {
