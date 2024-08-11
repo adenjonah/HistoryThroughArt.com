@@ -120,3 +120,6 @@ frontend/package-DESKTOP-UODP4MO.json
 package-DESKTOP-UODP4MO.json
 package-lock-DESKTOP-UODP4MO.json
 /scripts
+
+*.cmd
+*.ps1
