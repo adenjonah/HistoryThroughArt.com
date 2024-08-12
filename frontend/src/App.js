@@ -11,7 +11,7 @@ import About from './pages/About/About';
 import Exhibit from './pages/Exhibit/Exhibit'
 import Home from './pages/Home/Home';
 import Map from './pages/Map/Map'
-import Museum from './pages/Museum/Museum'
+import Museum from './pages/ArtGallery/Museum'
 
 function App() {
     const [menuOpened, setMenuOpened] = useState(false);

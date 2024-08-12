@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Card from './ArtCard';
+import "./Catalog.css"
 
 function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     const [imagesArray, setImagesArray] = useState([]);

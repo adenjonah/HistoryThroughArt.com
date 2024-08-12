@@ -1,55 +1,3 @@
-.contentBox {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 70%;
-}
-
-.controlBar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between; /* Evenly space items */
-    margin-top: 10px;
-    margin-bottom: 50px;
-    width: 90%;
-    background-color: var(--foreground-color);
-    padding: 10px;
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-.cb-Item, .layout-toggle {
-    background-color: var(--button-color); /* Blue background color */
-    color: var(--text-color); /* Text color */
-    padding: 10px 15px;
-    border-radius: 8px; /* Rounded corners */
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-right: 10px; /* Space between items */
-}
-
-.layout-toggle {
-    width: 200px; /* Width for the toggle button */
-}
-
-.cb-Item:hover, .layout-toggle:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-
-.search-input {
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 8px; /* Rounded corners */
-    width: 500px; /* Adjust width as necessary */
-    transition: border-color 0.3s;
-}
-
-.search-input:focus {
-    border-color: #80bdff; /* Focus color */
-    outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Focus glow */
-}
 
 .catalog.column {
     display: flex;
@@ -111,12 +59,4 @@
 .catalog.table .identifier {
     white-space: normal; /* Allow wrapping in grid layout */
     text-overflow: clip; /* No ellipsis in grid layout */
-}
-
-.w3-card.ArtCard {
-    background-color: var(--foreground-color);
-}
-
-.w3-card.ControlBar {
-    background-color: var(--foreground-color);
 }
