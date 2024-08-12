@@ -18,6 +18,11 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
             .catch(error => console.error('Error:', error));
     }, []);
 
+    if(fullArtPiecesArray.length > 0) {
+        console.log(JSON.parse(fullArtPiecesArray[1].transcript));
+    }
+    // console.log(fullArtPiecesArray);
+
     useEffect(() => {
         fetch('http://localhost:5001/museum-images')
             .then(response => response.json())
@@ -27,7 +32,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
 
     useEffect(() => {
         let filteredArtPieces = fullArtPiecesArray.filter(item => {
-            const transcriptText = item.transcript ? JSON.parse(item.transcript).map(t => t.text).join(' ').toLowerCase() : '';
+            const transcriptText = item.transcript ? item.transcript.map(t => t.text).join(' ').toLowerCase() : '';
             return item.name.toLowerCase().includes(search.toLowerCase())
                 || item.artist_culture.toLowerCase().includes(search.toLowerCase())
                 || item.location.toLowerCase().includes(search.toLowerCase())
@@ -51,7 +56,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
 
         setLocalArtPiecesArray(filteredArtPieces);
         setArtPiecesArray(filteredArtPieces);
-        
+
         if (currPageNumber > Math.ceil(filteredArtPieces.length / itemsPerPage)) {
             setCurrPageNumber(1);
         }

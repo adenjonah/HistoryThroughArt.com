@@ -121,14 +121,14 @@ class DatabaseManager {
     //             });
     //     });
 
-        fs.readFile('artworks.json', 'utf8', (err, data) => {
-            if (err) {
-                console.error('Error reading file:', err);
-            } else {
-                const artworks = JSON.parse(data);
-                console.log(JSON.parse(artworks[1].transcript));
-            }
-        });
+        // fs.readFile('artworks.json', 'utf8', (err, data) => {
+        //     if (err) {
+        //         console.error('Error reading file:', err);
+        //     } else {
+        //         const artworks = JSON.parse(data);
+        //         console.log(artworks.map(artwork => artwork.image.length));
+        //     }
+        // });
 
 
     } //end of initializeDatabase
