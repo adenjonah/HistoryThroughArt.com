@@ -9,7 +9,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
 
     useEffect(() => {
-        fetch('https://apah-server.vercel.app/museum')
+        fetch('http://localhost:5001/museum')
             .then(response => response.json())
             .then(data => {
                 setFullArtPiecesArray(data);
