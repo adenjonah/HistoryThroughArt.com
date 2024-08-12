@@ -19,7 +19,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     }, []);
 
     if(fullArtPiecesArray.length > 0) {
-        console.log(JSON.parse(fullArtPiecesArray[1].transcript));
+        console.log(fullArtPiecesArray);
     }
     // console.log(fullArtPiecesArray);
 

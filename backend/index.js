@@ -25,7 +25,6 @@ app.get('/museum', (req, res) => {
 
             //Parse the json data and then send it to frontend
             res.json(JSON.parse(data));
-            console.log(artworks.length);
         }
     });
 
