@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import SearchComponent from './SearchComponent';
-import SortComponent from './SortComponent';
 import ActiveFiltersComponent from './ActiveFiltersComponent';
 import "./ControlBar.css";
 
@@ -32,6 +31,9 @@ function ControlBar({
     //     setLayout(prevLayout => prevLayout === 'column' ? 'table' : 'column');
     // };
 
+    // Check if any filters are active
+    const areFiltersActive = Object.values(unitFilters).some(filter => filter);
+
     return (
         <div className="control-bar-container">
             <div className="control-bar">
@@ -45,26 +47,19 @@ function ControlBar({
                     searchBy={searchBy}
                     setSearchBy={setSearchBy}
                 />
-                <ActiveFiltersComponent
-                    unitFilters={unitFilters}
-                    handleClearFilters={handleClearFilters}
-                    clearFilters={clearFilters}
-                />
-                <div className='sort-toggle'>
-
-                    <SortComponent
-                        sort={sort}
-                        setSort={setSort}
-                        setClearFilters={setClearFilters}
+                {areFiltersActive && (
+                    <ActiveFiltersComponent
+                        unitFilters={unitFilters}
+                        handleClearFilters={handleClearFilters}
+                        clearFilters={clearFilters}
                     />
+                )}
 
-                    {/* <div className="toggle-layout-container">
-                        <button className="layout-toggle-button" onClick={toggleLayout}>
-                            {layout === 'table' ? 'Switch to Column' : 'Switch to Grid'}
-                        </button>
-                    </div> */}
-                </div>
-
+                {/* <div className="toggle-layout-container">
+                    <button className="layout-toggle-button" onClick={toggleLayout}>
+                        {layout === 'table' ? 'Switch to Column' : 'Switch to Grid'}
+                    </button>
+                </div> */}
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 // SortComponent.js
 import React from 'react';
-
+import './SearchComponent.css'
 function SortComponent({ sort, setSort, setClearFilters }) {
     
     const handleSortChange = (event) => {
@@ -12,7 +12,7 @@ function SortComponent({ sort, setSort, setClearFilters }) {
     return (
         <div className="sort-select-container">
             <select
-                className="control-bar-item"
+                className="sort-dropdown"
                 value={sort}
                 onChange={handleSortChange}
             >

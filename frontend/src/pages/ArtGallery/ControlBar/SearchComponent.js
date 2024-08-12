@@ -1,4 +1,5 @@
 import React from 'react';
+import SortComponent from './SortComponent';
 import "./SearchComponent.css";
 
 function SearchComponent({
@@ -8,6 +9,7 @@ function SearchComponent({
     unitFilters,
     setUnitFilters,
     sort,
+    setSort,
     searchBy,
     setSearchBy
 }) {
@@ -70,6 +72,13 @@ function SearchComponent({
                     </option>
                 ))}
             </select>
+
+            {/* Include SortComponent here */}
+            <SortComponent
+                sort={sort}
+                setSort={setSort}
+                setClearFilters={setClearFilters}
+            />
         </div>
     );
 }
