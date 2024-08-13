@@ -4,6 +4,7 @@ const images = require('./initImages.js');
 const artworks = require('./initArtworks.js');
 const displayed = require('./initDisplayed.js');
 const originatedLocations = require('./initOriginatedCoordinates.js');
+const fs = require('fs');
 
 class DatabaseManager {
 
@@ -91,6 +92,43 @@ class DatabaseManager {
 
         originatedLocations.initOriginatedCoordinates(this.db);
         console.log("Finished Initializing Originated Coordinates");
+
+    //     this.db.all(`SELECT a.id, a.name, a.location, a.artist_culture, a.date, a.materials, a.unit,
+    //        d.museum, d.displayedLocation,
+    //        '[' || GROUP_CONCAT(DISTINCT '"' || i.image || '"') || ']' AS image,
+    //        '[' || GROUP_CONCAT(DISTINCT '"' || v.videoLink || '"') || ']' AS videoLink,
+    //        '[' || GROUP_CONCAT(DISTINCT '"' || v.transcript || '"') || ']' AS transcript,
+    //        o.longitude AS originatedLongitude, o.latitude AS originatedLatitude
+    // FROM Artworks a
+    // LEFT JOIN Displayed d ON a.id = d.id
+    // LEFT JOIN Images i ON a.id = i.id
+    // LEFT JOIN Videos v ON a.id = v.id
+    // LEFT JOIN OriginatedCoordinates o ON a.id = o.id
+    // GROUP BY a.id, a.name, a.location, a.artist_culture, a.date, a.materials, a.unit,
+    //          d.museum, d.displayedLocation, o.longitude, o.latitude;`, (err, rows) => {
+    //         if (err) {
+    //             console.log(err);
+    //         }
+    //             const jsonData = JSON.stringify(rows, null, 2);
+    //
+    //             // Write the JSON string to a file
+    //             fs.writeFile('artworks.json', jsonData, (err) => {
+    //                 if (err) {
+    //                     console.error('Error writing to file:', err);
+    //                 } else {
+    //                     console.log('Data successfully written to artworks.json');
+    //                 }
+    //             });
+    //     });
+
+        // fs.readFile('artworks.json', 'utf8', (err, data) => {
+        //     if (err) {
+        //         console.error('Error reading file:', err);
+        //     } else {
+        //         const artworks = JSON.parse(data);
+        //         console.log(artworks.map(artwork => artwork.image.length));
+        //     }
+        // });
 
 
     } //end of initializeDatabase

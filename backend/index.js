@@ -7,6 +7,7 @@ const port = 5001;
 app.use(cors());
 app.use(express.json());
 const db = new DatabaseManager();
+const fs = require('fs');
 db.initializeDatabase();
 
 
@@ -16,14 +17,25 @@ app.get('/', (req, res) => {
 
 app.get('/museum', (req, res) => {
   console.log("museum");
-  db.fetchArtworks((err, rows) => {
-    if(err) {
-      res.status(500).send('Internal Server Error');
-    }
-    else {
-      res.json(rows);
-    }
-  });
+
+    fs.readFile('artworks.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading file:', err);
+        } else {
+
+            //Parse the json data and then send it to frontend
+            res.json(JSON.parse(data));
+        }
+    });
+
+  // db.fetchArtworks((err, rows) => {
+  //   if(err) {
+  //     res.status(500).send('Internal Server Error');
+  //   }
+  //   else {
+  //     res.json(rows);
+  //   }
+  // });
 
 });
 
