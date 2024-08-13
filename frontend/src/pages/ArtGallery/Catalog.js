@@ -1,33 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import Card from './ArtCard';
-import "./Catalog.css"
+import "./Catalog.css";
+import artPiecesData from '../../Data/artworks.json';
 
 function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
-    const [imagesArray, setImagesArray] = useState([]);
     const [currPageNumber, setCurrPageNumber] = useState(1);
     const [fullArtPiecesArray, setFullArtPiecesArray] = useState([]);
     const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
 
+    // Load the artworks data from the JSON file
     useEffect(() => {
-        fetch('http://localhost:5001/museum')
-            .then(response => response.json())
-            .then(data => {
-                setFullArtPiecesArray(data);
-                setLocalArtPiecesArray(data);
-            })
-            .catch(error => console.error('Error:', error));
-    }, []);
-
-    if(fullArtPiecesArray.length > 0) {
-        console.log(fullArtPiecesArray);
-    }
-    // console.log(fullArtPiecesArray);
-
-    useEffect(() => {
-        fetch('http://localhost:5001/museum-images')
-            .then(response => response.json())
-            .then(data => setImagesArray(data))
-            .catch(error => console.error('Error:', error));
+        setFullArtPiecesArray(artPiecesData);
+        setLocalArtPiecesArray(artPiecesData);
     }, []);
 
     useEffect(() => {
@@ -76,7 +60,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
         <div>
             <div className={`catalog ${layout}`}>
                 {currentArtPieces.map((item, index) => (
-                    <Card key={index} item={item} imagesArray={imagesArray} layout={layout} />
+                    <Card key={index} item={item} layout={layout} />
                 ))}
                 {artPiecesArray.length === 0 && <h3>No results found</h3>}
             </div>

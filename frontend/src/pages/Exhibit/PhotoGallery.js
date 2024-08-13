@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Exhibit.css';
+import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 
 const images = require.context('../../artImages', false, /\.png$/);
 
@@ -18,15 +19,11 @@ function PhotoGallery({ id }) {
     };
 
     useEffect(() => {
-        fetch(`http://localhost:5001/exhibit-images?id=${id}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok - exhibit-images');
-                }
-                return response.json();
-            })
-            .then(data => setArtImages(data))
-            .catch(error => console.error('Error:', error));
+        // Find the relevant art piece by ID and extract its images
+        const foundArtPiece = artPiecesData.find(piece => piece.id.toString() === id);
+        if (foundArtPiece && foundArtPiece.image) {
+            setArtImages(foundArtPiece.image);
+        }
     }, [id]);
 
     const showSlides = useCallback((n) => {
@@ -64,12 +61,12 @@ function PhotoGallery({ id }) {
         <div className="w3-container w3-center">
             <div className="w3-display-container image-container">
                 <div className={'image-wrapper'}>
-                    {artImages.map((imageItem, index) => (
+                    {artImages.map((imageName, index) => (
                         <div key={index} className={'image-slide'} style={{
                             display: index === slideIndex - 1 ? 'block' : 'none'}}
                              ref={(el) => (slideRefs.current[index] = el)}>
                             <img
-                                src={getImagePath(imageItem.image)}
+                                src={getImagePath(imageName)}
                                 alt={`Art piece ${index + 1}`}
                                 className="w3-image image"
                             />

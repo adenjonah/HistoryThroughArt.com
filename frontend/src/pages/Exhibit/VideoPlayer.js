@@ -1,5 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import './VideoPlayer.css'; // Make sure to create and import this CSS file
+import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 
 function VideoPlayer({ id }) {
     const [artVideos, setArtVideos] = useState([]);
@@ -9,10 +10,11 @@ function VideoPlayer({ id }) {
     const transcriptRef = useRef(null);
 
     useEffect(() => {
-        fetch(`http://localhost:5001/exhibit-videos?id=${id}`)
-            .then(response => response.json())
-            .then(data => setArtVideos(data))
-            .catch(error => console.error('Error:', error));
+        // Find the relevant art piece by ID and extract its videos
+        const foundArtPiece = artPiecesData.find(piece => piece.id.toString() === id);
+        if (foundArtPiece && foundArtPiece.videoLink) {
+            setArtVideos([{ videoLink: foundArtPiece.videoLink, transcript: foundArtPiece.transcript }]);
+        }
     }, [id]);
 
     useEffect(() => {
@@ -62,7 +64,7 @@ function VideoPlayer({ id }) {
                                 ref={iframeRef}
                                 src={`${artVideos[selectedVideo].videoLink}?enablejsapi=1`}
                                 allowFullScreen
-                                title={artVideos[selectedVideo].id}
+                                title={`Video ${selectedVideo + 1}`}
                                 className="video-player"
                             ></iframe>
                         </div>
@@ -75,7 +77,7 @@ function VideoPlayer({ id }) {
                             </button>
                         </div>
                         <div ref={transcriptRef} id="transcript" className={`transcript-box ${visibleTranscript ? 'w3-show' : 'w3-hide'} w3-animate-zoom`}>
-                            {JSON.parse(artVideos[selectedVideo].transcript).map((entry, index) => (
+                            {artVideos[selectedVideo].transcript && JSON.parse(artVideos[selectedVideo].transcript).map((entry, index) => (
                                 <div key={index}>
                                     <button className="youtube-marker" onClick={() => handleTranscriptClick(entry.start)}>
                                         {ConvertToMins(entry.start)} - {entry.text}

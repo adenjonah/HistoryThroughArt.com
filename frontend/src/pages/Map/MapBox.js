@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 
 // Your Mapbox access token
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
@@ -21,17 +22,19 @@ const MapBox = ({ center, zoom, style, size }) => {
   };
 
   useEffect(() => {
-    fetch('http://localhost:5001/displayed-locations')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          setOverlayData(data);
-        })
-        .catch(error => console.error('Error:', error));
+    // Extract locations and relevant data from the JSON file
+    const filteredData = artPiecesData.filter(piece => piece.originatedLatitude && piece.originatedLongitude);
+
+    const overlayData = filteredData.map(piece => ({
+      id: piece.id,
+      name: piece.name,
+      displayedLocation: piece.displayedLocation,
+      latitude: piece.originatedLatitude,
+      longitude: piece.originatedLongitude,
+      image: piece.image[0], // Assuming each piece has at least one image
+    }));
+
+    setOverlayData(overlayData);
   }, []);
 
   useEffect(() => {
@@ -48,13 +51,9 @@ const MapBox = ({ center, zoom, style, size }) => {
 
     map.on('load', () => {
       if (overlayData && overlayData.length > 0) {
-        const filteredData = overlayData.filter(item =>
-            item.latitude && item.longitude
-        );
-
         const geojsonData = {
           type: 'FeatureCollection',
-          features: filteredData.map((overlay) => ({
+          features: overlayData.map((overlay) => ({
             type: 'Feature',
             geometry: {
               type: 'Point',

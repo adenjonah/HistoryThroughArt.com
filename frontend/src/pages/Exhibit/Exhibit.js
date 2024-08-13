@@ -1,28 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import VideoPlayer from './VideoPlayer'
+import React, { useEffect, useState } from 'react';
+import VideoPlayer from './VideoPlayer';
 import PhotoGallery from "./PhotoGallery";
 import MapBox from "../Map/MapBox";
+import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 
 function Exhibit() {
 
-    const [artPiece, setArtPiece] = useState('');
+    const [artPiece, setArtPiece] = useState(null); // Initialize as null to handle loading state
 
-
-
-    //Gets the parameter in the search query
+    // Gets the parameter in the search query
     const urlParam = new URLSearchParams(window.location.search);
     const exhibitID = urlParam.get('id');
 
     useEffect(() => {
-        fetch(`http://localhost:5001/exhibit?id=${exhibitID}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok - exhibit');
-                }
-                return response.json();
-            })
-            .then(data => setArtPiece(data[0]))
-            .catch(error => console.error('Error:', error));
+        // Find the art piece by ID within the JSON data
+        const foundArtPiece = artPiecesData.find(piece => piece.id.toString() === exhibitID);
+        setArtPiece(foundArtPiece);
     }, [exhibitID]);
 
     const formatDate = (date) => {
@@ -44,36 +37,35 @@ function Exhibit() {
         return dateParts;
     };
 
-    //Displays loading if not loaded yet
+    // Displays loading if not loaded yet
     if (!artPiece) {
         return <div className="w3-container w3-center"><p>Loading...</p></div>;
     }
-
 
     return (
         <div className="w3-container">
             <h1 className="w3-center title">{artPiece.name}</h1>
             <div className="w3-row-padding w3-margin-top">
                 <div className="w3-col s12">
-                    <VideoPlayer id={exhibitID}/>
+                    <VideoPlayer id={exhibitID} />
                 </div>
             </div>
             <div className="w3-row-padding w3-margin-top">
                 <div className="w3-col s12 m6 l6 grid-item">
                     <div className='minimap'>
                         <MapBox
-                            center={[artPiece.longitude, artPiece.latitude]}
+                            center={[artPiece.originatedLongitude, artPiece.originatedLatitude]}
                             zoom={5}
-                            size={{width: '100%', height: '500px'}}
+                            size={{ width: '100%', height: '500px' }}
                         />
                     </div>
                 </div>
                 <div className="w3-col s12 m6 l6 grid-item">
-                    <PhotoGallery id={exhibitID}/>
+                    <PhotoGallery id={exhibitID} />
                 </div>
             </div>
             <div className="w3-row-padding w3-margin-top">
-            <div className="w3-col s12">
+                <div className="w3-col s12">
                     <div className={'w3-container w3-center'}>
                         <p className={'blurb'}>Here's some more information on {artPiece.name}:</p>
                         {artPiece.artist_culture !== "None" &&
@@ -87,9 +79,7 @@ function Exhibit() {
                 </div>
             </div>
         </div>
-
-    )
-
+    );
 }
 
 export default Exhibit;

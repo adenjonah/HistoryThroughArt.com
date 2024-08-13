@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 
+// Dynamically require images from the artImages folder
 const images = require.context('../../artImages', false, /\.png$/);
 
 const getImagePath = (imageName) => {
@@ -12,10 +13,8 @@ const getImagePath = (imageName) => {
     }
 };
 
-function ArtCard({ item, imagesArray, layout }) {
+function ArtCard({ item, layout }) {
     const navigate = useNavigate();
-
-    const imageItem = imagesArray.find(image => image.id === item.id);
 
     const formatDate = () => {
         let date = item.date.split('/');
@@ -42,11 +41,11 @@ function ArtCard({ item, imagesArray, layout }) {
             onClick={() => navigate(`/exhibit?id=${item.id}`)}
         >
             <div className="spotlight-container">
-                {imageItem && (
+                {item.image && (
                     <img
                         className='spotlight-image'
-                        src={getImagePath(imageItem.image)}
-                        alt="Art Piece"
+                        src={getImagePath(item.image[0])}
+                        alt={item.name}
                     />
                 )}
             </div>
