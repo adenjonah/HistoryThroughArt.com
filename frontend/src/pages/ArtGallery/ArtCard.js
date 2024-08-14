@@ -46,6 +46,7 @@ function ArtCard({ item, layout }) {
                         className='spotlight-image'
                         src={getImagePath(item.image[0])}
                         alt={item.name}
+                        loading={'lazy'}
                     />
                 )}
             </div>
