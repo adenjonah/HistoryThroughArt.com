@@ -7,7 +7,7 @@ import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const images = require.context('../../artImages', false, /\.png$/);
 
-const MapBox = ({ center, zoom, style, size }) => {
+const MapBox = ({ center, zoom, style, size, mapType }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const [overlayData, setOverlayData] = useState([]);
@@ -21,21 +21,41 @@ const MapBox = ({ center, zoom, style, size }) => {
     }
   };
 
+  console.log(mapType);
   useEffect(() => {
     // Extract locations and relevant data from the JSON file
-    const filteredData = artPiecesData.filter(piece => piece.originatedLatitude && piece.originatedLongitude);
 
-    const overlayData = filteredData.map(piece => ({
-      id: piece.id,
-      name: piece.name,
-      displayedLocation: piece.displayedLocation,
-      latitude: piece.originatedLatitude,
-      longitude: piece.originatedLongitude,
-      image: piece.image[0], // Assuming each piece has at least one image
-    }));
+    //Show where each artpiece was created
+    if(mapType === 'originated') {
+        const filteredData = artPiecesData.filter(piece => piece.originatedLatitude && piece.originatedLongitude);
+        const overlayData = filteredData.map(piece => ({
+          id: piece.id,
+          name: piece.name,
+          displayedLocation: piece.location,
+          latitude: piece.originatedLatitude,
+          longitude: piece.originatedLongitude,
+          image: piece.image[0], // Assuming each piece has at least one image
+        }));
+        setOverlayData(overlayData);
+    }
+    //Show where each artpiece is currently displayed, or if mapType property is not set
+    else {
+      const filteredData = artPiecesData.filter(piece => piece.displayedLatitude && piece.displayedLongitude);
 
-    setOverlayData(overlayData);
-  }, []);
+      const overlayData = filteredData.map(piece => ({
+        id: piece.id,
+        name: piece.name,
+        displayedLocation: piece.displayedLocation,
+        latitude: piece.displayedLatitude,
+        longitude: piece.displayedLongitude,
+        image: piece.image[0], // Assuming each piece has at least one image
+      }));
+      setOverlayData(overlayData);
+    }
+
+
+  }, [mapType]);
+
 
   useEffect(() => {
     const map = new mapboxgl.Map({
