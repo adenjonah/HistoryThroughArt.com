@@ -94,7 +94,7 @@ class DatabaseManager {
         console.log("Finished Initializing Originated Coordinates");
 
     //     this.db.all(`SELECT a.id, a.name, a.location, a.artist_culture, a.date, a.materials, a.unit,
-    //        d.museum, d.displayedLocation,
+    //        d.museum, d.displayedLocation, d.longitude AS displayedLongitude, d.latitude AS displayedLatitude,
     //        '[' || GROUP_CONCAT(DISTINCT '"' || i.image || '"') || ']' AS image,
     //        '[' || GROUP_CONCAT(DISTINCT '"' || v.videoLink || '"') || ']' AS videoLink,
     //        '[' || GROUP_CONCAT(DISTINCT '"' || v.transcript || '"') || ']' AS transcript,
@@ -119,6 +119,8 @@ class DatabaseManager {
     //                     console.log('Data successfully written to artworks.json');
     //                 }
     //             });
+    //
+    //         console.log("Done");
     //     });
 
         // fs.readFile('artworks.json', 'utf8', (err, data) => {
