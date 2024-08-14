@@ -8,9 +8,12 @@ function Exhibit() {
 
     const [artPiece, setArtPiece] = useState(null); // Initialize as null to handle loading state
 
+
     // Gets the parameter in the search query
     const urlParam = new URLSearchParams(window.location.search);
     const exhibitID = urlParam.get('id');
+
+    const [mapType, setMapType] = useState(urlParam.get('mapType') || 'currentlyDisplayed');
 
     useEffect(() => {
         // Find the art piece by ID within the JSON data
@@ -42,6 +45,15 @@ function Exhibit() {
         return <div className="w3-container w3-center"><p>Loading...</p></div>;
     }
 
+    const handleMapToggle = () => {
+        if (mapType === 'currentlyDisplayed') {
+            setMapType('originated');
+        } else {
+            setMapType('currentlyDisplayed');
+        }
+    };
+    const artPieceMapLocation = mapType === 'originated' ? [artPiece.originatedLongitude, artPiece.originatedLatitude] : [artPiece.displayedLongitude, artPiece.displayedLatitude];
+
     return (
         <div className="w3-container">
             <h1 className="w3-center title">{artPiece.name}</h1>
@@ -52,11 +64,13 @@ function Exhibit() {
             </div>
             <div className="w3-row-padding w3-margin-top">
                 <div className="w3-col s12 m6 l6 grid-item">
+                    <button className={`w3-center`} onClick={handleMapToggle}>Toggle Currently Displayed/Originated</button>
                     <div className='minimap'>
                         <MapBox
-                            center={[artPiece.originatedLongitude, artPiece.originatedLatitude]}
-                            zoom={5}
-                            size={{ width: '100%', height: '500px' }}
+                            center={artPieceMapLocation}
+                            zoom={artPieceMapLocation[0] === null ? 0 : 5}
+                            size={{width: '100%', height: '500px'}}
+                            mapType={mapType}
                         />
                     </div>
                 </div>

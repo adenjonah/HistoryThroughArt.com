@@ -21,7 +21,6 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
     }
   };
 
-  console.log(mapType);
   useEffect(() => {
     // Extract locations and relevant data from the JSON file
 
@@ -31,7 +30,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
         const overlayData = filteredData.map(piece => ({
           id: piece.id,
           name: piece.name,
-          displayedLocation: piece.location,
+          location: piece.location,
           latitude: piece.originatedLatitude,
           longitude: piece.originatedLongitude,
           image: piece.image[0], // Assuming each piece has at least one image
@@ -45,7 +44,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
       const overlayData = filteredData.map(piece => ({
         id: piece.id,
         name: piece.name,
-        displayedLocation: piece.displayedLocation,
+        location: piece.displayedLocation,
         latitude: piece.displayedLatitude,
         longitude: piece.displayedLongitude,
         image: piece.image[0], // Assuming each piece has at least one image
@@ -71,6 +70,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
 
     map.on('load', () => {
       if (overlayData && overlayData.length > 0) {
+
         const geojsonData = {
           type: 'FeatureCollection',
           features: overlayData.map((overlay) => ({
@@ -82,7 +82,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
             properties: {
               id: overlay.id,
               name: overlay.name,
-              location: overlay.displayedLocation,
+              location: overlay.location,
               imageUrl: getImagePath(overlay.image),
             },
           })),
@@ -202,7 +202,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
 
         map.on('click', 'unclustered-point', (e) => {
           const { id } = e.features[0].properties;
-          window.location.href = `/exhibit?id=${id}`;
+          window.location.href = `/exhibit?id=${id}&mapType=${mapType}`;
         });
 
         map.on('mouseenter', 'clusters', () => {
@@ -216,7 +216,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
     });
 
     return () => map.remove();
-  }, [center, zoom, style, overlayData]);
+  }, [center, zoom, style, overlayData, mapType]);
 
   return <div ref={mapContainerRef} style={{ width: size?.width || '80%', height: size?.height || '600px' }} />;
 };
