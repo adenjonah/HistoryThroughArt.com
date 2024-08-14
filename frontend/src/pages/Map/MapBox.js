@@ -202,7 +202,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
 
         map.on('click', 'unclustered-point', (e) => {
           const { id } = e.features[0].properties;
-          window.location.href = `http://localhost:3000/exhibit?id=${id}`;
+          window.location.href = `/exhibit?id=${id}`;
         });
 
         map.on('mouseenter', 'clusters', () => {

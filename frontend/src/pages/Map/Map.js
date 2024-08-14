@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import MapBox from './MapBox';
 
 // Assuming you have the JSON data in a file named 'data.json'
-import jsonData from './extracted_placemarks.json';
+// import jsonData from './extracted_placemarks.json';
 
 function Map() {
-  const [overlayData, setOverlayData] = useState([]);
+  // const [overlayData, setOverlayData] = useState([]);
   const [mapType, setMapType] = useState('currentlyDisplayed');
 
   // useEffect(() => {
