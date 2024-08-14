@@ -44,6 +44,7 @@ function ControlBar({
                     unitFilters={unitFilters}
                     setUnitFilters={setUnitFilters}
                     sort={sort}
+                    setSort={setSort}
                     searchBy={searchBy}
                     setSearchBy={setSearchBy}
                 />

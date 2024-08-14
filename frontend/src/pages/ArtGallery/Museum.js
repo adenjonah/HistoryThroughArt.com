@@ -18,7 +18,8 @@ function Museum() {
             <h1 className="title">Art Gallery</h1>
             <div className='contentBox'>
                 <ControlBar search={search} searchBy = {searchBy} setSearch={setSearch} setSearchBy={setSearchBy} layout={layout} setLayout={setLayout} setSort={setSort} sort={sort} unitFilters={unitFilters} setUnitFilters={setUnitFilters}/>
-                <Catalog className={"catalog"} artPiecesArray={artPiecesArray} search={search} setArtPiecesArray={setArtPiecesArray} layout={layout} sort={sort} unitFilters={unitFilters} />
+                <Catalog className={"catalog"} artPiecesArray={artPiecesArray} search={search}
+                         setArtPiecesArray={setArtPiecesArray} layout={layout} sort={sort} unitFilters={unitFilters}/>
             </div>
         </div>
     );
