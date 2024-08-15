@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Card from './ArtCard';
 import "./Catalog.css";
 import artPiecesData from '../../Data/artworks.json';
-const images = require.context('../../artImages', false, /\.png$/);
+const images = require.context('../../artImages', false, /\.webp$/);
 
 function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     const [currPageNumber, setCurrPageNumber] = useState(1);
@@ -21,6 +21,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     // Load the artworks data from the JSON file
     useEffect(() => {
 
+        //Loads all images and puts them into an array
         const preloadImages = () => {
             const image = artPiecesData.map(item => {
                 const img = new Image();
@@ -67,6 +68,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
         }
     }, [search, sort, unitFilters, fullArtPiecesArray, currPageNumber, setArtPiecesArray]);
 
+    //Changes the page number
     const handlePageClick = pageNum => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         setCurrPageNumber(pageNum);
@@ -77,6 +79,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     const endIndex = startIndex + itemsPerPage;
     const currentArtPieces = artPiecesArray.slice(startIndex, endIndex);
 
+    //Passes the image index to the Card component
     return (
         <div>
             <div className={`catalog ${layout}`}>

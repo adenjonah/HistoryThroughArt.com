@@ -48,7 +48,7 @@ function ArtCard({ item, layout, image }) {
         return date;
     };
 
-    // console.log(image);
+    //Uses the image property passed from Catalog to display the image
     return (
         <div
             className={`w3-card ArtCard w3-hover-shadow w3-hover-purple w3-margin w3-round-xlarge ${layout}`}
