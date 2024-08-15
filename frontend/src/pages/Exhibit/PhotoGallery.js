@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Exhibit.css';
 import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 
-const images = require.context('../../artImages', false, /\.png$/);
+const images = require.context('../../artImages', false, /\.webp$/);
 
 function PhotoGallery({ id }) {
     const [artImages, setArtImages] = useState([]);

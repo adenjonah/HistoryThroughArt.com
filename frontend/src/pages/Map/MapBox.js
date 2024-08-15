@@ -5,7 +5,7 @@ import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 
 // Your Mapbox access token
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
-const images = require.context('../../artImages', false, /\.png$/);
+const images = require.context('../../artImages', false, /\.webp$/);
 
 const MapBox = ({ center, zoom, style, size, mapType }) => {
   const mapContainerRef = useRef(null);
