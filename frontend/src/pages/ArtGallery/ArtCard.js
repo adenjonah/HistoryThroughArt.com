@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from "react-router-dom";
 
 // Dynamically require images from the artImages folder
-const images = require.context('../../artImages', false, /\.png$/);
+// const images = require.context('../../artImages', false, /\.png$/);
 
 // const preloadImages = (imagePath) => {
 //         const img = new Image();
@@ -10,16 +10,16 @@ const images = require.context('../../artImages', false, /\.png$/);
 //
 // };
 
-const getImagePath = (imageName) => {
-    try {
-        return images(`./${imageName}`);
-    } catch (e) {
-        console.error(`Cannot find image: ${imageName}`);
-        return '';
-    }
-};
+// const getImagePath = (imageName) => {
+//     try {
+//         return images(`./${imageName}`);
+//     } catch (e) {
+//         console.error(`Cannot find image: ${imageName}`);
+//         return '';
+//     }
+// };
 
-function ArtCard({ item, layout }) {
+function ArtCard({ item, layout, image }) {
     // console.log(item);
     const navigate = useNavigate();
 
@@ -48,6 +48,7 @@ function ArtCard({ item, layout }) {
         return date;
     };
 
+    // console.log(image);
     return (
         <div
             className={`w3-card ArtCard w3-hover-shadow w3-hover-purple w3-margin w3-round-xlarge ${layout}`}
@@ -57,7 +58,7 @@ function ArtCard({ item, layout }) {
                 {item.image && (
                     <img
                         className='spotlight-image'
-                        src={getImagePath(item.image[0])}
+                        src={image.src}
                         alt={item.name}
                         loading={'lazy'}
                     />

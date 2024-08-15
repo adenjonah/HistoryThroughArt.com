@@ -2,21 +2,33 @@ import React, { useEffect, useState } from 'react';
 import Card from './ArtCard';
 import "./Catalog.css";
 import artPiecesData from '../../Data/artworks.json';
+const images = require.context('../../artImages', false, /\.png$/);
 
 function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     const [currPageNumber, setCurrPageNumber] = useState(1);
     const [fullArtPiecesArray, setFullArtPiecesArray] = useState([]);
     const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
+    const [preloadedImages, setPreloadedImages] = useState([]);
 
+    const getImagePath = (imageName) => {
+        try {
+            return images(`./${imageName}`);
+        } catch (e) {
+            console.error(`Cannot find image: ${imageName}`);
+            return '';
+        }
+    };
     // Load the artworks data from the JSON file
     useEffect(() => {
 
         const preloadImages = () => {
-            artPiecesData.forEach(item => {
-                const image = new Image();
-                image.src = item.image[0];
-            })
-        }
+            const image = artPiecesData.map(item => {
+                const img = new Image();
+                img.src = getImagePath(item.image[0]);
+                return img;
+            });
+            setPreloadedImages(image);
+        };
 
         preloadImages();
         setFullArtPiecesArray(artPiecesData);
@@ -69,7 +81,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
         <div>
             <div className={`catalog ${layout}`}>
                 {currentArtPieces.map((item, index) => (
-                    <Card key={index} item={item} layout={layout} />
+                    <Card key={index} item={item} layout={layout} image={preloadedImages[index + (currPageNumber - 1) * itemsPerPage]} />
                 ))}
                 {artPiecesArray.length === 0 && <h3>No results found</h3>}
             </div>
