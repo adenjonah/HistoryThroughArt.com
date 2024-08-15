@@ -10,6 +10,15 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
 
     // Load the artworks data from the JSON file
     useEffect(() => {
+
+        const preloadImages = () => {
+            artPiecesData.forEach(item => {
+                const image = new Image();
+                image.src = item.image[0];
+            })
+        }
+
+        preloadImages();
         setFullArtPiecesArray(artPiecesData);
         setLocalArtPiecesArray(artPiecesData);
     }, []);

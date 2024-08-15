@@ -1,14 +1,14 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { useNavigate } from "react-router-dom";
 
 // Dynamically require images from the artImages folder
 const images = require.context('../../artImages', false, /\.png$/);
 
-const preloadImages = (imagePath) => {
-        const img = new Image();
-        img.src = imagePath;
-
-};
+// const preloadImages = (imagePath) => {
+//         const img = new Image();
+//         img.src = imagePath;
+//
+// };
 
 const getImagePath = (imageName) => {
     try {
@@ -20,12 +20,14 @@ const getImagePath = (imageName) => {
 };
 
 function ArtCard({ item, layout }) {
+    // console.log(item);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        preloadImages(getImagePath(item.image[0]));
-
-    }, [item.image]);
+    // useEffect(() => {
+    //     // console.log(item.image[0]);
+    //     preloadImages(getImagePath(item.image[0]));
+    //
+    // }, [item.image]);
 
     const formatDate = () => {
         let date = item.date.split('/');
