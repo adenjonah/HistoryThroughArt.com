@@ -20,6 +20,14 @@ function Home() {
         window.location.href = `/exhibit?id=${randomId}`;
     };
 
+    const handleStartLearning = () => {
+        window.location.href = '/museum';
+    }
+
+    const handleViewMap = () => {
+        window.location.href = '/map';
+    }
+
     return (
         <div className="w3-container w3-display-container pagecontainer">
             <div className="w3-display-middle text">
@@ -28,7 +36,12 @@ function Home() {
                     This site is intended to be a learning aid for students exploring the content of the AP Art History
                     curriculum.
                 </p>
-                <button onClick={handleFeelingLucky} className="w3-button button w3-round">I'm Feeling Lucky</button>
+                <div className="button-container">
+                    <button onClick={handleStartLearning} className="w3-button button w3-round">Start Learning</button>
+                    <button onClick={handleFeelingLucky} className="w3-button button w3-round">I'm Feeling Lucky
+                    </button>
+                    <button onClick={handleViewMap} className="w3-button button w3-round">View Map</button>
+                </div>
             </div>
             <div className="scrolling-background1"></div>
             <div className="scrolling-background2"></div>
