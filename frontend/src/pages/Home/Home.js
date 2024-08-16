@@ -29,23 +29,37 @@ function Home() {
     }
 
     return (
-        <div className="w3-container w3-display-container pagecontainer">
+        <div className="w3-container w3-display-container w3-center"
+             style={{minHeight: 'calc(100vh - 60px)', zIndex: 0, overflowX: 'hidden'}}>
             <div className="w3-display-middle text">
                 <h1 className="w3-xxlarge w3-text-white">Welcome to Korus' Corner!</h1>
                 <p className="w3-large w3-text-white">
                     This site is intended to be a learning aid for students exploring the content of the AP Art History
                     curriculum.
                 </p>
-                <div className="button-container">
-                    <button onClick={handleStartLearning} className="w3-button button w3-round">Start Learning</button>
-                    <button onClick={handleFeelingLucky} className="w3-button button w3-round">I'm Feeling Lucky
-                    </button>
-                    <button onClick={handleViewMap} className="w3-button button w3-round">View Map</button>
+                <div className="w3-row w3-center w3-margin-top">
+                    <div className="w3-col s12 m12 l4 w3-margin-bottom">
+                        <button onClick={handleStartLearning}
+                                className="w3-button button w3-round w3-block">Start Learning
+                        </button>
+                    </div>
+                    <div className="w3-col s12 m12 l4 w3-margin-bottom">
+                        <button onClick={handleFeelingLucky}
+                                className="w3-button button w3-round w3-block">I'm Feeling Lucky
+                        </button>
+                    </div>
+                    <div className="w3-col s12 m12 l4 w3-margin-bottom">
+                        <button onClick={handleViewMap}
+                                className="w3-button button w3-round w3-block">View Map
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className="scrolling-background1"></div>
             <div className="scrolling-background2"></div>
         </div>
+
+
     );
 }
 
