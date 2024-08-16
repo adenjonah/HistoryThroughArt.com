@@ -1,33 +1,9 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 
-// Dynamically require images from the artImages folder
-// const images = require.context('../../artImages', false, /\.png$/);
-
-// const preloadImages = (imagePath) => {
-//         const img = new Image();
-//         img.src = imagePath;
-//
-// };
-
-// const getImagePath = (imageName) => {
-//     try {
-//         return images(`./${imageName}`);
-//     } catch (e) {
-//         console.error(`Cannot find image: ${imageName}`);
-//         return '';
-//     }
-// };
-
 function ArtCard({ item, layout, image }) {
-    // console.log(item);
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     // console.log(item.image[0]);
-    //     preloadImages(getImagePath(item.image[0]));
-    //
-    // }, [item.image]);
 
     const formatDate = () => {
         let date = item.date.split('/');

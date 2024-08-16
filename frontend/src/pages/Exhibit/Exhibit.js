@@ -21,6 +21,7 @@ function Exhibit() {
         setArtPiece(foundArtPiece);
     }, [exhibitID]);
 
+    //Formats the date to either BCE or CE
     const formatDate = (date) => {
         let dateParts = date.split('/');
 
@@ -45,6 +46,7 @@ function Exhibit() {
         return <div className="w3-container w3-center"><p>Loading...</p></div>;
     }
 
+    //Toggles the map between the currently displayed location and the originated location
     const handleMapToggle = () => {
         if (mapType === 'currentlyDisplayed') {
             setMapType('originated');
@@ -52,6 +54,7 @@ function Exhibit() {
             setMapType('currentlyDisplayed');
         }
     };
+    //Sets the location of the art piece on the map
     const artPieceMapLocation = mapType === 'originated' ? [artPiece.originatedLongitude, artPiece.originatedLatitude] : [artPiece.displayedLongitude, artPiece.displayedLatitude];
 
     return (
