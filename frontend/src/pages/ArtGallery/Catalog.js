@@ -82,15 +82,26 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     //Passes the image index to the Card component
     return (
         <div>
-            <div className={`catalog ${layout}`}>
+            <div className="w3-row-padding">
                 {currentArtPieces.map((item, index) => (
-                    <Card key={index} item={item} layout={layout} image={preloadedImages[index + (currPageNumber - 1) * itemsPerPage]} />
+                    <div key={index} className="w3-col s12 m6 l4">
+                        <Card
+                            item={item}
+                            layout={layout}
+                            image={preloadedImages[index + (currPageNumber - 1) * itemsPerPage]}
+                        />
+                    </div>
                 ))}
                 {artPiecesArray.length === 0 && <h3>No results found</h3>}
             </div>
             <div className="w3-bar">
                 {[...Array(Math.ceil(artPiecesArray.length / itemsPerPage)).keys()].map(pageNum => (
-                    <a key={pageNum} href={`#${pageNum + 1}`} className={`w3-button w3-margin-left ${currPageNumber === pageNum + 1 ? "w3-blue" : "w3-light-gray"}`} onClick={() => handlePageClick(pageNum + 1)}>
+                    <a
+                        key={pageNum}
+                        href={`#${pageNum + 1}`}
+                        className={`w3-button w3-margin-left ${currPageNumber === pageNum + 1 ? "w3-blue" : "w3-light-gray"}`}
+                        onClick={() => handlePageClick(pageNum + 1)}
+                    >
                         {pageNum + 1}
                     </a>
                 ))}
@@ -98,6 +109,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
             <br />
         </div>
     );
+
 }
 
 export default Catalog;
