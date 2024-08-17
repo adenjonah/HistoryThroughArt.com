@@ -88,7 +88,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
                         <Card
                             item={item}
                             layout={layout}
-                            image={preloadedImages[index + (currPageNumber - 1) * itemsPerPage]}
+                            image={preloadedImages[item.id - 1]}
                         />
                     </div>
                 ))}
