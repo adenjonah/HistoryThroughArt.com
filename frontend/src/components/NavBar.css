@@ -23,6 +23,7 @@
     font-weight: bold;
     color: var(--text-color);
     text-decoration: none;
+    cursor: pointer;
 }
 
 @media (min-width: 992px) {
