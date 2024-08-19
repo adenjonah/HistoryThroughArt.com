@@ -41,11 +41,14 @@ function ArtCard({ item, layout, image }) {
                 )}
             </div>
             <div>
-                <h3 className={`w3-text-theme w3-large`}><b>{item.id}. {item.name}</b></h3>
-                {item.artist_culture !== "None" && <div className={`w3-medium`}>Artist/Culture: {item.artist_culture}</div>}
-                {item.location !== "None" && <div className={`w3-medium`}>Location Made: {item.location}</div>}
-                {item.date !== "None" && <div className={`w3-medium`}>Date: {formatDate()}</div>}
-                <div className={`w3-medium`}>Unit: {item.unit}</div>
+                <h3 className={`w3-text-theme text-heading`}><b>{item.id}. {item.name}</b></h3>
+                {item.artist_culture !== "None" &&
+                    <div className={`text-subheading`}>Artist/Culture: {item.artist_culture}</div>}
+                {item.location !== "None" &&
+                    <div className={`text-subheading`}>Location Made: {item.location}</div>}
+                {item.date !== "None" &&
+                    <div className={`text-subheading`}>Date: {formatDate()}</div>}
+                <div className={`text-subheading`}>Unit: {item.unit}</div>
             </div>
         </div>
     );

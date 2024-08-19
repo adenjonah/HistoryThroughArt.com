@@ -58,3 +58,11 @@
     white-space: normal; /* Allow wrapping in grid layout */
     text-overflow: clip; /* No ellipsis in grid layout */
 }
+
+.text-heading {
+    font-size: 16px; /* Default font size for headings */
+}
+
+.text-subheading {
+    font-size: 14px; /* Default font size for subheadings */
+}
