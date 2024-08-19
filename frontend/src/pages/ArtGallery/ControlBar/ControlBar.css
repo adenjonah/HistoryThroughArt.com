@@ -1,10 +1,6 @@
 .control-bar-container {
     background-color: var(--foreground-color);
-    align-items: center;
-    width: 100%;
-    max-width: 1000px;
     border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .control-bar {
@@ -47,4 +43,5 @@
     margin-left: 5px;
     font-size: 12px;
 }
+
 

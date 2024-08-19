@@ -10,9 +10,9 @@ function SortComponent({ sort, setSort, setClearFilters }) {
     };
 
     return (
-        <div className="sort-select-container">
+        <div className="w3-col s6 m6 l3">
             <select
-                className="sort-dropdown"
+                className="w3-select w3-border w3-light-gray"
                 value={sort}
                 onChange={handleSortChange}
             >

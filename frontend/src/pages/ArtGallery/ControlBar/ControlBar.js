@@ -35,33 +35,25 @@ function ControlBar({
     const areFiltersActive = Object.values(unitFilters).some(filter => filter);
 
     return (
-        <div className="control-bar-container">
-            <div className="control-bar">
-                <SearchComponent
-                    search={search}
-                    setSearch={setSearch}
-                    setClearFilters={setClearFilters}
+        <div className="w3-card-4 w3-padding w3-center control-bar-container">
+            <SearchComponent
+                search={search}
+                setSearch={setSearch}
+                setClearFilters={setClearFilters}
+                unitFilters={unitFilters}
+                setUnitFilters={setUnitFilters}
+                sort={sort}
+                setSort={setSort}
+                searchBy={searchBy}
+                setSearchBy={setSearchBy}
+            />
+            {areFiltersActive && (
+                <ActiveFiltersComponent
                     unitFilters={unitFilters}
-                    setUnitFilters={setUnitFilters}
-                    sort={sort}
-                    setSort={setSort}
-                    searchBy={searchBy}
-                    setSearchBy={setSearchBy}
+                    handleClearFilters={handleClearFilters}
+                    clearFilters={clearFilters}
                 />
-                {areFiltersActive && (
-                    <ActiveFiltersComponent
-                        unitFilters={unitFilters}
-                        handleClearFilters={handleClearFilters}
-                        clearFilters={clearFilters}
-                    />
-                )}
-
-                {/* <div className="toggle-layout-container">
-                    <button className="layout-toggle-button" onClick={toggleLayout}>
-                        {layout === 'table' ? 'Switch to Column' : 'Switch to Grid'}
-                    </button>
-                </div> */}
-            </div>
+            )}
         </div>
     );
 }

@@ -19,8 +19,6 @@
     margin: 20px;
     display: flex;
     flex-direction: column; /* Vertical stacking */
-    width: 100%; /* Adjusted to 100% to fit container width */
-    max-width: 400px; /* Maximum width */
     height: 400px;
     padding: 10px;
     box-sizing: border-box;

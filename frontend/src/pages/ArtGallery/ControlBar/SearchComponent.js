@@ -44,36 +44,37 @@ function SearchComponent({
     };
 
     return (
-        <div className="search-input-container">
-            <select className="search-by" value={searchBy} onChange={handleSearchByChange}>
-                <option value="name">By Name</option>
-                <option value="id">By ID</option>
-                <option value="culture/artist">By Culture/Artist</option>
-                <option value="time">By Time</option>
-                <option value="color">By Color</option>
-                <option value="medium">By Medium</option>
-                <option value="concept">By Concept</option>
-            </select>
-            <input
-                type="text"
-                className="search-input"
-                placeholder="Search..."
-                value={search}
-                onChange={handleSearchChange}
-            />
-
-            <select className="filter-by" onChange={handleFilterChange} value="">
-                <option value="" disabled>
-                    Filters
-                </option>
-                {Object.keys(unitFilters).map((unit) => (
-                    <option key={unit} value={unit}>
-                        {unit.replace('unit', 'Unit ')} {unitFilters[unit] ? '✓' : ''}
-                    </option>
-                ))}
-            </select>
-
-            {/* Include SortComponent here */}
+        <div className="w3-row w3-padding">
+            <div className="w3-col s4 m4 l2">
+                <select className="w3-select w3-border w3-light-gray" value={searchBy} onChange={handleSearchByChange}>
+                    <option value="name">By Name</option>
+                    <option value="id">By ID</option>
+                    <option value="culture/artist">By Culture/Artist</option>
+                    <option value="time">By Time</option>
+                    <option value="color">By Color</option>
+                    <option value="medium">By Medium</option>
+                    <option value="concept">By Concept</option>
+                </select>
+            </div>
+            <div className="w3-col s8 m8 l5">
+                <input
+                    type="text"
+                    className="w3-input w3-border"
+                    placeholder="Search..."
+                    value={search}
+                    onChange={handleSearchChange}
+                />
+            </div>
+            <div className="w3-col s6 m6 l2">
+                <select className="w3-select w3-border w3-light-gray" onChange={handleFilterChange} value="">
+                    <option value="" disabled>Filters</option>
+                    {Object.keys(unitFilters).map((unit) => (
+                        <option key={unit} value={unit}>
+                            {unit.replace('unit', 'Unit ')} {unitFilters[unit] ? '✓' : ''}
+                        </option>
+                    ))}
+                </select>
+            </div>
             <SortComponent
                 sort={sort}
                 setSort={setSort}

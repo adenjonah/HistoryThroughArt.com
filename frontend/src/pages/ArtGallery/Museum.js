@@ -14,10 +14,12 @@ function Museum() {
         unit5: false, unit6: false, unit7: false, unit8: false})
 
     return (
-        <div className='museum pagecontainer'>
+        <div>
             <h1 className="title">Art Gallery</h1>
-            <div className='contentBox'>
-                <ControlBar search={search} searchBy = {searchBy} setSearch={setSearch} setSearchBy={setSearchBy} layout={layout} setLayout={setLayout} setSort={setSort} sort={sort} unitFilters={unitFilters} setUnitFilters={setUnitFilters}/>
+            <div className='contentBox w3-center'>
+                <ControlBar search={search} searchBy = {searchBy} setSearch={setSearch} setSearchBy={setSearchBy}
+                            layout={layout} setLayout={setLayout} setSort={setSort} sort={sort} unitFilters={unitFilters}
+                            setUnitFilters={setUnitFilters}/>
                 <Catalog className={"catalog"} artPiecesArray={artPiecesArray} search={search}
                          setArtPiecesArray={setArtPiecesArray} layout={layout} sort={sort} unitFilters={unitFilters}/>
             </div>

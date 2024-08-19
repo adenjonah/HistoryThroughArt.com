@@ -30,7 +30,7 @@ function ArtCard({ item, layout, image }) {
             className={`w3-card ArtCard w3-hover-shadow w3-hover-purple w3-margin w3-round-xlarge ${layout}`}
             onClick={() => navigate(`/exhibit?id=${item.id}`)}
         >
-            <div className="spotlight-container">
+            <div className="spotlight-container w3-image w3-large">
                 {item.image && (
                     <img
                         className='spotlight-image'
