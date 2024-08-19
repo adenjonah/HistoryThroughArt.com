@@ -1,9 +1,9 @@
 import React from 'react';
 import '../Home/Home.css'; // Assuming the CSS file is shared
 import './About.css';
-import JonahHeadshot from "./jonah-headshot.jpeg";
-import CalebHeadshot from "./caleb-headshot.png";
-import KorusHeadshot from "./korus-headshot.png";
+import JonahHeadshot from "./jonah-headshot.webp";
+import CalebHeadshot from "./caleb-headshot.webp";
+import KorusHeadshot from "./korus-headshot.webp";
 
 function About() {
   return (
