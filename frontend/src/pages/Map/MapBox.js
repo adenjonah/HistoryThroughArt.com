@@ -218,7 +218,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
     return () => map.remove();
   }, [center, zoom, style, overlayData, mapType]);
 
-  return <div ref={mapContainerRef} style={{ width: size?.width || '80%', height: size?.height || '600px' }} />;
+  return <div ref={mapContainerRef} style={{ width: size?.width || '100%', height: size?.height || '600px'}} />;
 };
 
 export default MapBox;

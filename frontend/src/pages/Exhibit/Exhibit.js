@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import VideoPlayer from './VideoPlayer';
 import PhotoGallery from "./PhotoGallery";
-import MapBox from "../Map/MapBox";
+import MiniMap from "./MiniMap";
 import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 
 function Exhibit() {
@@ -46,16 +46,6 @@ function Exhibit() {
         return <div className="w3-container w3-center"><p>Loading...</p></div>;
     }
 
-    //Toggles the map between the currently displayed location and the originated location
-    const handleMapToggle = () => {
-        if (mapType === 'currentlyDisplayed') {
-            setMapType('originated');
-        } else {
-            setMapType('currentlyDisplayed');
-        }
-    };
-    //Sets the location of the art piece on the map
-    const artPieceMapLocation = mapType === 'originated' ? [artPiece.originatedLongitude, artPiece.originatedLatitude] : [artPiece.displayedLongitude, artPiece.displayedLatitude];
 
     return (
         <div className="w3-container">
@@ -66,17 +56,7 @@ function Exhibit() {
                 </div>
             </div>
             <div className="w3-row-padding w3-margin-top">
-                <div className="w3-col s12 m6 l6 grid-item">
-                    <button className={`w3-center`} onClick={handleMapToggle}>Toggle Currently Displayed/Originated</button>
-                    <div className='minimap'>
-                        <MapBox
-                            center={artPieceMapLocation}
-                            zoom={artPieceMapLocation[0] === null ? 0 : 5}
-                            size={{width: '100%', height: '500px'}}
-                            mapType={mapType}
-                        />
-                    </div>
-                </div>
+                <MiniMap mapType={mapType} setMapType={setMapType} artPiece={artPiece}/>
                 <div className="w3-col s12 m6 l6 grid-item">
                     <PhotoGallery id={exhibitID} />
                 </div>
