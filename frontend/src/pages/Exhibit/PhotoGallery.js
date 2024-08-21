@@ -82,6 +82,24 @@ function PhotoGallery({ id }) {
                     </div>
                 )}
             </div>
+            {artImages.length > 1 && (
+                <div className="w3-center w3-padding-top">
+                    {artImages.map((imageName, index) => (
+                        <span
+                            key={index}
+                            className={`w3-badge ${slideIndex === index + 1 ? 'w3-blue' : 'w3-light-gray'}`}
+                            style={{
+                                cursor: 'pointer',
+                                margin: '10px 5px',
+                                width: '15px',
+                                height: '15px',
+                                lineHeight: '15px'
+                            }}
+                            onClick={() => setSlideIndex(index + 1)}
+                        />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

@@ -57,11 +57,7 @@ function VideoPlayer({ id }) {
         let seconds = time - minutes * 60;
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds.toFixed(0)}`;
     };
-
-
-    console.log(artVideos);
-
-
+    
     return (
         <div className="w3-container">
             {artVideos.length > 0 && (

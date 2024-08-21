@@ -75,7 +75,11 @@ function Exhibit() {
                     </div>
                 </div>
             </div>
+
+            <span className={`w3-circle w3-badge`}></span>
         </div>
+
+
     );
 }
 
