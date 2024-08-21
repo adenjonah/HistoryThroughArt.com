@@ -10,10 +10,14 @@ function VideoPlayer({ id }) {
     const transcriptRef = useRef(null);
 
     useEffect(() => {
-        // Find the relevant art piece by ID and extract its videos
+        // Find the relevant art piece by ID and extract its videos and transcripts
         const foundArtPiece = artPiecesData.find(piece => piece.id.toString() === id);
-        if (foundArtPiece && foundArtPiece.videoLink) {
-            setArtVideos([{ videoLink: foundArtPiece.videoLink, transcript: foundArtPiece.transcript }]);
+        if (foundArtPiece && foundArtPiece.videoLink && foundArtPiece.transcript) {
+            const combinedVideos = foundArtPiece.videoLink.map((video, index) => ({
+                videoLink: video,
+                transcript: JSON.parse(foundArtPiece.transcript[index])
+            }));
+            setArtVideos(combinedVideos);
         }
     }, [id]);
 
@@ -54,6 +58,10 @@ function VideoPlayer({ id }) {
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds.toFixed(0)}`;
     };
 
+
+    console.log(artVideos);
+
+
     return (
         <div className="w3-container">
             {artVideos.length > 0 && (
@@ -76,12 +84,15 @@ function VideoPlayer({ id }) {
                                 {visibleTranscript ? "Hide Transcript" : "Show Transcript"}
                             </button>
                         </div>
-                        <div ref={transcriptRef} id="transcript" className={`transcript-box ${visibleTranscript ? 'w3-show' : 'w3-hide'} w3-animate-zoom`}>
-                            {artVideos[selectedVideo].transcript && JSON.parse(artVideos[selectedVideo].transcript).map((entry, index) => (
+                        <div ref={transcriptRef} id="transcript"
+                             className={`transcript-box ${visibleTranscript ? 'w3-show' : 'w3-hide'} w3-animate-zoom`}>
+                            {artVideos[selectedVideo].transcript && artVideos[selectedVideo].transcript.map((entry, index) => (
                                 <div key={index}>
-                                    <button className="youtube-marker" onClick={() => handleTranscriptClick(entry.start)}>
+                                    <button className="youtube-marker"
+                                            onClick={() => handleTranscriptClick(entry.start)}>
                                         {ConvertToMins(entry.start)} - {entry.text}
-                                    </button><br/>
+                                    </button>
+                                    <br/>
                                 </div>
                             ))}
                         </div>
