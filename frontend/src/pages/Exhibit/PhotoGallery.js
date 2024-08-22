@@ -82,6 +82,7 @@ function PhotoGallery({ id }) {
                     </div>
                 )}
             </div>
+            {/* Selection for multiple photos*/}
             {artImages.length > 1 && (
                 <div className="w3-center w3-padding-top">
                     {artImages.map((imageName, index) => (

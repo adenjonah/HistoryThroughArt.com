@@ -92,7 +92,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
                         />
                     </div>
                 ))}
-                {artPiecesArray.length === 0 && <h3>No results found</h3>}
+                {artPiecesArray.length === 0 && <p className={`blurb`}>No results found</p>}
             </div>
             <div className="w3-bar">
                 {[...Array(Math.ceil(artPiecesArray.length / itemsPerPage)).keys()].map(pageNum => (
