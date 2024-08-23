@@ -27,7 +27,9 @@ function MiniMap({mapType, setMapType, artPiece}) {
                 />
                 <div className='w3-display-topleft w3-padding w3-marginleft w3-large'>
                     {mapType === 'currentlyDisplayed' ?
-                        "Currently Displayed" :
+                        (artPiece.displayedLongitude === null ?
+                            "Art piece is not currently displayed" :
+                            "Currently Displayed") :
                         (artPiece.originatedLongitude === null ?
                             "No originated location for this art piece" :
                             "Originated")}
