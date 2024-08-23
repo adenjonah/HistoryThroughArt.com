@@ -5,7 +5,7 @@ import Catalog from './Catalog';
 
 function Museum() {
     const [search, setSearch] = useState('');
-    const [searchBy, setSearchBy] = useState('');
+    const [searchBy, setSearchBy] = useState('all');
     const [artPiecesArray, setArtPiecesArray] = useState([]);
     const [layout, setLayout] = useState('table'); // New state for layout
     const [sort, setSort] = useState('ID Ascending');
@@ -21,7 +21,8 @@ function Museum() {
                             layout={layout} setLayout={setLayout} setSort={setSort} sort={sort} unitFilters={unitFilters}
                             setUnitFilters={setUnitFilters}/>
                 <Catalog className={"catalog"} artPiecesArray={artPiecesArray} search={search}
-                         setArtPiecesArray={setArtPiecesArray} layout={layout} sort={sort} unitFilters={unitFilters}/>
+                         setArtPiecesArray={setArtPiecesArray} layout={layout} sort={sort} unitFilters={unitFilters}
+                        searchBy={searchBy}/>
             </div>
         </div>
     );

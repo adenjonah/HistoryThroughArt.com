@@ -4,7 +4,7 @@ import "./Catalog.css";
 import artPiecesData from '../../Data/artworks.json';
 const images = require.context('../../artImages', false, /\.webp$/);
 
-function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
+function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters, searchBy }) {
     const [currPageNumber, setCurrPageNumber] = useState(1);
     const [fullArtPiecesArray, setFullArtPiecesArray] = useState([]);
     const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
@@ -36,14 +36,35 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
         setLocalArtPiecesArray(artPiecesData);
     }, []);
 
+
+
+    const parseYear = (date) => {
+        return date.replace(/[bce]/gi, '').trim();
+    }
+
+
     useEffect(() => {
         let filteredArtPieces = fullArtPiecesArray.filter(item => {
             const transcriptText = item.transcript ? item.transcript.map(t => t.text).join(' ').toLowerCase() : '';
-            return item.name.toLowerCase().includes(search.toLowerCase())
-                || item.artist_culture.toLowerCase().includes(search.toLowerCase())
-                || item.location.toLowerCase().includes(search.toLowerCase())
-                || item.id.toString().toLowerCase().includes(search.toLowerCase())
-                || transcriptText.includes(search.toLowerCase());
+
+            switch(searchBy) {
+                case 'name': return item.name.toLowerCase().includes(search.toLowerCase());
+                case 'id': return item.id.toString().toLowerCase().includes(search.toLowerCase());
+                case 'artist/culture': return item.artist_culture.toLowerCase().includes(search.toLowerCase());
+                case 'medium': return item.materials.toLowerCase().includes(search.toLowerCase());
+                case 'year': return item.date.toLowerCase().includes(parseYear(search.toLowerCase()));
+                case 'location': return item.location.toLowerCase().includes(search.toLowerCase());
+                default:
+                    return item.name.toLowerCase().includes(search.toLowerCase())
+                        || item.artist_culture.toLowerCase().includes(search.toLowerCase())
+                        || item.location.toLowerCase().includes(search.toLowerCase())
+                        || item.id.toString().toLowerCase().includes(search.toLowerCase())
+                        || item.date.toLowerCase().includes(parseYear(search.toLowerCase()))
+                        || item.materials.toLowerCase().includes(search.toLowerCase())
+                        || transcriptText.includes(search.toLowerCase());
+
+            }
+
         }).sort((a, b) => {
             switch (sort) {
                 case 'Name Descending': return b.name.localeCompare(a.name);
@@ -66,7 +87,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
         if (currPageNumber > Math.ceil(filteredArtPieces.length / itemsPerPage)) {
             setCurrPageNumber(1);
         }
-    }, [search, sort, unitFilters, fullArtPiecesArray, currPageNumber, setArtPiecesArray]);
+    }, [search, sort, unitFilters, fullArtPiecesArray, currPageNumber, setArtPiecesArray, searchBy]);
 
     //Changes the page number
     const handlePageClick = pageNum => {
@@ -89,6 +110,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
                             item={item}
                             layout={layout}
                             image={preloadedImages[item.id - 1]}
+                            search={search.toLowerCase()}
                         />
                     </div>
                 ))}

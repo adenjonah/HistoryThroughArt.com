@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 
-function ArtCard({ item, layout, image }) {
+function ArtCard({ item, layout, image, search }) {
     const navigate = useNavigate();
 
 
@@ -24,6 +24,11 @@ function ArtCard({ item, layout, image }) {
         return date;
     };
 
+    //So everything isnt always highlighted
+    if(search === '') {
+        search = null;
+    }
+
     //Uses the image property passed from Catalog to display the image
     return (
         <div
@@ -41,14 +46,30 @@ function ArtCard({ item, layout, image }) {
                 )}
             </div>
             <div>
-                <h3 className={`w3-text-theme text-heading`}><b>{item.id}. {item.name}</b></h3>
-                {item.artist_culture !== "None" &&
-                    <div className={`text-subheading`}>Artist/Culture: {item.artist_culture}</div>}
-                {item.location !== "None" &&
-                    <div className={`text-subheading`}>Location Made: {item.location}</div>}
-                {item.date !== "None" &&
-                    <div className={`text-subheading`}>Date: {formatDate()}</div>}
-                <div className={`text-subheading`}>Unit: {item.unit}</div>
+                <h3 className={`w3-text-theme text-heading ${item.name.toLowerCase().includes(search) ? 'w3-yellow' : ''}`}>
+                    <b>{item.id}. {item.name}</b>
+                </h3>
+                {item.artist_culture !== "None" && (
+                    <div
+                        className={`text-subheading ${item.artist_culture.toLowerCase().includes(search) ? 'w3-yellow' : ''}`}>
+                        Artist/Culture: {item.artist_culture}
+                    </div>
+                )}
+                {item.location !== "None" && (
+                    <div
+                        className={`text-subheading ${item.location.toLowerCase().includes(search) ? 'w3-yellow' : ''}`}>
+                        Location Made: {item.location}
+                    </div>
+                )}
+                {item.date !== "None" && (
+                    <div
+                        className={`text-subheading ${item.date.toLowerCase().includes(search) ? 'w3-yellow' : ''}`}>
+                        Date: {formatDate()}
+                    </div>
+                )}
+                <div className={`text-subheading ${item.unit.toString().includes(search) ? 'w3-yellow' : ''}`}>
+                    Unit: {item.unit}
+                </div>
             </div>
         </div>
     );

@@ -47,13 +47,13 @@ function SearchComponent({
         <div className="w3-row w3-padding">
             <div className="w3-col s4 m4 l2">
                 <select className="w3-select w3-border w3-light-gray" value={searchBy} onChange={handleSearchByChange}>
+                    <option value={'all'}>By All</option>
                     <option value="name">By Name</option>
                     <option value="id">By ID</option>
                     <option value="culture/artist">By Culture/Artist</option>
-                    <option value="time">By Time</option>
-                    <option value="color">By Color</option>
+                    <option value="year">By Year</option>
                     <option value="medium">By Medium</option>
-                    <option value="concept">By Concept</option>
+                    <option value="location">By Location</option>
                 </select>
             </div>
             <div className="w3-col s8 m8 l5">
