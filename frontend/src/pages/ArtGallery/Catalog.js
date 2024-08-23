@@ -41,7 +41,13 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters, searchB
     const parseYear = (date) => {
         return date.replace(/[bce]/gi, '').trim();
     }
-
+    const extractYear = (dateString) => {
+        //Get the first date in the range and return it as an int
+        return parseInt(dateString
+            .split('/')[0]
+            .split("~")[0] // Remove everything after '~'
+            .trim());
+    };
 
     useEffect(() => {
         let filteredArtPieces = fullArtPiecesArray.filter(item => {
@@ -73,6 +79,8 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters, searchB
                 case 'Unit Ascending': return a.unit - b.unit;
                 case 'ID Descending': return b.id - a.id;
                 case 'ID Ascending': return a.id - b.id;
+                case 'Date Descending': return extractYear(b.date) - Math.abs(extractYear(a.date)); //Funky math stuff
+                case 'Date Ascending': return Math.abs(extractYear(a.date)) - extractYear(b.date);
                 default: return a.id - b.id;
             }
         });

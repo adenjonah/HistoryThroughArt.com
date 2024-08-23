@@ -22,6 +22,8 @@ function SortComponent({ sort, setSort, setClearFilters }) {
                 <option value="Name Descending">Sort By: Name: Z-A</option>
                 <option value="Unit Ascending">Sort By: Unit Ascending</option>
                 <option value="Unit Descending">Sort By: Unit Descending</option>
+                <option value={"Date Ascending"}>Sort By: Date Ascending</option>
+                <option value={"Date Descending"}>Sort By: Date Descending</option>
             </select>
         </div>
     );
