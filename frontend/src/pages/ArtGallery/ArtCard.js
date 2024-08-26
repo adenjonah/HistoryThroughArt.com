@@ -46,7 +46,7 @@ function ArtCard({ item, layout, image, search }) {
                 )}
             </div>
             <div>
-                <h3 className={`w3-text-theme text-heading ${item.name.toLowerCase().includes(search) ? 'w3-yellow' : ''}`}>
+                <h3 className={`w3-text-theme text-heading ${item.id.toString().includes(search) || item.name.toLowerCase().includes(search) ? 'w3-yellow' : ''}`}>
                     <b>{item.id}. {item.name}</b>
                 </h3>
                 {item.artist_culture !== "None" && (
