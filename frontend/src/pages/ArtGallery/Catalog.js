@@ -60,23 +60,31 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters, searchB
                 transcriptText = tempArr.map(x => x.map(y => y.text)).join(" ");
             }
 
-            switch(searchBy) {
-                case 'name': return item.name.toLowerCase().includes(search.toLowerCase());
-                case 'id': return item.id.toString().toLowerCase().includes(search.toLowerCase());
-                case 'artist/culture': return item.artist_culture.toLowerCase().includes(search.toLowerCase());
-                case 'medium': return item.materials.toLowerCase().includes(search.toLowerCase());
-                case 'year': return item.date.toLowerCase().includes(parseYear(search.toLowerCase()));
-                case 'location': return item.location.toLowerCase().includes(search.toLowerCase());
-                default:
-                    return item.name.toLowerCase().includes(search.toLowerCase())
-                        || item.artist_culture.toLowerCase().includes(search.toLowerCase())
-                        || item.location.toLowerCase().includes(search.toLowerCase())
-                        || item.id.toString().toLowerCase().includes(search.toLowerCase())
-                        || item.date.toLowerCase().includes(parseYear(search.toLowerCase()))
-                        || item.materials.toLowerCase().includes(search.toLowerCase())
-                        || (item.transcript !== null && transcriptText.toLowerCase().includes(search.toLowerCase()));
+            //Checks the string for the search key
+            const checkIncludes = (item, date) => {
+                if(!date) {
+                    return item.toString().toLowerCase().includes(search.toLowerCase());
+                }
+                else { //Need to parse the year from item.date
+                    return item.toString().toLowerCase().includes(parseYear(search.toLowerCase()));
+                }
+
             }
-            
+
+            switch(searchBy) {
+                case 'name': return checkIncludes(item.name);
+                case 'id': return checkIncludes(item.id);
+                case 'artist/culture': return checkIncludes(item.artist_culture);
+                case 'medium': return checkIncludes(item.materials);
+                case 'year': return checkIncludes(item.date, 1);
+                case 'location': return checkIncludes(item.location);
+                case 'transcript': return item.transcript && checkIncludes(transcriptText)
+                default:
+                    return checkIncludes(item.name) || checkIncludes(item.id) || checkIncludes(item.artist_culture)
+                        || checkIncludes(item.date, 1) || checkIncludes(item.materials)
+                        || checkIncludes(item.location) || (item.transcript && checkIncludes(transcriptText))
+            }
+
         }).sort((a, b) => {
             switch (sort) {
                 case 'Name Descending': return b.name.localeCompare(a.name);
