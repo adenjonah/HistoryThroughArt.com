@@ -51,7 +51,14 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters, searchB
 
     useEffect(() => {
         let filteredArtPieces = fullArtPiecesArray.filter(item => {
-            const transcriptText = item.transcript ? item.transcript.map(t => t.text).join(' ').toLowerCase() : '';
+
+            //Gets the transcript from each available video
+            //and fetches only the text and puts it into the transcriptText
+            let transcriptText = '';
+            if(item.transcript) {
+                const tempArr = item.transcript.map(x => JSON.parse(x));
+                transcriptText = tempArr.map(x => x.map(y => y.text)).join(" ");
+            }
 
             switch(searchBy) {
                 case 'name': return item.name.toLowerCase().includes(search.toLowerCase());
@@ -67,10 +74,9 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters, searchB
                         || item.id.toString().toLowerCase().includes(search.toLowerCase())
                         || item.date.toLowerCase().includes(parseYear(search.toLowerCase()))
                         || item.materials.toLowerCase().includes(search.toLowerCase())
-                        || transcriptText.includes(search.toLowerCase());
-
+                        || (item.transcript !== null && transcriptText.toLowerCase().includes(search.toLowerCase()));
             }
-
+            
         }).sort((a, b) => {
             switch (sort) {
                 case 'Name Descending': return b.name.localeCompare(a.name);
