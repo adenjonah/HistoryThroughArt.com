@@ -26,17 +26,17 @@ function Home() {
                     curriculum.
                 </p>
                 <div className="w3-row w3-center w3-margin-top">
-                    <div className="w3-col s12 m12 l4 w3-margin-bottom">
+                    <div className="w3-col s12 m12 l12 w3-margin-bottom">
                         <button onClick={handleStartLearning}
                                 className="w3-button button w3-round w3-block">Start Learning
                         </button>
                     </div>
-                    <div className="w3-col s12 m12 l4 w3-margin-bottom">
+                    <div className="w3-col s12 m12 l12 w3-margin-bottom">
                         <button onClick={handleFeelingLucky}
                                 className="w3-button button w3-round w3-block">Random Art Piece
                         </button>
                     </div>
-                    <div className="w3-col s12 m12 l4 w3-margin-bottom">
+                    <div className="w3-col s12 m12 l12 w3-margin-bottom">
                         <button onClick={handleViewMap}
                                 className="w3-button button w3-round w3-block">View Map
                         </button>
