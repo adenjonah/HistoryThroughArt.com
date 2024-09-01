@@ -1,19 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './Home.css';
 
 function Home() {
-
-    useEffect(() => {
-        fetch('http://localhost:5001/')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not okay');
-                }
-                return response.json();
-            })
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));
-    }, []);
 
     const handleFeelingLucky = () => {
         const randomId = Math.floor(Math.random() * 250) + 1;
@@ -45,7 +33,7 @@ function Home() {
                     </div>
                     <div className="w3-col s12 m12 l4 w3-margin-bottom">
                         <button onClick={handleFeelingLucky}
-                                className="w3-button button w3-round w3-block">I'm Feeling Lucky
+                                className="w3-button button w3-round w3-block">Random Art Piece
                         </button>
                     </div>
                     <div className="w3-col s12 m12 l4 w3-margin-bottom">
@@ -58,8 +46,6 @@ function Home() {
             <div className="scrolling-background1"></div>
             <div className="scrolling-background2"></div>
         </div>
-
-
     );
 }
 
