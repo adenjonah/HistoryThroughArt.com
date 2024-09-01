@@ -70,3 +70,8 @@
     gap: 20px; /* Space between the buttons */
     margin-top: 20px; /* Optional: Space above the buttons */
 }
+
+.w3-button.button {
+    max-width: 300px; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the button horizontally */
+}
