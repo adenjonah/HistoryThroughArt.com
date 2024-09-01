@@ -7,10 +7,24 @@ import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const images = require.context('../../artImages', false, /\.webp$/);
 
-const MapBox = ({ center, zoom, style, size, mapType }) => {
+const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const [mapType, setMapType] = useState('originated'); // Default to 'originated'
   const [overlayData, setOverlayData] = useState([]);
+
+  const handleMapToggle = () => {
+    setMapType((prevType) => {
+      const newType = prevType === 'originated' ? 'currentlyDisplayed' : 'originated';
+      
+      // Notify the parent component (MiniMap) of the mapType change
+      if (onMapTypeChange) {
+        onMapTypeChange(newType);
+      }
+
+      return newType;
+    });
+  };
 
   const getImagePath = (imageName) => {
     try {
@@ -24,7 +38,6 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
   useEffect(() => {
     // Extract locations and relevant data from the JSON file
 
-    //Show where each artpiece was created
     if(mapType === 'originated') {
         const filteredData = artPiecesData.filter(piece => piece.originatedLatitude && piece.originatedLongitude);
         const overlayData = filteredData.map(piece => ({
@@ -36,9 +49,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
           image: piece.image[0], // Assuming each piece has at least one image
         }));
         setOverlayData(overlayData);
-    }
-    //Show where each artpiece is currently displayed, or if mapType property is not set
-    else {
+    } else {
       const filteredData = artPiecesData.filter(piece => piece.displayedLatitude && piece.displayedLongitude);
 
       const overlayData = filteredData.map(piece => ({
@@ -51,17 +62,14 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
       }));
       setOverlayData(overlayData);
     }
-
-
   }, [mapType]);
-
 
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: style || 'mapbox://styles/mapbox/streets-v11',
-      center: center || [-74.5, 40],
-      zoom: zoom || 1.5,
+      style: style || 'mapbox://styles/mapbox/standard-satellite',
+      center: center || [-117.420015, 47.673373],
+      zoom: zoom || 4,
     });
 
     mapRef.current = map;
@@ -70,7 +78,6 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
 
     map.on('load', () => {
       if (overlayData && overlayData.length > 0) {
-
         const geojsonData = {
           type: 'FeatureCollection',
           features: overlayData.map((overlay) => ({
@@ -105,22 +112,26 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
             'circle-color': [
               'step',
               ['get', 'point_count'],
-              '#009688',
-              100,
-              '#8BC34A',
-              750,
-              '#FFC107',
+              '#ff9999', // Lightest red for 1-4 points
+              5,
+              '#ff6666', // Slightly darker red for 5-9 points
+              10,
+              '#ff3333', // Darker red for 10-15 points
+              15,
+              '#cc0000', // Darkest red for 16+ points
             ],
             'circle-radius': [
               'step',
               ['get', 'point_count'],
-              15,
-              100,
+              10, // Small clusters (1-4 points)
+              5,
+              15, // Medium clusters (5-9 points)
+              10,
+              20, // Larger clusters (10-15 points)
               25,
-              750,
-              35,
+              25, // Largest clusters (16+ points)
             ],
-            'circle-stroke-color': '#fff',
+            'circle-stroke-color': '#000000', // Black border for all clusters
             'circle-stroke-width': 2,
           },
         });
@@ -146,10 +157,10 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
           source: 'points',
           filter: ['!', ['has', 'point_count']],
           paint: {
-            'circle-color': '#e91e63',
-            'circle-radius': 10,
+            'circle-color': '#ff0000', // Bright red for individual points
+            'circle-radius': 5, // Half the original size
             'circle-stroke-width': 2,
-            'circle-stroke-color': '#fff',
+            'circle-stroke-color': '#000000', // Black border for individual points
           },
         });
 
@@ -218,7 +229,28 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
     return () => map.remove();
   }, [center, zoom, style, overlayData, mapType]);
 
-  return <div ref={mapContainerRef} style={{ width: size?.width || '100%', height: size?.height || '600px'}} />;
+  return (
+    <div ref={mapContainerRef} style={{ width: size?.width || '100%', height: size?.height || '600px', position: 'relative' }}>
+      {/* Toggle Button */}
+      <button
+        onClick={handleMapToggle}
+        style={{
+          position: 'absolute',
+          top: '10px',
+          left: '10px',
+          padding: '10px',
+          backgroundColor: '#007BFF',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          zIndex: 1,
+        }}
+      >
+        Toggle Currently Displayed/Originated
+      </button>
+    </div>
+  );
 };
 
 export default MapBox;

@@ -48,10 +48,10 @@
 }
 
 .headshot {
-    height: 200px; /* Keep the fixed height */
-    width: auto; /* Maintain aspect ratio */
+    height: 300px; /* Fixed height */
+    width: 220px; /* Fixed width to maintain consistent shapes */
     object-fit: cover; /* Cover the space without stretching */
-    border-radius: 50%; /* Make the image circular for a modern look */
+    border-radius: 50%; /* Circular shape for uniformity */
     margin-bottom: 15px; /* Add space between the image and the title */
 }
 
