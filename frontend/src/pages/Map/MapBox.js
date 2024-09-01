@@ -118,13 +118,13 @@ const MapBox = ({ center, zoom, style, size }) => {
             'circle-radius': [
               'step',
               ['get', 'point_count'],
-              15, // Small clusters (1-4 points)
+              10, // Small clusters (1-4 points)
               5,
-              22, // Medium clusters (5-9 points)
+              15, // Medium clusters (5-9 points)
               10,
-              30, // Larger clusters (10-15 points)
+              20, // Larger clusters (10-15 points)
               25,
-              50, // Largest clusters (16+ points)
+              25, // Largest clusters (16+ points)
             ],
             'circle-stroke-color': '#000000', // Black border for all clusters
             'circle-stroke-width': 2,
