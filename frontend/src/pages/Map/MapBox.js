@@ -7,10 +7,19 @@ import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const images = require.context('../../artImages', false, /\.webp$/);
 
-const MapBox = ({ center, zoom, style, size, mapType }) => {
+const MapBox = ({ center, zoom, style, size }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const [mapType, setMapType] = useState('originated'); // Default to 'originated'
   const [overlayData, setOverlayData] = useState([]);
+
+  const handleMapToggle = () => {
+    if (mapType === 'originated') {
+      setMapType('currentlyDisplayed');
+    } else {
+      setMapType('originated');
+    }
+  };
 
   const getImagePath = (imageName) => {
     try {
@@ -24,7 +33,6 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
   useEffect(() => {
     // Extract locations and relevant data from the JSON file
 
-    //Show where each artpiece was created
     if(mapType === 'originated') {
         const filteredData = artPiecesData.filter(piece => piece.originatedLatitude && piece.originatedLongitude);
         const overlayData = filteredData.map(piece => ({
@@ -36,9 +44,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
           image: piece.image[0], // Assuming each piece has at least one image
         }));
         setOverlayData(overlayData);
-    }
-    //Show where each artpiece is currently displayed, or if mapType property is not set
-    else {
+    } else {
       const filteredData = artPiecesData.filter(piece => piece.displayedLatitude && piece.displayedLongitude);
 
       const overlayData = filteredData.map(piece => ({
@@ -51,10 +57,7 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
       }));
       setOverlayData(overlayData);
     }
-
-
   }, [mapType]);
-
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -70,7 +73,6 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
 
     map.on('load', () => {
       if (overlayData && overlayData.length > 0) {
-
         const geojsonData = {
           type: 'FeatureCollection',
           features: overlayData.map((overlay) => ({
@@ -218,7 +220,28 @@ const MapBox = ({ center, zoom, style, size, mapType }) => {
     return () => map.remove();
   }, [center, zoom, style, overlayData, mapType]);
 
-  return <div ref={mapContainerRef} style={{ width: size?.width || '100%', height: size?.height || '600px'}} />;
+  return (
+    <div ref={mapContainerRef} style={{ width: size?.width || '100%', height: size?.height || '600px', position: 'relative' }}>
+      {/* Toggle Button */}
+      <button
+        onClick={handleMapToggle}
+        style={{
+          position: 'absolute',
+          top: '10px',
+          left: '10px',
+          padding: '10px',
+          backgroundColor: '#007BFF',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          zIndex: 1,
+        }}
+      >
+        Toggle Currently Displayed/Originated
+      </button>
+    </div>
+  );
 };
 
 export default MapBox;
