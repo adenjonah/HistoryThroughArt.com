@@ -107,22 +107,26 @@ const MapBox = ({ center, zoom, style, size }) => {
             'circle-color': [
               'step',
               ['get', 'point_count'],
-              '#009688',
-              100,
-              '#8BC34A',
-              750,
-              '#FFC107',
+              '#ff9999', // Lightest red for 1-4 points
+              5,
+              '#ff6666', // Slightly darker red for 5-9 points
+              10,
+              '#ff3333', // Darker red for 10-15 points
+              15,
+              '#cc0000', // Darkest red for 16+ points
             ],
             'circle-radius': [
               'step',
               ['get', 'point_count'],
-              15,
-              100,
+              15, // Small clusters (1-4 points)
+              5,
+              22, // Medium clusters (5-9 points)
+              10,
+              30, // Larger clusters (10-15 points)
               25,
-              750,
-              35,
+              50, // Largest clusters (16+ points)
             ],
-            'circle-stroke-color': '#fff',
+            'circle-stroke-color': '#000000', // Black border for all clusters
             'circle-stroke-width': 2,
           },
         });
@@ -148,10 +152,10 @@ const MapBox = ({ center, zoom, style, size }) => {
           source: 'points',
           filter: ['!', ['has', 'point_count']],
           paint: {
-            'circle-color': '#e91e63',
-            'circle-radius': 10,
+            'circle-color': '#ff0000', // Bright red for individual points
+            'circle-radius': 5, // Half the original size
             'circle-stroke-width': 2,
-            'circle-stroke-color': '#fff',
+            'circle-stroke-color': '#000000', // Black border for individual points
           },
         });
 
