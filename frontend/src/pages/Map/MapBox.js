@@ -7,18 +7,23 @@ import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const images = require.context('../../artImages', false, /\.webp$/);
 
-const MapBox = ({ center, zoom, style, size }) => {
+const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const [mapType, setMapType] = useState('originated'); // Default to 'originated'
   const [overlayData, setOverlayData] = useState([]);
 
   const handleMapToggle = () => {
-    if (mapType === 'originated') {
-      setMapType('currentlyDisplayed');
-    } else {
-      setMapType('originated');
-    }
+    setMapType((prevType) => {
+      const newType = prevType === 'originated' ? 'currentlyDisplayed' : 'originated';
+      
+      // Notify the parent component (MiniMap) of the mapType change
+      if (onMapTypeChange) {
+        onMapTypeChange(newType);
+      }
+
+      return newType;
+    });
   };
 
   const getImagePath = (imageName) => {
