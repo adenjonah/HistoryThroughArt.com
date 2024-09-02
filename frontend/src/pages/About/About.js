@@ -30,7 +30,7 @@ function About() {
       <p className='about blurb'>We are thrilled to bring you an enriching experience, blending art history with cutting-edge technology.</p>
       <p className='about blurb'>
         Have questions or feedback? Reach out to us at:
-        <strong><a href="mailto:smartartspokane@gmail.com">smartartspokane@gmail.com</a></strong>
+        <strong><a href="mailto:HistoryThroughArt@gmail.com">smartartspokane@gmail.com</a></strong>
       </p>
       <a href="https://github.com/adenjonah/APAH" target="_blank" rel="noopener noreferrer" className="github-link">
         <button className="github-button">View on GitHub</button>
