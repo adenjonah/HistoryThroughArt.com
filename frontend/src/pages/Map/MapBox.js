@@ -247,7 +247,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
           zIndex: 1,
         }}
       >
-        Toggle Currently Displayed/Originated
+        {mapType === 'originated' ? 'Switch To Displayed Locations' : 'Switch To Originated Locations'}
       </button>
     </div>
   );

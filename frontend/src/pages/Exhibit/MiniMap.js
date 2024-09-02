@@ -24,11 +24,6 @@ function MiniMap({ artPiece }) {
           onMapTypeChange={handleMapTypeChange}  // Pass the callback function to MapBox
           mapType={mapType}  // Pass the current mapType as a prop
         />
-        <div className='w3-display-topleft w3-padding w3-marginleft w3-large'>
-          {mapType === 'currentlyDisplayed' 
-            ? (artPiece.displayedLongitude === null ? "Art piece is not currently displayed" : "Currently Displayed") 
-            : (artPiece.originatedLongitude === null ? "No originated location for this art piece" : "Originated")}
-        </div>
       </div>
     </div>
   );
