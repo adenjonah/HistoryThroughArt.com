@@ -63,9 +63,7 @@ function CalendarPage() {
         <ul>
           {quizzes.map((quiz, index) => (
             <li key={index}>
-              <a href={`/quiz?id=${quiz.id}`}>
-                {quiz.title}
-              </a>
+              {quiz.title}
             </li>
           ))}
         </ul>
