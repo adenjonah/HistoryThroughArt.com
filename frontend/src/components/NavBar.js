@@ -30,6 +30,7 @@ function NavBar({menuOpened, setMenuOpened}) {
               <a href="/about" className="w3-bar-item w3-button">About</a>
               <a href="/artgallery" className="w3-bar-item w3-button">Art Gallery</a>
               <a href="/map" className="w3-bar-item w3-button">Map</a>
+              <a href="/calendar" className="w3-bar-item w3-button">Calendar</a>
           </div>
           <div className="spacerMain"/>
       </div>
