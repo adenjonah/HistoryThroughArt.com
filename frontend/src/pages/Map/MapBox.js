@@ -67,7 +67,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: style || 'mapbox://styles/mapbox/standard-satellite',
+      style: style || 'mapbox://styles/mapbox/satellite-streets-v12',
       center: center || [-117.420015, 47.673373],
       zoom: zoom || 4,
     });
@@ -247,7 +247,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
           zIndex: 1,
         }}
       >
-        Toggle Currently Displayed/Originated
+        {mapType === 'originated' ? 'Switch To Displayed Locations' : 'Switch To Originated Locations'}
       </button>
     </div>
   );
