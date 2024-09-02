@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ControlBar from './ControlBar/ControlBar';
-import './Museum.css';
+import './ArtGallery.css';
 import Catalog from './Catalog';
 
 function Museum() {

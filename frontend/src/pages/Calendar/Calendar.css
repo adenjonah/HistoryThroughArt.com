@@ -1,0 +1,25 @@
+.calendar-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    color: var(--text-color);
+}
+
+.details-section {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.details {
+    text-align: left;
+    color: var(--text-color);
+}
+
+.details h3 {
+    margin-bottom: 10px;
+}
