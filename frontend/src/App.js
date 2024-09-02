@@ -11,7 +11,8 @@ import About from './pages/About/About';
 import Exhibit from './pages/Exhibit/Exhibit'
 import Home from './pages/Home/Home';
 import Map from './pages/Map/Map'
-import Museum from './pages/ArtGallery/Museum'
+import ArtGallery from './pages/ArtGallery/ArtGallery'
+import Calendar from './pages/Calendar/Calendar';
 
 function App() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -25,7 +26,8 @@ function App() {
                     <Route path='/about' element={<About />} />
                     <Route path='/exhibit' element={<Exhibit />} />
                     <Route path='/map' element={<Map />} />
-                    <Route path='/museum' element={<Museum />} />
+                    <Route path='/artgallery' element={<ArtGallery />} />
+                    <Route path='/calendar' element={<Calendar />} />
                 </Routes>
             </div>
         </>

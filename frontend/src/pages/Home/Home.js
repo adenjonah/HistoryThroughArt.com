@@ -20,7 +20,7 @@ function Home() {
         <div className="w3-container w3-display-container w3-center"
              style={{minHeight: 'calc(100vh - 60px)', zIndex: 0, overflowX: 'hidden'}}>
             <div className="w3-display-middle text">
-                <h1 className="w3-xxlarge w3-text-white">Welcome to Korus' Corner!</h1>
+                <h1 className="w3-xxlarge w3-text-white">Welcome to History Through Art!</h1>
                 <p className="w3-large w3-text-white">
                     This site is intended to be a learning aid for students exploring the content of the AP Art History
                     curriculum.

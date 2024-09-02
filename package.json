@@ -4,6 +4,7 @@
     "dotenv": "^16.4.5",
     "mapbox-gl": "^3.5.2",
     "papaparse": "^5.4.1",
+    "react-calendar": "^5.0.0",
     "w3-css": "^4.1.0"
   },
   "devDependencies": {
