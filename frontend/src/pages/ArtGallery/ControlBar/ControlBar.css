@@ -1,6 +1,7 @@
 .control-bar-container {
     background-color: var(--foreground-color);
     border-radius: 10px;
+    margin: 30px;
 }
 
 .control-bar {
@@ -29,10 +30,21 @@
     margin: 10px;
     width: 95%;
     display: flex;
-    justify-content: space-between;
+    justify-content: left;
     align-items: center;
     font-size: 14px;
     color: #333;
+}
+
+.bottom-filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.clear-filter-button {
+    height: 30px;
+    width: 130px;
 }
 
 .filter-tag {

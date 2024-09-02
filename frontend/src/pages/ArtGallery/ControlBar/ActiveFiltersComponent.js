@@ -5,17 +5,21 @@ function ActiveFiltersComponent({ unitFilters, handleClearFilters, clearFilters 
     const activeFilters = Object.keys(unitFilters).filter(unit => unitFilters[unit]);
 
     return (
-        <div className="active-filters">
-            <span>Active Filters:</span>
-            {activeFilters.map((filter) => (
-                <span key={filter} className="filter-tag">
-                    {filter.replace('unit', 'Unit ')}
-                </span>
-            ))}
+        <div className='bottom-filter-section'>
+            <div className="active-filters">
+                <span>Active Filters:</span>
+                <div className='current-filters'>
+                    {activeFilters.map((filter) => (
+                        <span key={filter} className="filter-tag">
+                            {filter.replace('unit', 'Unit ')}
+                        </span>
+                    ))}
+                </div>
+            </div>
 
             <div className="filter-button-container">
                 <button
-                    className="control-bar-item"
+                    className="clear-filter-button"
                     onClick={handleClearFilters}
                     disabled={clearFilters}
                 >
