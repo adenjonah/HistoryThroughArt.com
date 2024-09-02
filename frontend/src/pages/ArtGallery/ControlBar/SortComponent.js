@@ -24,6 +24,7 @@ function SortComponent({ sort, setSort, setClearFilters }) {
                 <option value="Unit Descending">Sort By: Unit Descending</option>
                 <option value={"Date Ascending"}>Sort By: Date Ascending</option>
                 <option value={"Date Descending"}>Sort By: Date Descending</option>
+                <option value={"Korus Sort"}>Sort By: Korus Sort</option>
             </select>
         </div>
     );
