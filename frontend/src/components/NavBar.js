@@ -28,7 +28,7 @@ function NavBar({menuOpened, setMenuOpened}) {
           <div className="w3-sidebar w3-bar-block w3-collapse w3-card sidebar spacerSidebar" style={{width: '200px'}} id="mySidebar">
               <a href="/" className="w3-bar-item w3-button">Home</a>
               <a href="/about" className="w3-bar-item w3-button">About</a>
-              <a href="/museum" className="w3-bar-item w3-button">Art Gallery</a>
+              <a href="/artgallery" className="w3-bar-item w3-button">Art Gallery</a>
               <a href="/map" className="w3-bar-item w3-button">Map</a>
           </div>
           <div className="spacerMain"/>
