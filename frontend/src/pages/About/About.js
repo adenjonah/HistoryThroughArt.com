@@ -35,7 +35,7 @@ function About() {
         </div>
       </div>
       <p className='about blurb'>
-        Have questions or feedback? Reach out to us at:
+        Reach out to us at: 
         <strong><a href="mailto:HistoryThroughArt@gmail.com">HistoryThroughArt@gmail.com</a></strong>
       </p>
       <a href="https://github.com/adenjonah/APAH" target="_blank" rel="noopener noreferrer" className="github-link">
