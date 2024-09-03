@@ -6,10 +6,12 @@ import CalebHeadshot from "./caleb-headshot.webp";
 import KorusHeadshot from "./korus-headshot.webp";
 
 function About() {
+
+
   return (
-    <div className='about pagecontainer'>
-      <h1 className="about title">Tutorial</h1>
-      <p className='about blurbb'>The following video provides a comprehensive walkthrough of this site's features and design, explaning common uses and ideas for utilizing this learning aid:</p>
+    <div className='pagecontainer'>
+      <h1 className="title">Tutorial</h1>
+      <p className='blurbb'>The following video provides a comprehensive walkthrough of this site's features and design, explaning common uses and ideas for utilizing this learning aid:</p>
 
       <div className="about video">
         <iframe width="560" title="Tutorial" height="315" src="https://www.youtube.com/embed/pv1N-USnLhE" frameborder="0" allowfullscreen></iframe>
@@ -35,8 +37,8 @@ function About() {
         </div>
       </div>
       <p className='about blurb'>
-        Reach out to us at: 
-        <strong><a href="mailto:HistoryThroughArt@gmail.com">HistoryThroughArt@gmail.com</a></strong>
+        Reach out to us at:
+        <strong><a href="mailto:HistoryThroughArt@gmail.com"> HistoryThroughArt@gmail.com</a></strong>
       </p>
       <a href="https://github.com/adenjonah/APAH" target="_blank" rel="noopener noreferrer" className="github-link">
         <button className="github-button">View on GitHub</button>

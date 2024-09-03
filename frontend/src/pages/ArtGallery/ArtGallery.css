@@ -4,6 +4,7 @@
 }
 
 .w3-card.ArtCard {
+    cursor: pointer;
     background-color: var(--foreground-color);
 }
 
