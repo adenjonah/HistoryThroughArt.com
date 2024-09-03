@@ -86,7 +86,7 @@ function CalendarPage() {
 
   return (
     <div className="calendar-page">
-      <h2>Select a Date</h2>
+      <h2>Korus' Class Calendar</h2>
       <Calendar
         onClickDay={onDateClick}
         value={selectedDate}
