@@ -33,7 +33,7 @@ function CalendarPage() {
 
     return (
       <div>
-        <h3>Homework:</h3>
+        <h3>Homework Due:</h3>
         <ul>
           {assignments.map((assignment) => {
             const artPiece = artPiecesData.find(piece => piece.id === parseInt(assignment.id));
