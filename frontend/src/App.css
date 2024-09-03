@@ -53,3 +53,20 @@ body {
     margin-left: 200px;
   }
 }
+
+.feedback-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--button-color); /* Green */
+  color: var(--buttontext-color);
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 10000; /* Ensure it appears above other elements */
+}
+
+.feedback-button:hover {
+  background-color: white; /* Darker green */
+}
