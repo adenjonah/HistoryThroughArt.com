@@ -9,7 +9,7 @@ function Home() {
     };
 
     const handleStartLearning = () => {
-        window.location.href = '/artgallery';
+        window.location.href = '/about';
     }
 
     const handleViewMap = () => {
@@ -28,7 +28,7 @@ function Home() {
                 <div className="w3-row w3-center w3-margin-top">
                     <div className="w3-col s12 m12 l12 w3-margin-bottom">
                         <button onClick={handleStartLearning}
-                                className="w3-button button w3-round w3-block">Start Learning
+                                className="w3-button button w3-round w3-block">How To Use This Site
                         </button>
                     </div>
                     <div className="w3-col s12 m12 l12 w3-margin-bottom">
