@@ -50,9 +50,9 @@ function SearchComponent({
                     <option value={'all'}>By All</option>
                     <option value="name">By Name</option>
                     <option value="id">By ID</option>
-                    <option value="culture/artist">By Culture/Artist</option>
+                    {/* <option value="culture/artist">By Culture/Artist</option> */}
                     <option value="year">By Year</option>
-                    <option value="medium">By Medium</option>
+                    {/* <option value="medium">By Medium</option> */}
                     <option value="location">By Location</option>
                 </select>
             </div>
