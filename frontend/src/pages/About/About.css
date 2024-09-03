@@ -16,6 +16,16 @@
     color: var(--text-color); /* Ensure the text uses the defined text color */
 }
 
+.blurbb {
+    font-size: 1.2em;
+    margin-bottom: 30px; /* Increase spacing below paragraphs */
+    max-width: 40%;
+    margin-left: auto;
+    margin-right: auto; /* Center the text block */
+    line-height: 1.6; /* Improve readability */
+    color: var(--text-color); /* Ensure the text uses the defined text color */
+}
+
 .caption {
     color: var(--accent-color);
     font-style: italic; /* Add a modern touch with italicized captions */

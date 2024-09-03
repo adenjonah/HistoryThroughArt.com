@@ -9,7 +9,7 @@ function Home() {
     };
 
     const handleStartLearning = () => {
-        window.location.href = '/museum';
+        window.location.href = '/artgallery';
     }
 
     const handleViewMap = () => {
