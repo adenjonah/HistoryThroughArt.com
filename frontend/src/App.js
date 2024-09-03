@@ -1,4 +1,3 @@
-// App.js
 import { Route, Routes } from 'react-router-dom';
 import { useState } from "react";
 
@@ -30,6 +29,9 @@ function App() {
                     <Route path='/calendar' element={<Calendar />} />
                 </Routes>
             </div>
+            <button className="feedback-button" onClick={() => window.open('https://forms.gle/3Bngm7bphSjygE2Q7', '_blank')}>
+                Feedback
+            </button>
         </>
     );
 }
