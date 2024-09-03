@@ -26,16 +26,16 @@ function About() {
         <div className='team-card'>
           <img src={CalebHeadshot} alt='Caleb Stewart' className='headshot' />
           <h2>Caleb Stewart</h2>
-          <p className='caption'>A computer science whiz studying at Eastern Washington University. Caleb, a proud alum of Mrs. Korus' class, graduated in 2021 and brings his tech expertise to our team.</p>
+          <p className='caption'>Caleb is a Senior at Eastern Washington University. A proud alum of Mrs. Korus' history classes, graduated in 2021 and brings his tech expertise to our team.</p>
         </div>
         <div className='team-card'>
           <img src={JonahHeadshot} alt='Jonah Aden' className='headshot' />
           <h2>Jonah Aden</h2>
-          <p className='caption'>Another computer science major, currently at Columbia University. Jonah, also a former student of Mrs. Korus, graduated in 2022.</p>
+          <p className='caption'>Jonah is a Junior at Columbia University majoring in Computer Science, Political Science, and Statistics. He had Mrs. Korus as a history teacher in 7th, 8th, 10th, and 12th grade. Jonah graduated North Central in 2022.</p>
         </div>
       </div>
       <p className='about blurb'>
-        Have questions or feedback? Reach out to us at:
+        Reach out to us at: 
         <strong><a href="mailto:HistoryThroughArt@gmail.com">HistoryThroughArt@gmail.com</a></strong>
       </p>
       <a href="https://github.com/adenjonah/APAH" target="_blank" rel="noopener noreferrer" className="github-link">
