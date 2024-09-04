@@ -1,4 +1,4 @@
-# AP Art History (APAH) Project
+# History Through Art
 
 ## V1. Overview
 
