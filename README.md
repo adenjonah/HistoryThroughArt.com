@@ -26,4 +26,4 @@ To get started with the APAH website:
 
 ## Contact
 
-For questions or feedback, please contact the project maintainer at [smartartspokane@gmail.com](mailto:smartartspokane@gmail.com).
+For questions or feedback, please contact the project maintainer at [HistoryThroughArt24@gmail.com](mailto:HistoryThroughArt24@gmail.com).
