@@ -11,8 +11,8 @@ function Map() {
       </p>
 
       {/* MapBox component */}
-      <div className="w3-display-container" style={{ width: '80%', maxWidth: '100%' }}>
-        <MapBox />
+      <div className="w3-display-container" style={{ width: '80%', maxWidth: '100%'}}>
+        <MapBox spin={true} />
       </div>
     </div>
   );
