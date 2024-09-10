@@ -1,11 +1,13 @@
 import './NavBar.css';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function NavBar({menuOpened, setMenuOpened}) {
 
     const navigate = useNavigate();
 
-    const toggleMenu = () => {
+    const toggleMenu = (event) => {
+        event.stopPropagation(); // Prevent the click from propagating to the document listener
         const sidebar = document.getElementById("mySidebar");
         if (menuOpened) { // Close menu
             sidebar.style.display = "none";
@@ -16,8 +18,23 @@ function NavBar({menuOpened, setMenuOpened}) {
             sidebar.style.display = "block";
             setMenuOpened(true);
         }
+    };
 
-    }
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            const sidebar = document.getElementById("mySidebar");
+            if (menuOpened && sidebar && !sidebar.contains(event.target)) {
+                sidebar.style.display = "none";
+                setMenuOpened(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [menuOpened, setMenuOpened]);
 
     return (
       <div>
@@ -34,8 +51,7 @@ function NavBar({menuOpened, setMenuOpened}) {
           </div>
           <div className="spacerMain"/>
       </div>
-);
-
+    );
 }
 
 export default NavBar;
