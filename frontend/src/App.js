@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import './App.css';
 import './w3.css'
+import './index.css';
 
 import NavBar from './components/NavBar'
 
