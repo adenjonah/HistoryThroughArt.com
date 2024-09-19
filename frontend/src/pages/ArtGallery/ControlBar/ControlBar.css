@@ -1,7 +1,12 @@
+/* Adjusted Styles */
 .control-bar-container {
     background-color: var(--foreground-color);
     border-radius: 10px;
     margin: 30px;
+    width: 100%; /* Make control bar wider */
+    max-width: 1200px; /* Set a maximum width for larger screens */
+    margin-left: auto;
+    margin-right: auto; /* Center the control bar */
 }
 
 .control-bar {
@@ -19,20 +24,21 @@
 }
 
 .control-bar-item {
-    padding: 8px 12px;
+    padding: 6px 10px; /* Reduced padding */
     border-radius: 5px;
     border: 1px solid #ced4da;
     background-color: #ffffff;
     cursor: pointer;
+    font-size: 14px; /* Made text smaller */
 }
 
 .active-filters {
     margin: 10px;
     width: 95%;
     display: flex;
-    justify-content: left;
+    justify-content: flex-start;
     align-items: center;
-    font-size: 14px;
+    font-size: 12px; /* Made text smaller */
     color: #333;
 }
 
@@ -43,17 +49,87 @@
 }
 
 .clear-filter-button {
-    height: 30px;
+    height: 28px;
     width: 130px;
+    font-size: 10px; /* Made text significantly smaller */
+    padding: 4px 8px; /* Adjusted padding */
 }
 
 .filter-tag {
     background-color: #e9ecef;
     color: #495057;
-    padding: 5px 10px;
+    padding: 4px 8px; /* Reduced padding */
     border-radius: 3px;
     margin-left: 5px;
-    font-size: 12px;
+    font-size: 10px; /* Made text smaller */
 }
 
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+    .control-bar-container {
+        margin: 20px;
+        width: 95%; /* Adjusted width for mobile */
+    }
 
+    .control-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .sort-select-container,
+    .filter-button-container,
+    .toggle-layout-container {
+        margin: 10px 0;
+    }
+
+    .control-bar-item {
+        width: 100%;
+        margin-bottom: 8px;
+        font-size: 12px; /* Further reduced font size */
+    }
+
+    .active-filters {
+        flex-direction: column;
+        align-items: flex-start;
+        font-size: 11px; /* Smaller text */
+    }
+
+    .filter-tag {
+        margin: 5px 5px 0 0;
+        font-size: 9px; /* Smaller text */
+        padding: 3px 6px; /* Adjusted padding */
+    }
+
+    .clear-filter-button {
+        width: 100%;
+        margin-top: 10px;
+        font-size: 9px; /* Significantly smaller text */
+        height: 26px; /* Adjusted height */
+    }
+}
+
+@media (max-width: 480px) {
+    .control-bar-container {
+        margin: 10px;
+        width: 100%;
+    }
+
+    .control-bar-item {
+        padding: 4px 6px; /* Further reduced padding */
+        font-size: 11px; /* Smaller text */
+    }
+
+    .active-filters {
+        font-size: 10px; /* Smaller text */
+    }
+
+    .filter-tag {
+        font-size: 8px; /* Smaller text */
+        padding: 2px 4px; /* Reduced padding */
+    }
+
+    .clear-filter-button {
+        height: 40px;
+        font-size: 8px; /* Smallest text size */
+    }
+}

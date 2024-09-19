@@ -1,3 +1,4 @@
+/* Existing styles */
 
 .catalog.column {
     display: flex;
@@ -19,7 +20,7 @@
     margin: 20px;
     display: flex;
     flex-direction: column; /* Vertical stacking */
-    height: 400px;
+    height: 350px;
     padding: 10px;
     box-sizing: border-box;
     align-items: center;
@@ -65,4 +66,41 @@
 
 .text-subheading {
     font-size: 14px; /* Default font size for subheadings */
+}
+
+/* Updated mobile device media queries */
+@media (max-width: 767px) {
+    .catalog.table {
+        grid-template-columns: 1fr; /* Single column layout */
+        gap: 10px; /* Adjust gap for smaller screens */
+        justify-content: center; /* Center the grid within its container */
+        justify-items: center; /* Center items within their grid cells */
+    }
+
+    .ArtCard {
+        width: 300px; /* Set art cards to 300px wide */
+        height: auto; /* Let height adjust based on content */
+        margin: 10px; /* Adjust margin */
+    }
+
+    .spotlight-container {
+        width: 100%; /* Make image container full width of ArtCard */
+    }
+
+    .identifier {
+        white-space: normal; /* Allow text to wrap */
+        text-overflow: clip; /* No ellipsis on mobile */
+    }
+
+    .text-heading {
+        font-size: 14px; /* Adjust font size for mobile */
+    }
+
+    .text-subheading {
+        font-size: 12px; /* Adjust font size for mobile */
+    }
+}
+
+.w3-row-padding, .w3-row-padding>.w3-half, .w3-row-padding>.w3-third, .w3-row-padding>.w3-twothird, .w3-row-padding>.w3-threequarter, .w3-row-padding>.w3-quarter, .w3-row-padding>.w3-col {
+    padding: 0 16px;
 }
