@@ -6,8 +6,49 @@ function VideoPlayer({ id }) {
     const [artVideos, setArtVideos] = useState([]);
     const [selectedVideo, setSelectedVideo] = useState(0);
     const [visibleTranscript, setVisibleTranscript] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
     const iframeRef = useRef(null);
     const transcriptRef = useRef(null);
+    const playerRef = useRef(null);
+
+    useEffect(() => {
+        // Load the YouTube Iframe API script
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // This function will be called by the YouTube API when it's ready
+        window.onYouTubeIframeAPIReady = () => {
+            playerRef.current = new window.YT.Player(iframeRef.current, {
+                events: {
+                    'onStateChange': onPlayerStateChange,
+                    'onReady': onPlayerReady,
+                },
+            });
+        };
+
+        // Clean up the YouTube API script when the component unmounts
+        return () => {
+            if (playerRef.current) {
+                playerRef.current.destroy();
+            }
+            delete window.onYouTubeIframeAPIReady;
+        };
+    }, [selectedVideo]);
+
+    const onPlayerReady = (event) => {
+        // Start updating the current time every second
+        setInterval(() => {
+            if (playerRef.current && playerRef.current.getCurrentTime) {
+                setCurrentTime(playerRef.current.getCurrentTime());
+            }
+        }, 500); // Update every 500 milliseconds
+    };
+
+    const onPlayerStateChange = (event) => {
+        // You can handle different player states if needed
+    };
 
     useEffect(() => {
         // Find the relevant art piece by ID and extract its videos and transcripts
@@ -42,9 +83,8 @@ function VideoPlayer({ id }) {
     };
 
     const handleTranscriptClick = (start) => {
-        const videoElement = document.querySelector('.video-player');
-        if (videoElement) {
-            videoElement.contentWindow.postMessage(`{"event":"command","func":"seekTo","args":[${start}, true]}`, '*');
+        if (playerRef.current && playerRef.current.seekTo) {
+            playerRef.current.seekTo(start, true);
         }
     };
 
@@ -55,9 +95,31 @@ function VideoPlayer({ id }) {
     const ConvertToMins = (time) => {
         let minutes = Math.floor(time / 60);
         let seconds = time - minutes * 60;
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds.toFixed(0)}`;
+        return `${minutes}:${seconds < 10 ? '0' : ''}${Math.floor(seconds)}`;
     };
-    
+
+    // Function to get the active transcript index based on current time
+    const getActiveTranscriptIndex = () => {
+        const transcript = artVideos[selectedVideo]?.transcript || [];
+        for (let i = 0; i < transcript.length; i++) {
+            if (currentTime >= transcript[i].start && (i === transcript.length - 1 || currentTime < transcript[i + 1].start)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+
+    // Scroll the active transcript line into view
+    useEffect(() => {
+        if (visibleTranscript && transcriptRef.current) {
+            const activeIndex = getActiveTranscriptIndex();
+            const transcriptElements = transcriptRef.current.querySelectorAll('.transcript-entry');
+            if (activeIndex !== -1 && transcriptElements[activeIndex]) {
+                transcriptElements[activeIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }, [currentTime, visibleTranscript]);
+
     return (
         <div className="w3-container">
             {artVideos.length > 0 && (
@@ -88,14 +150,17 @@ function VideoPlayer({ id }) {
                                 id="transcript"
                                 className={`transcript-box w3-show w3-animate-zoom`}
                             >
-                                {artVideos[selectedVideo].transcript && artVideos[selectedVideo].transcript.map((entry, index) => (
-                                    <div key={index}>
-                                        <button className="youtube-marker" onClick={() => handleTranscriptClick(entry.start)}>
-                                            {ConvertToMins(entry.start)} - {entry.text}
-                                        </button>
-                                        <br/>
-                                    </div>
-                                ))}
+                                {artVideos[selectedVideo].transcript && artVideos[selectedVideo].transcript.map((entry, index) => {
+                                    const isActive = index === getActiveTranscriptIndex();
+                                    return (
+                                        <div key={index} className={`transcript-entry ${isActive ? 'active' : ''}`}>
+                                            <button className="youtube-marker" onClick={() => handleTranscriptClick(entry.start)}>
+                                                {ConvertToMins(entry.start)} - {entry.text}
+                                            </button>
+                                            <br />
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
