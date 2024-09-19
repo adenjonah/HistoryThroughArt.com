@@ -1,22 +1,16 @@
 .title {
     font-size: 3em;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: var(--text-color); 
     text-align: center; /* Center the title */
     font-weight: 700; /* Make the title bolder */
 }
 
-.blurb {
-    font-size: 1.2em;
-    margin-bottom: 30px; /* Increase spacing below paragraphs */
-    max-width: 60%;
-    margin-left: auto;
-    margin-right: auto; /* Center the text block */
-    line-height: 1.6; /* Improve readability */
-    color: var(--text-color); /* Ensure the text uses the defined text color */
+.headshot-name {
+    font-size: xx-large;
 }
 
-.blurbb {
+.aboutblurb {
     font-size: 1.2em;
     margin-bottom: 30px; /* Increase spacing below paragraphs */
     max-width: 40%;
@@ -38,7 +32,7 @@
     max-width: 1200px; /* Increase max width for better spacing */
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 40px; /* Increase bottom margin for better spacing */
+    margin-bottom: 20px; /* Increase bottom margin for better spacing */
     gap: 20px; /* Add space between cards */
 }
 
@@ -68,7 +62,7 @@
 .team-card h2 {
     font-size: 1.6em;
     margin-bottom: 10px;
-    color: var(--text-color); /* Ensure consistent text color */
+    color: var(--accent-color);
 }
 
 .github-link {
@@ -98,3 +92,58 @@
     background-color: #586069;
     transform: translateY(-5px);
 }
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 768px) {
+    .aboutblurb {
+        font-size: 1em;
+        max-width: 90%; /* Increase max-width to fit mobile screens */
+    }
+
+    .team-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .team-card {
+        width: 90%; /* Adjust card width for mobile */
+        margin-bottom: 20px; /* Add space between cards */
+    }
+
+    .headshot {
+        width: 100%;
+        height: auto;
+        max-width: 200px; /* Adjust headshot size for mobile */
+    }
+
+    .title {
+        font-size: 2em;
+    }
+
+    .github-button {
+        max-width: 80%;
+        font-size: 1em;
+    }
+
+    .about.video iframe {
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .aboutblurb {
+        font-size: 0.9em;
+    }
+
+    .team-card h2 {
+        font-size: 2.4em;
+        color: var(--accent-color);
+    }
+
+    .github-button {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+}
+

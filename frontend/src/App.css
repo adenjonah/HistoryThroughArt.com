@@ -70,3 +70,17 @@ body {
 .feedback-button:hover {
   background-color: white; /* Darker green */
 }
+
+/* For mobile devices */
+@media (max-width: 992px) {
+  .feedback-button {
+    width: 50px;  /* Make the button a square */
+    height: 50px; /* Same height and width for a square shape */
+    padding: 0;   /* Remove padding */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 8px; /* Adjust font size if needed */
+  }
+}
+
