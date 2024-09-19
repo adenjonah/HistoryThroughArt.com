@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import './VideoPlayer.css'; // Make sure to create and import this CSS file
 import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 
@@ -10,6 +10,7 @@ function VideoPlayer({ id }) {
     const iframeRef = useRef(null);
     const transcriptRef = useRef(null);
     const playerRef = useRef(null);
+    const intervalRef = useRef(null);
 
     useEffect(() => {
         // Load the YouTube Iframe API script
@@ -37,13 +38,13 @@ function VideoPlayer({ id }) {
         };
     }, [selectedVideo]);
 
-    const onPlayerReady = (event) => {
-        // Start updating the current time every second
-        setInterval(() => {
+    const onPlayerReady = () => {
+        // Start updating the current time every 500 milliseconds
+        intervalRef.current = setInterval(() => {
             if (playerRef.current && playerRef.current.getCurrentTime) {
                 setCurrentTime(playerRef.current.getCurrentTime());
             }
-        }, 500); // Update every 500 milliseconds
+        }, 500);
     };
 
     const onPlayerStateChange = (event) => {
@@ -98,16 +99,19 @@ function VideoPlayer({ id }) {
         return `${minutes}:${seconds < 10 ? '0' : ''}${Math.floor(seconds)}`;
     };
 
-    // Function to get the active transcript index based on current time
-    const getActiveTranscriptIndex = () => {
+    // Memoize getActiveTranscriptIndex using useCallback
+    const getActiveTranscriptIndex = useCallback(() => {
         const transcript = artVideos[selectedVideo]?.transcript || [];
         for (let i = 0; i < transcript.length; i++) {
-            if (currentTime >= transcript[i].start && (i === transcript.length - 1 || currentTime < transcript[i + 1].start)) {
+            if (
+                currentTime >= transcript[i].start &&
+                (i === transcript.length - 1 || currentTime < transcript[i + 1].start)
+            ) {
                 return i;
             }
         }
         return -1;
-    };
+    }, [artVideos, selectedVideo, currentTime]);
 
     // Scroll the active transcript line into view
     useEffect(() => {
@@ -118,7 +122,7 @@ function VideoPlayer({ id }) {
                 transcriptElements[activeIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
         }
-    }, [currentTime, visibleTranscript]);
+    }, [currentTime, visibleTranscript, getActiveTranscriptIndex]);
 
     return (
         <div className="w3-container">
