@@ -100,7 +100,3 @@
         font-size: 12px; /* Adjust font size for mobile */
     }
 }
-
-.w3-row-padding, .w3-row-padding>.w3-half, .w3-row-padding>.w3-third, .w3-row-padding>.w3-twothird, .w3-row-padding>.w3-threequarter, .w3-row-padding>.w3-quarter, .w3-row-padding>.w3-col {
-    padding: 0 16px;
-}
