@@ -5,7 +5,7 @@ import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
 function VideoPlayer({ id }) {
     const [artVideos, setArtVideos] = useState([]);
     const [selectedVideo, setSelectedVideo] = useState(0);
-    const [visibleTranscript, setVisibleTranscript] = useState(true);
+    const [visibleTranscript, setVisibleTranscript] = useState(false);
     const iframeRef = useRef(null);
     const transcriptRef = useRef(null);
 
@@ -62,7 +62,8 @@ function VideoPlayer({ id }) {
         <div className="w3-container">
             {artVideos.length > 0 && (
                 <div className="w3-row">
-                    <div className={`w3-col s12 m9 l9 w3-padding`}>
+                    {/* Video Player Column */}
+                    <div className={`w3-col s12 ${visibleTranscript ? 'm9 l9' : 'm12 l12'} w3-padding`}>
                         <div className="w3-responsive w3-display-container video-player-wrapper">
                             <iframe
                                 ref={iframeRef}
@@ -74,25 +75,39 @@ function VideoPlayer({ id }) {
                         </div>
                     </div>
 
-                    <div className={`w3-col s12 m3 l3 w3-padding`}>
-                        <div className="w3-center">
+                    {/* Transcript Column */}
+                    {visibleTranscript && (
+                        <div className={`w3-col s12 m3 l3 w3-padding`}>
+                            <div className="w3-center">
+                                <button className="w3-button w3-blue" onClick={handleToggleTranscript}>
+                                    {visibleTranscript ? "Hide Transcript" : "Show Transcript"}
+                                </button>
+                            </div>
+                            <div
+                                ref={transcriptRef}
+                                id="transcript"
+                                className={`transcript-box w3-show w3-animate-zoom`}
+                            >
+                                {artVideos[selectedVideo].transcript && artVideos[selectedVideo].transcript.map((entry, index) => (
+                                    <div key={index}>
+                                        <button className="youtube-marker" onClick={() => handleTranscriptClick(entry.start)}>
+                                            {ConvertToMins(entry.start)} - {entry.text}
+                                        </button>
+                                        <br/>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Show Transcript Button when Transcript is Hidden */}
+                    {!visibleTranscript && (
+                        <div className="w3-col s12 w3-center w3-padding">
                             <button className="w3-button w3-blue" onClick={handleToggleTranscript}>
-                                {visibleTranscript ? "Hide Transcript" : "Show Transcript"}
+                                Show Transcript
                             </button>
                         </div>
-                        <div ref={transcriptRef} id="transcript"
-                             className={`transcript-box ${visibleTranscript ? 'w3-show' : 'w3-hide'} w3-animate-zoom`}>
-                            {artVideos[selectedVideo].transcript && artVideos[selectedVideo].transcript.map((entry, index) => (
-                                <div key={index}>
-                                    <button className="youtube-marker"
-                                            onClick={() => handleTranscriptClick(entry.start)}>
-                                        {ConvertToMins(entry.start)} - {entry.text}
-                                    </button>
-                                    <br/>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    )}
                 </div>
             )}
             {artVideos.length > 1 && (
@@ -102,7 +117,7 @@ function VideoPlayer({ id }) {
                             key={index}
                             onClick={() => handleVideoSelection(index)}
                             className={`w3-button w3-ripple w3-bar-item w3-margin-right w3-margin-bottom
-                             ${index === selectedVideo ? 'w3-blue' : 'w3-light-gray'} `}
+                                 ${index === selectedVideo ? 'w3-blue' : 'w3-light-gray'} `}
                         >
                             Video {index + 1}
                         </button>
