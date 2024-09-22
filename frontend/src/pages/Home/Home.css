@@ -1,8 +1,3 @@
-
-.button {
-    background: var(--button-color)
-}
-
 .pagecontainer {
     position: relative;
     z-index: 0;
@@ -14,10 +9,12 @@
     min-height: calc(100vh - 60px);
     width: 100%;
     overflow-x: hidden;
+    padding: 0 20px; /* Some padding for desktop and mobile */
 }
 
 .text {
     z-index: 1;
+    padding: 10px; /* Padding around the text */
 }
 
 .scrolling-background1, .scrolling-background2 {
@@ -27,7 +24,6 @@
     height: 100%;
     background-size: cover;
     background-position: top left;
-    overflow: hidden;
     opacity: .5;
     z-index: 0;
 }
@@ -66,12 +62,48 @@
 
 .button-container {
     display: flex;
-    justify-content: center; /* Align buttons in the center */
-    gap: 20px; /* Space between the buttons */
-    margin-top: 20px; /* Optional: Space above the buttons */
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .w3-button.button {
-    max-width: 300px; /* Adjust the width as needed */
-    margin: 0 auto; /* Center the button horizontally */
+    max-width: 300px; /* Max width to limit size on large screens */
+    width: 100%; /* Full width on mobile */
+    background-color: var(--button-color); /* Keep button color */
+    color: black; /* Ensure text is visible */
+    border: none;
+    padding: 15px 20px; /* Make the buttons large and clickable */
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.w3-button.button:hover {
+    background-color: var(--button-hover-color); /* Define button hover color */
+}
+
+@media (max-width: 768px) {
+    .pagecontainer {
+        padding: 0 10px; /* Padding for smaller screens */
+    }
+    
+    .w3-xxlarge {
+        font-size: 24px; /* Reduce font size for mobile */
+    }
+    
+    .w3-large {
+        font-size: 16px; /* Adjust paragraph text size */
+    }
+
+    .button-container {
+        flex-direction: column; /* Stack buttons vertically on mobile */
+        gap: 10px; /* Space between the buttons */
+    }
+    
+    .w3-button.button {
+        padding: 12px 15px; /* Adjust padding for smaller buttons on mobile */
+        font-size: 14px; /* Slightly reduce button text size */
+    }
 }
