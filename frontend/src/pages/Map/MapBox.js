@@ -37,21 +37,19 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
 
   useEffect(() => {
     // Extract locations and relevant data from the JSON file
-
-    if(mapType === 'originated') {
-        const filteredData = artPiecesData.filter(piece => piece.originatedLatitude && piece.originatedLongitude);
-        const overlayData = filteredData.map(piece => ({
-          id: piece.id,
-          name: piece.name,
-          location: piece.location,
-          latitude: piece.originatedLatitude,
-          longitude: piece.originatedLongitude,
-          image: piece.image[0], // Assuming each piece has at least one image
-        }));
-        setOverlayData(overlayData);
+    if (mapType === 'originated') {
+      const filteredData = artPiecesData.filter(piece => piece.originatedLatitude && piece.originatedLongitude);
+      const overlayData = filteredData.map(piece => ({
+        id: piece.id,
+        name: piece.name,
+        location: piece.location,
+        latitude: piece.originatedLatitude,
+        longitude: piece.originatedLongitude,
+        image: piece.image[0], // Assuming each piece has at least one image
+      }));
+      setOverlayData(overlayData);
     } else {
       const filteredData = artPiecesData.filter(piece => piece.displayedLatitude && piece.displayedLongitude);
-
       const overlayData = filteredData.map(piece => ({
         id: piece.id,
         name: piece.name,
@@ -65,11 +63,15 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
   }, [mapType]);
 
   useEffect(() => {
+    // Determine default zoom based on device type
+    const isMobile = window.innerWidth <= 768;
+    const defaultZoom = isMobile ? 1 : 4;
+    
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: style || 'mapbox://styles/mapbox/satellite-streets-v12',
       center: center || [-117.420015, 47.673373],
-      zoom: zoom || 4,
+      zoom: zoom !== undefined ? zoom : defaultZoom, // Use prop zoom if provided, otherwise default
     });
 
     mapRef.current = map;
@@ -198,9 +200,9 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
           `;
 
           new mapboxgl.Popup()
-              .setLngLat(coordinates)
-              .setHTML(popupContent)
-              .addTo(map);
+            .setLngLat(coordinates)
+            .setHTML(popupContent)
+            .addTo(map);
         });
 
         map.on('mouseleave', 'unclustered-point', () => {
