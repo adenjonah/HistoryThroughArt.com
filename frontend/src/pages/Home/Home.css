@@ -69,6 +69,7 @@
 
 .w3-button.button {
     max-width: 300px; /* Max width to limit size on large screens */
+    margin: 0 auto; /* Center the button horizontally */
     width: 100%; /* Full width on mobile */
     background-color: var(--button-color); /* Keep button color */
     color: black; /* Ensure text is visible */
