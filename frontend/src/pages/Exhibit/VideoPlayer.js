@@ -133,6 +133,7 @@ function VideoPlayer({ id }) {
                         <div className="w3-responsive w3-display-container video-player-wrapper">
                             <iframe
                                 ref={iframeRef}
+                                key={selectedVideo}
                                 src={`${artVideos[selectedVideo].videoLink}?enablejsapi=1`}
                                 allowFullScreen
                                 title={`Video ${selectedVideo + 1}`}
