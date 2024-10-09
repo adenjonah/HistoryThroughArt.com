@@ -86,16 +86,21 @@ function CalendarPage() {
 
   return (
     <div className="calendar-page">
-      <h2>Korus' Class Calendar</h2>
+      <h2>Class Calendar</h2>
+      <p className='subhead'>
+        This calendar breaks down a consistent study approach to cover all materials 
+        by the date of the AP test in the spring, assuming you start in September 2024.
+      </p>
       <Calendar
         onClickDay={onDateClick}
         value={selectedDate}
       />
       <div className="details-section">
-        {selectedDate ? renderContent() : <p>Select a date to view details.</p>}
+        {selectedDate ? renderContent() : <p>Select a date to view items due</p>}
       </div>
     </div>
   );
+  
 }
 
 export default CalendarPage;

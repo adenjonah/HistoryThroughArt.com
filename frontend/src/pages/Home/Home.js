@@ -9,7 +9,7 @@ function Home() {
     };
 
     const handleStartLearning = () => {
-        window.location.href = '/about';
+        window.location.href = '/tutorial';
     }
 
     const handleViewMap = () => {

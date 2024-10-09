@@ -11,7 +11,7 @@ function Map() {
       </p>
 
       {/* MapBox component */}
-      <div className="w3-display-container" style={{ width: '80%', maxWidth: '100%' }}>
+      <div className="w3-display-container" style={{ width: '80%', maxWidth: '100%', Height: '60vh' }}>
         <MapBox />
       </div>
     </div>
