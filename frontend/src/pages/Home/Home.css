@@ -58,9 +58,7 @@
     to {
         transform: translateX(-100%);
     }
-}
-
-.button-container {
+}.button-container {
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -68,36 +66,43 @@
 }
 
 .w3-button.button {
-    max-width: 300px; /* Max width to limit size on large screens */
+    max-width: 300px; /* Limit size on large screens */
     margin: 0 auto; /* Center the button horizontally */
     width: 100%; /* Full width on mobile */
-    background-color: var(--button-color); /* Keep button color */
-    color: black; /* Ensure text is visible */
+    background-color: var(--button-color); /* Main button background color */
+    color: var(--button-text-color); /* Text color */
     border: none;
     padding: 15px 20px; /* Make the buttons large and clickable */
     font-size: 16px;
+    font-weight: bold; /* Make the text bold */
     border-radius: 8px;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     transition: background-color 0.3s ease;
 }
 
-.w3-button.button:hover {
-    background-color: var(--button-hover-color); /* Define button hover color */
+.w3-button.button i {
+    margin-right: 8px; /* Space between icon and text */
+    color: var(--button-text-color); /* Ensure icon color matches text */
 }
 
+.w3-button.button:hover {
+    background-color: var(--button-hover-color); /* Darker background color on hover */
+    color: var(--text-color); /* Text color on hover */
+}
+
+.w3-button.button:hover i {
+    color: var(--text-color); /* Ensure icon color changes on hover */
+}
+
+/* Mobile adjustments */
 @media (max-width: 768px) {
     .pagecontainer {
         padding: 0 10px; /* Padding for smaller screens */
     }
     
-    .w3-xxlarge {
-        font-size: 24px; /* Reduce font size for mobile */
-    }
-    
-    .w3-large {
-        font-size: 16px; /* Adjust paragraph text size */
-    }
-
     .button-container {
         flex-direction: column; /* Stack buttons vertically on mobile */
         gap: 10px; /* Space between the buttons */

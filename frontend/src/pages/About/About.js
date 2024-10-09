@@ -9,21 +9,7 @@ function About() {
 
   return (
     <div className='pagecontainer'>
-      <h1 className="title">Tutorial</h1>
-      <p className='aboutblurb'>The following video provides a comprehensive walkthrough of this site's features and design, explaining common uses and ideas for utilizing this learning aid:</p>
-
-      <div className="about video">
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/pv1N-USnLhE"
-          title="Tutorial"
-          frameBorder="0"
-          allowFullScreen
-        ></iframe>
-      </div>
-
-      <h1 className="about title">Our Team</h1>
+      <h1 className="about title">About Us</h1>
       
       <div className='team-cards'>
         <div className='team-card'>

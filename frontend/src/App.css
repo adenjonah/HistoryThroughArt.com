@@ -58,17 +58,30 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: var(--button-color); /* Green */
-  color: var(--buttontext-color);
+  background-color: var(--button-color); /* Main button background color */
+  color: var(--button-text-color); /* Icon/text color */
   padding: 12px 24px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   z-index: 10000; /* Ensure it appears above other elements */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.feedback-button i {
+  color: var(--button-text-color); /* Ensure icon color matches text */
+  font-size: 18px;
 }
 
 .feedback-button:hover {
-  background-color: white; /* Darker green */
+  background-color: var(--accent-color); /* Change background on hover */
+  color: var(--text-color); /* Ensure icon/text color changes on hover */
+}
+
+.feedback-button:hover i {
+  color: var(--text-color); /* Ensure icon color changes on hover */
 }
 
 /* For mobile devices */
@@ -77,10 +90,8 @@ body {
     width: 50px;  /* Make the button a square */
     height: 50px; /* Same height and width for a square shape */
     padding: 0;   /* Remove padding */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 8px; /* Adjust font size if needed */
+    font-size: 18px;
   }
 }
+
 

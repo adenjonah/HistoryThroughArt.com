@@ -232,7 +232,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
   }, [center, zoom, style, overlayData, mapType]);
 
   return (
-    <div ref={mapContainerRef} style={{ width: size?.width || '100%', height: size?.height || '600px', position: 'relative' }}>
+    <div ref={mapContainerRef} style={{ width: size?.width || '100%', height: size?.height || '500px', position: 'relative' }}>
       {/* Toggle Button */}
       <button
         onClick={handleMapToggle}
