@@ -10,8 +10,8 @@ function Tutorial() {
 
       <div className="about video">
         <iframe
-          width="560"
-          height="315"
+          width="700"
+          height="400"
           src="https://www.youtube.com/embed/pv1N-USnLhE"
           title="Tutorial"
           frameBorder="0"

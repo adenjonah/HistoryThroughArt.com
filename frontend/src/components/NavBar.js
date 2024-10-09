@@ -46,9 +46,6 @@ function NavBar({ menuOpened, setMenuOpened }) {
                 <a href="/" className="w3-bar-item w3-button">
                     <i className="fas fa-home"></i> Home
                 </a>
-                <a href="/about" className="w3-bar-item w3-button">
-                    <i className="fas fa-info-circle"></i> About Us
-                </a>
                 <a href="/artgallery" className="w3-bar-item w3-button">
                     <i className="fas fa-palette"></i> Art Gallery
                 </a>
@@ -60,6 +57,9 @@ function NavBar({ menuOpened, setMenuOpened }) {
                 </a>
                 <a href="/tutorial" className="w3-bar-item w3-button">
                     <i className="fas fa-video"></i> How-To
+                </a>
+                <a href="/about" className="w3-bar-item w3-button">
+                    <i className="fas fa-info-circle"></i> About Us
                 </a>
             </div>
             <div className="spacerMain" />
