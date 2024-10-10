@@ -12,7 +12,8 @@ import Home from './pages/Home/Home';
 import Map from './pages/Map/Map';
 import ArtGallery from './pages/ArtGallery/ArtGallery';
 import Calendar from './pages/Calendar/Calendar';
-import Tutorial from './pages/Tutorial/Tutorial'; // Import the new Tutorial page
+import Tutorial from './pages/Tutorial/Tutorial';
+import Flashcards from './pages/Flashcards/Flashcards'; // Import Flashcards component
 
 function App() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -28,7 +29,8 @@ function App() {
                     <Route path='/map' element={<Map />} />
                     <Route path='/artgallery' element={<ArtGallery />} />
                     <Route path='/calendar' element={<Calendar />} />
-                    <Route path='/tutorial' element={<Tutorial />} /> {/* Add Tutorial Route */}
+                    <Route path='/tutorial' element={<Tutorial />} />
+                    <Route path='/flashcards' element={<Flashcards />} /> {/* Add Flashcards Route */}
                 </Routes>
             </div>
             <button className="feedback-button" onClick={() => window.open('https://forms.gle/3Bngm7bphSjygE2Q7', '_blank')}>
