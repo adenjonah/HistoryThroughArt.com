@@ -19,14 +19,14 @@
 .progress {
     background-color: var(--foreground-color);
     border-radius: 10px;
-    padding: 20px;
-    font-size: 18px;
+    padding: 10px;
+    font-size: 15px;
     margin-bottom: 20px;
 }
 
 .flashcard {
-    width: 50%;
-    height: 60%;
+    width: 40%;
+    height: 55%;
     perspective: 1000px;
     margin-bottom: 20px;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./Flashcards.css";
 import artPiecesData from "../../Data/artworks.json"; // Import the JSON data
 
@@ -12,7 +12,7 @@ const Flashcards = () => {
   const [showSettings, setShowSettings] = useState(false); // Toggle settings modal
 
   // Shuffle flashcards based on unit and exclusions
-  const shuffleDeck = () => {
+  const shuffleDeck = useCallback(() => {
     const filteredDeck = artPiecesData.filter(
       (card) =>
         (selectedUnits.length === 0 || selectedUnits.includes(card.unit)) &&
@@ -22,11 +22,11 @@ const Flashcards = () => {
     setDeck(shuffledDeck);
     setCurrentCard(0);
     setIsFlipped(false);
-  };
+  }, [selectedUnits, excludedCardIds]); // Dependencies for shuffleDeck
 
   useEffect(() => {
-    shuffleDeck(); // Shuffle deck on component mount
-  }, [selectedUnits, excludedCardIds]); // Reshuffle deck when units or excluded cards change
+    shuffleDeck(); // Shuffle deck on component mount and when dependencies change
+  }, [shuffleDeck]); // Include shuffleDeck in the dependency array
 
   const handleFlip = () => {
     if (!isTransitioning) {
@@ -93,6 +93,8 @@ const Flashcards = () => {
 
   return (
     <div className="flashcards-container">
+    <h1 className="title">Flashcards</h1>
+    <p className="blurb">New Page! Select units you want to practice with settings button in top right. Cards are removed from deck when marked as "Great"</p>
       <div className="progress">{deck.length} cards remaining</div>
       <div
         className={`flashcard ${isFlipped ? "flipped" : ""}`}
@@ -170,7 +172,7 @@ const Flashcards = () => {
                 onChange={handleUnitSelection}
                 checked={selectedUnits.includes(unit)}
               />
-                Unit {unit}
+              Unit {unit}
             </label>
           ))}
         </div>
