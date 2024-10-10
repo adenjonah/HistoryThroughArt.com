@@ -127,7 +127,7 @@ const Flashcards = () => {
           </button>
         </div>
       )}
-
+        <h1 className="title">Flashcards</h1>
       <div className="progress">{deck.length} cards remaining</div>
       <div
         className={`flashcard ${isFlipped ? "flipped" : ""}`}
