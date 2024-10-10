@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./Flashcards.css";
 import artPiecesData from "../../Data/artworks.json"; // Import the JSON data
 
@@ -10,9 +10,10 @@ const Flashcards = () => {
   const [selectedUnits, setSelectedUnits] = useState([]); // Units to include
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showSettings, setShowSettings] = useState(false); // Toggle settings modal
+  const [showBanner, setShowBanner] = useState(true); // State to show/hide banner
 
   // Shuffle flashcards based on unit and exclusions
-  const shuffleDeck = () => {
+  const shuffleDeck = useCallback(() => {
     const filteredDeck = artPiecesData.filter(
       (card) =>
         (selectedUnits.length === 0 || selectedUnits.includes(card.unit)) &&
@@ -22,11 +23,11 @@ const Flashcards = () => {
     setDeck(shuffledDeck);
     setCurrentCard(0);
     setIsFlipped(false);
-  };
+  }, [selectedUnits, excludedCardIds]); // Dependencies for shuffleDeck
 
   useEffect(() => {
-    shuffleDeck(); // Shuffle deck on component mount
-  }, [selectedUnits, excludedCardIds]); // Reshuffle deck when units or excluded cards change
+    shuffleDeck(); // Shuffle deck on component mount and when dependencies change
+  }, [shuffleDeck]); // Include shuffleDeck in the dependency array
 
   const handleFlip = () => {
     if (!isTransitioning) {
@@ -39,21 +40,26 @@ const Flashcards = () => {
 
     setIsTransitioning(true); // Block interaction during transition
 
-    // After the card flips, replace it with a new instance
     setTimeout(() => {
       let updatedDeck = [...deck];
 
       if (action === "great") {
         // Remove the card if marked as "Great"
-        updatedDeck = deck.filter((_, index) => index !== currentCard);
+        updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
+      } else if (action === "bad") {
+        // Add a duplicate of the current card to the deck if marked as "Bad"
+        updatedDeck.push(deck[currentCard]);
+        shuffleDeck();
       }
 
       // Move to the next card or reset to 0 if necessary
       setCurrentCard((prev) => (prev + 1) % updatedDeck.length);
 
+      // Shuffle the updated deck to randomly place the duplicate
+      setDeck(updatedDeck.sort(() => Math.random() - 0.5));
+
       // Ensure the new card starts with the front side facing up
       setIsFlipped(false);
-      setDeck(updatedDeck);
       setIsTransitioning(false);
     }, 300); // Adjust delay as needed for smooth transitions
   };
@@ -80,6 +86,10 @@ const Flashcards = () => {
     }
   };
 
+  const closeBanner = () => {
+    setShowBanner(false);
+  };
+
   if (deck.length === 0) {
     return (
       <div className="flashcards-container">
@@ -93,6 +103,31 @@ const Flashcards = () => {
 
   return (
     <div className="flashcards-container">
+      {/* Popup banner */}
+      {showBanner && (
+        <div className="popup-banner">
+          <p className="blurb">New Flashcards Page!</p>
+          <p className="blurb">
+            - Select units you want to practice and cards you want to exclude
+            with settings button in top right.
+          </p>
+          <p className="blurb">
+            - Cards are removed from deck when marked as "Great".
+          </p>
+          <p className="blurb">
+            - Resetting the deck puts all "Great" cards back in and shuffles the
+            deck
+          </p>
+          <p className="blurb">
+            - Marking a card as bad puts a duplicate of it in the deck so you
+            have to mark it as great twice.
+          </p>
+          <button className="close-banner" onClick={closeBanner}>
+            X Close Popup
+          </button>
+        </div>
+      )}
+
       <div className="progress">{deck.length} cards remaining</div>
       <div
         className={`flashcard ${isFlipped ? "flipped" : ""}`}
@@ -170,7 +205,7 @@ const Flashcards = () => {
                 onChange={handleUnitSelection}
                 checked={selectedUnits.includes(unit)}
               />
-                Unit {unit}
+              Unit {unit}
             </label>
           ))}
         </div>
