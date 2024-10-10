@@ -73,11 +73,11 @@ function CalendarPage() {
 
   const renderContent = () => {
     if (assignments.length === 0 && quizzes.length === 0) {
-      return <p>Nothing due today.</p>;
+      return <p className='details-section'>Nothing due today.</p>;
     }
 
     return (
-      <div>
+      <div className='details-section'>
         {renderAssignments()}
         {renderQuizzes()}
       </div>

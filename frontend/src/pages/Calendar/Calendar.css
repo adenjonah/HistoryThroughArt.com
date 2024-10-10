@@ -9,11 +9,12 @@
 .details-section {
     margin-top: 20px;
     padding: 10px;
-    border: 1px solid var(--text-color);
+    color: var(--accent-color);
     border-radius: 8px;
     padding-left: 30px;
     width: 100%;
     max-width: 600px;
+    background-color: var(--foreground-color);
 }
 
 .subhead {
@@ -25,7 +26,6 @@
 
 .details {
     text-align: left;
-    color: var(--text-color);
 }
 
 .details h3 {
@@ -36,9 +36,8 @@
 
 /* Style the calendar container */
 .react-calendar {
-    background-color: var(--background-color); /* Dark background from the site */
+    background-color: var(--foreground-color); /* Dark background from the site */
     color: var(--text-color); /* Text color matching the site's text */
-    border: 1px solid var(--accent-color); /* Accent color for the border */
     border-radius: 10px;
     padding: 20px;
     width: 100%;
@@ -47,14 +46,14 @@
   
   /* Tile (day button) styling */
   .react-calendar__tile {
-    background-color: var(--foreground-color); /* Foreground color for tiles */
+    background-color: var(--button-color); /* Foreground color for tiles */
     color: var(--button-text-color); /* Text color for tiles */
     transition: background-color 0.3s ease;
   }
   
   /* Hover effect for tiles */
   .react-calendar__tile:hover {
-    background-color: var(--button-color); /* Button color on hover */
+    background-color: var(--accent-color); /* Button color on hover */
     color: var(--button-text-color); /* Ensure text remains readable */
   }
   

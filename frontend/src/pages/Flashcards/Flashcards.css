@@ -1,0 +1,124 @@
+.flashcard-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Ensures the entire image fits without cropping */
+    border-radius: 20px;
+    padding: 10px; /* Optional padding for a cleaner look */
+}
+
+
+.flashcards-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 80px);
+    margin: 20px;
+}
+
+.progress {
+    background-color: var(--foreground-color);
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.flashcard {
+    width: 50%;
+    height: 60%;
+    perspective: 1000px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .flashcard {
+        width: 90%;
+        height: 50%;
+        margin-bottom: 10px;
+    }
+
+    .action-buttons button {
+        padding: 15px 30px;
+        font-size: 18px;
+    }
+}
+
+.flashcard-inner {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background-color: var(--foreground-color);
+    border-radius: 10px;
+    text-align: center;
+}
+
+.flashcard-back {
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    font-size: 16px; /* Adjust size as necessary */
+}
+
+.flashcard-title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px; /* Space between the title and other info */
+}
+
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.action-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.bad-button {
+    background-color: #ff6b6b;
+}
+
+.good-button {
+    background-color: #ffcc00;
+}
+
+.great-button {
+    background-color: #4caf50;
+}
+
+.reset-button {
+    background-color: var(--button-color);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

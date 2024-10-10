@@ -49,6 +49,9 @@ function NavBar({ menuOpened, setMenuOpened }) {
                 <a href="/artgallery" className="w3-bar-item w3-button">
                     <i className="fas fa-palette"></i> Art Gallery
                 </a>
+                <a href="/flashcards" className="w3-bar-item w3-button">
+                    <i className="fas fa-clipboard-list"></i> Flashcards
+                </a>
                 <a href="/map" className="w3-bar-item w3-button">
                     <i className="fas fa-map"></i> Map
                 </a>
