@@ -106,7 +106,7 @@ const Flashcards = () => {
       {/* Popup banner */}
       {showBanner && (
         <div className="popup-banner">
-          <p className="blurb">New Flashcards Page!</p>
+          <strong className="blurb">New Flashcards Page!</strong>
           <p className="blurb">
             - Select units you want to practice and cards you want to exclude
             with settings button in top right.
@@ -119,11 +119,11 @@ const Flashcards = () => {
             deck
           </p>
           <p className="blurb">
-            - Marking a card as bad puts a duplicate of it in the deck so you
-            have to mark it as great twice.
+            - Marking a card as "Bad" puts a duplicate of it in the deck so you
+            have to mark it as "Great" twice.
           </p>
           <button className="close-banner" onClick={closeBanner}>
-            X Close Popup
+            <i className="fas fa-times-circle"></i> Close Popup
           </button>
         </div>
       )}
