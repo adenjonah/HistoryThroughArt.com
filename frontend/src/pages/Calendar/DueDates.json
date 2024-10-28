@@ -71,14 +71,40 @@
       { "id": "72", "dueDate": "2024-10-30" },
       { "id": "73", "dueDate": "2024-10-31" },
       { "id": "74", "dueDate": "2024-10-31" },
-      { "id": "75", "dueDate": "2024-11-01" }
+      { "id": "75", "dueDate": "2024-11-01" },
+      {"id":  "197", "dueDate":  "2024-12-02"},
+      {"id":  "207", "dueDate":  "2024-12-02"},
+      {"id":  "Buddhism Due", "dueDate":  "2024-12-02"},
+      {"id":  "193", "dueDate":  "2024-12-04"},
+      {"id":  "194", "dueDate":  "2024-12-04"},
+      {"id":  "201", "dueDate":  "2024-12-05"},
+      {"id":  "204", "dueDate":  "2024-12-05"},
+      {"id":  "206", "dueDate":  "2024-12-06"},
+      {"id":  "212", "dueDate":  "2024-12-06"},
+      {"id":  "196", "dueDate":  "2024-12-09"},
+      {"id":  "205", "dueDate":  "2024-12-09"},
+      {"id":  "203", "dueDate":  "2024-12-10"},
+      {"id":  "210", "dueDate":  "2024-12-10"},
+      {"id":  "211", "dueDate":  "2024-12-11"},
+      {"id":  "74", "dueDate":  "2024-12-13"},
+      {"id":  "77", "dueDate":  "2024-12-13"},
+      {"id":  "79", "dueDate":  "2024-12-16"},
+      {"id":  "83", "dueDate":  "2024-12-16"},
+      {"id":  "82", "dueDate":  "2024-12-17"},
+      {"id":  "85", "dueDate":  "2024-12-17"},
+      {"id":  "86", "dueDate":  "2024-12-20"},
+      {"id":  "87", "dueDate":  "2024-12-20"}
     ],
     "quizzes": [
       { "title": "Quiz on Prehistory", "dueDate": "2024-09-11" },
       { "title": "Quiz on Mesopotamia", "dueDate": "2024-09-17" },
       { "title": "Quiz on Egypt", "dueDate": "2024-09-24" },
       { "title": "Roman Quiz", "dueDate": "2024-10-14" },
-      { "title": "Medieval Europe Quiz", "dueDate": "2024-10-25" }
+      { "title": "Medieval Europe Quiz", "dueDate": "2024-10-25" },
+      { "title": "Hinduism and Buddhism Quiz", "dueDate": "2024-12-03" },
+      { "title": "S, SE, E Asian Art Quiz", "dueDate": "2024-12-12" },
+      { "title": "Northern Renaissance Quiz", "dueDate": "2024-12-18" }
+
 
     ]
   }
