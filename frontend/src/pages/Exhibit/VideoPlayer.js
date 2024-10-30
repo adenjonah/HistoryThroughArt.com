@@ -159,7 +159,7 @@ function VideoPlayer({ id }) {
                                     const isActive = index === getActiveTranscriptIndex();
                                     return (
                                         <div key={index} className={`transcript-entry ${isActive ? 'active' : ''}`}>
-                                            <button className="youtube-marker" onClick={() => handleTranscriptClick(entry.start)}>
+                                            <button className={`youtube-marker ${isActive ? `w3-yellow` : ``}`} onClick={() => handleTranscriptClick(entry.start)}>
                                                 {ConvertToMins(entry.start)} - {entry.text}
                                             </button>
                                             <br />
