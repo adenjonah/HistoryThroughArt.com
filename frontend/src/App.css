@@ -1,13 +1,14 @@
 :root {
-  --background-color: #210B2C;
-  --accent-color: #55286F;
-  --foreground-color: #BC96E6;
-  --text-color: #D8B4E2;
-  --button-color: #AE759F;
-  --button-text-color: #55286F;
+  --background-color: #210b2c;
+  --accent-color: #55286f;
+  --foreground-color: #bc96e6;
+  --text-color: #d8b4e2;
+  --button-color: #ae759f;
+  --button-text-color: #55286f;
 }
 
-body, html {
+body,
+html {
   background-color: var(--background-color);
   height: 100%;
   width: 100%;
@@ -32,7 +33,7 @@ body {
   color: var(--text-color);
 }
 
-.pagecontainer{
+.pagecontainer {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -45,7 +46,7 @@ body {
 
 .button {
   color: var(--background-color);
-  background: var(--button-color)
+  background: var(--button-color);
 }
 
 @media (min-width: 992px) {
@@ -87,11 +88,9 @@ body {
 /* For mobile devices */
 @media (max-width: 992px) {
   .feedback-button {
-    width: 50px;  /* Make the button a square */
+    width: 50px; /* Make the button a square */
     height: 50px; /* Same height and width for a square shape */
-    padding: 0;   /* Remove padding */
+    padding: 0; /* Remove padding */
     font-size: 18px;
   }
 }
-
-

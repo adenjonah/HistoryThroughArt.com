@@ -1,149 +1,148 @@
 .title {
-    font-size: 3em;
-    margin-bottom: 10px;
-    color: var(--text-color); 
-    text-align: center; /* Center the title */
-    font-weight: 700; /* Make the title bolder */
+  font-size: 3em;
+  margin-bottom: 10px;
+  color: var(--text-color);
+  text-align: center; /* Center the title */
+  font-weight: 700; /* Make the title bolder */
 }
 
 .headshot-name {
-    font-size: xx-large;
+  font-size: xx-large;
 }
 
 .aboutblurb {
-    font-size: 1.2em;
-    margin-bottom: 30px; /* Increase spacing below paragraphs */
-    max-width: 40%;
-    margin-left: auto;
-    margin-right: auto; /* Center the text block */
-    line-height: 1.6; /* Improve readability */
-    color: var(--text-color); /* Ensure the text uses the defined text color */
+  font-size: 1.2em;
+  margin-bottom: 30px; /* Increase spacing below paragraphs */
+  max-width: 40%;
+  margin-left: auto;
+  margin-right: auto; /* Center the text block */
+  line-height: 1.6; /* Improve readability */
+  color: var(--text-color); /* Ensure the text uses the defined text color */
 }
 
 .caption {
-    color: var(--accent-color);
-    font-style: italic; /* Add a modern touch with italicized captions */
+  color: var(--accent-color);
+  font-style: italic; /* Add a modern touch with italicized captions */
 }
 
 .team-cards {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    max-width: 1200px; /* Increase max width for better spacing */
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px; /* Increase bottom margin for better spacing */
-    gap: 20px; /* Add space between cards */
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1200px; /* Increase max width for better spacing */
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px; /* Increase bottom margin for better spacing */
+  gap: 20px; /* Add space between cards */
 }
 
 .team-card {
-    background-color: var(--foreground-color);
-    padding: 20px;
-    border-radius: 12px; /* Slightly larger border radius for a more modern look */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slightly larger shadow for depth */
-    text-align: center;
-    width: 280px;
-    transition: transform 0.3s, box-shadow 0.3s; /* Add a transition effect */
+  background-color: var(--foreground-color);
+  padding: 20px;
+  border-radius: 12px; /* Slightly larger border radius for a more modern look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slightly larger shadow for depth */
+  text-align: center;
+  width: 280px;
+  transition: transform 0.3s, box-shadow 0.3s; /* Add a transition effect */
 }
 
 .team-card:hover {
-    transform: translateY(-10px); /* Lift the card on hover */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+  transform: translateY(-10px); /* Lift the card on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
 }
 
 .headshot {
-    height: 300px; /* Fixed height */
-    width: 220px; /* Fixed width to maintain consistent shapes */
-    object-fit: cover; /* Cover the space without stretching */
-    border-radius: 50%; /* Circular shape for uniformity */
-    margin-bottom: 15px; /* Add space between the image and the title */
+  height: 300px; /* Fixed height */
+  width: 220px; /* Fixed width to maintain consistent shapes */
+  object-fit: cover; /* Cover the space without stretching */
+  border-radius: 50%; /* Circular shape for uniformity */
+  margin-bottom: 15px; /* Add space between the image and the title */
 }
 
 .team-card h2 {
-    font-size: 1.6em;
-    margin-bottom: 10px;
-    color: var(--accent-color);
+  font-size: 1.6em;
+  margin-bottom: 10px;
+  color: var(--accent-color);
 }
 
 .github-link {
-    text-decoration: none; /* Remove underline from the link */
-    margin-bottom: 100px;
+  text-decoration: none; /* Remove underline from the link */
+  margin-bottom: 100px;
 }
 
 .github-button {
-    background-color: var(--button-color);
-    color: var(--text-color);
-    padding: 12px 24px;
-    border: none;
-    border-radius: 25px;
-    border-bottom: 100px;
-    cursor: pointer;
-    text-align: center;
-    font-size: 1.2em;
-    font-weight: 600;
-    text-decoration: none; /* Ensure no underline */
-    display: block;
-    max-width: 300px;
-    margin: 30px auto 0 auto; /* Center the button */
-    transition: background-color 0.3s, transform 0.3s;
+  background-color: var(--button-color);
+  color: var(--text-color);
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  border-bottom: 100px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: 600;
+  text-decoration: none; /* Ensure no underline */
+  display: block;
+  max-width: 300px;
+  margin: 30px auto 0 auto; /* Center the button */
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .github-button:hover {
-    background-color: #586069;
-    transform: translateY(-5px);
+  background-color: #586069;
+  transform: translateY(-5px);
 }
 
 /* Media Queries for Mobile Devices */
 @media (max-width: 768px) {
-    .aboutblurb {
-        font-size: 1em;
-        max-width: 90%; /* Increase max-width to fit mobile screens */
-    }
+  .aboutblurb {
+    font-size: 1em;
+    max-width: 90%; /* Increase max-width to fit mobile screens */
+  }
 
-    .team-cards {
-        flex-direction: column;
-        align-items: center;
-    }
+  .team-cards {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .team-card {
-        width: 90%; /* Adjust card width for mobile */
-        margin-bottom: 20px; /* Add space between cards */
-    }
+  .team-card {
+    width: 90%; /* Adjust card width for mobile */
+    margin-bottom: 20px; /* Add space between cards */
+  }
 
-    .headshot {
-        width: 100%;
-        height: auto;
-        max-width: 200px; /* Adjust headshot size for mobile */
-    }
+  .headshot {
+    width: 100%;
+    height: auto;
+    max-width: 200px; /* Adjust headshot size for mobile */
+  }
 
-    .title {
-        font-size: 2em;
-    }
+  .title {
+    font-size: 2em;
+  }
 
-    .github-button {
-        max-width: 80%;
-        font-size: 1em;
-    }
+  .github-button {
+    max-width: 80%;
+    font-size: 1em;
+  }
 
-    .about.video iframe {
-        width: 100%;
-        height: auto;
-    }
+  .about.video iframe {
+    width: 100%;
+    height: auto;
+  }
 }
 
 @media (max-width: 480px) {
-    .aboutblurb {
-        font-size: 0.9em;
-    }
+  .aboutblurb {
+    font-size: 0.9em;
+  }
 
-    .team-card h2 {
-        font-size: 2.4em;
-        color: var(--accent-color);
-    }
+  .team-card h2 {
+    font-size: 2.4em;
+    color: var(--accent-color);
+  }
 
-    .github-button {
-        padding: 10px 20px;
-        font-size: 0.9em;
-    }
+  .github-button {
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
 }
-
