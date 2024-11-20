@@ -1,22 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import artPiecesData from '../../Data/artworks.json'; // Import the JSON data
+import React, { useEffect, useRef, useState } from "react";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import artPiecesData from "../../Data/artworks.json"; // Import the JSON data
 
 // Your Mapbox access token
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
-const images = require.context('../../artImages', false, /\.webp$/);
+const images = require.context("../../artImages", false, /\.webp$/);
 
 const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-  const [mapType, setMapType] = useState('originated'); // Default to 'originated'
+  const [mapType, setMapType] = useState("originated"); // Default to 'originated'
   const [overlayData, setOverlayData] = useState([]);
 
   const handleMapToggle = () => {
     setMapType((prevType) => {
-      const newType = prevType === 'originated' ? 'currentlyDisplayed' : 'originated';
-      
+      const newType =
+        prevType === "originated" ? "currentlyDisplayed" : "originated";
+
       // Notify the parent component (MiniMap) of the mapType change
       if (onMapTypeChange) {
         onMapTypeChange(newType);
@@ -31,15 +32,17 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
       return images(`./${imageName}`);
     } catch (e) {
       console.error(`Cannot find image: ${imageName}`);
-      return '';
+      return "";
     }
   };
 
   useEffect(() => {
     // Extract locations and relevant data from the JSON file
-    if (mapType === 'originated') {
-      const filteredData = artPiecesData.filter(piece => piece.originatedLatitude && piece.originatedLongitude);
-      const overlayData = filteredData.map(piece => ({
+    if (mapType === "originated") {
+      const filteredData = artPiecesData.filter(
+        (piece) => piece.originatedLatitude && piece.originatedLongitude
+      );
+      const overlayData = filteredData.map((piece) => ({
         id: piece.id,
         name: piece.name,
         location: piece.location,
@@ -49,8 +52,10 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
       }));
       setOverlayData(overlayData);
     } else {
-      const filteredData = artPiecesData.filter(piece => piece.displayedLatitude && piece.displayedLongitude);
-      const overlayData = filteredData.map(piece => ({
+      const filteredData = artPiecesData.filter(
+        (piece) => piece.displayedLatitude && piece.displayedLongitude
+      );
+      const overlayData = filteredData.map((piece) => ({
         id: piece.id,
         name: piece.name,
         location: piece.displayedLocation,
@@ -66,26 +71,26 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
     // Determine default zoom based on device type
     const isMobile = window.innerWidth <= 768;
     const defaultZoom = isMobile ? 1 : 4;
-    
+
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: style || 'mapbox://styles/mapbox/satellite-streets-v12',
+      style: style || "mapbox://styles/mapbox/satellite-streets-v12",
       center: center || [-117.420015, 47.673373],
       zoom: zoom !== undefined ? zoom : defaultZoom, // Use prop zoom if provided, otherwise default
     });
 
     mapRef.current = map;
 
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
-    map.on('load', () => {
+    map.on("load", () => {
       if (overlayData && overlayData.length > 0) {
         const geojsonData = {
-          type: 'FeatureCollection',
+          type: "FeatureCollection",
           features: overlayData.map((overlay) => ({
-            type: 'Feature',
+            type: "Feature",
             geometry: {
-              type: 'Point',
+              type: "Point",
               coordinates: [overlay.longitude, overlay.latitude],
             },
             properties: {
@@ -97,8 +102,8 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
           })),
         };
 
-        map.addSource('points', {
-          type: 'geojson',
+        map.addSource("points", {
+          type: "geojson",
           data: geojsonData,
           cluster: true,
           clusterMaxZoom: 14,
@@ -106,25 +111,25 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
         });
 
         map.addLayer({
-          id: 'clusters',
-          type: 'circle',
-          source: 'points',
-          filter: ['has', 'point_count'],
+          id: "clusters",
+          type: "circle",
+          source: "points",
+          filter: ["has", "point_count"],
           paint: {
-            'circle-color': [
-              'step',
-              ['get', 'point_count'],
-              '#ff9999', // Lightest red for 1-4 points
+            "circle-color": [
+              "step",
+              ["get", "point_count"],
+              "#ff9999", // Lightest red for 1-4 points
               5,
-              '#ff6666', // Slightly darker red for 5-9 points
+              "#ff6666", // Slightly darker red for 5-9 points
               10,
-              '#ff3333', // Darker red for 10-15 points
+              "#ff3333", // Darker red for 10-15 points
               15,
-              '#cc0000', // Darkest red for 16+ points
+              "#cc0000", // Darkest red for 16+ points
             ],
-            'circle-radius': [
-              'step',
-              ['get', 'point_count'],
+            "circle-radius": [
+              "step",
+              ["get", "point_count"],
               10, // Small clusters (1-4 points)
               5,
               15, // Medium clusters (5-9 points)
@@ -133,56 +138,58 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
               25,
               25, // Largest clusters (16+ points)
             ],
-            'circle-stroke-color': '#000000', // Black border for all clusters
-            'circle-stroke-width': 2,
+            "circle-stroke-color": "#000000", // Black border for all clusters
+            "circle-stroke-width": 2,
           },
         });
 
         map.addLayer({
-          id: 'cluster-count',
-          type: 'symbol',
-          source: 'points',
-          filter: ['has', 'point_count'],
+          id: "cluster-count",
+          type: "symbol",
+          source: "points",
+          filter: ["has", "point_count"],
           layout: {
-            'text-field': ['get', 'point_count_abbreviated'],
-            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-            'text-size': 14,
+            "text-field": ["get", "point_count_abbreviated"],
+            "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+            "text-size": 14,
           },
           paint: {
-            'text-color': '#ffffff',
+            "text-color": "#ffffff",
           },
         });
 
         map.addLayer({
-          id: 'unclustered-point',
-          type: 'circle',
-          source: 'points',
-          filter: ['!', ['has', 'point_count']],
+          id: "unclustered-point",
+          type: "circle",
+          source: "points",
+          filter: ["!", ["has", "point_count"]],
           paint: {
-            'circle-color': '#ff0000', // Bright red for individual points
-            'circle-radius': 5, // Half the original size
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#000000', // Black border for individual points
+            "circle-color": "#ff0000", // Bright red for individual points
+            "circle-radius": 5, // Half the original size
+            "circle-stroke-width": 2,
+            "circle-stroke-color": "#000000", // Black border for individual points
           },
         });
 
-        map.on('click', 'clusters', (e) => {
+        map.on("click", "clusters", (e) => {
           const features = map.queryRenderedFeatures(e.point, {
-            layers: ['clusters'],
+            layers: ["clusters"],
           });
           const clusterId = features[0].properties.cluster_id;
-          map.getSource('points').getClusterExpansionZoom(clusterId, (err, zoom) => {
-            if (err) return;
+          map
+            .getSource("points")
+            .getClusterExpansionZoom(clusterId, (err, zoom) => {
+              if (err) return;
 
-            map.easeTo({
-              center: features[0].geometry.coordinates,
-              zoom: zoom,
+              map.easeTo({
+                center: features[0].geometry.coordinates,
+                zoom: zoom,
+              });
             });
-          });
         });
 
-        map.on('mouseenter', 'unclustered-point', (e) => {
-          map.getCanvas().style.cursor = 'pointer';
+        map.on("mouseenter", "unclustered-point", (e) => {
+          map.getCanvas().style.cursor = "pointer";
 
           const coordinates = e.features[0].geometry.coordinates.slice();
           const { id, name, location, imageUrl } = e.features[0].properties;
@@ -205,25 +212,25 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
             .addTo(map);
         });
 
-        map.on('mouseleave', 'unclustered-point', () => {
-          map.getCanvas().style.cursor = '';
-          const popups = document.getElementsByClassName('mapboxgl-popup');
+        map.on("mouseleave", "unclustered-point", () => {
+          map.getCanvas().style.cursor = "";
+          const popups = document.getElementsByClassName("mapboxgl-popup");
           if (popups.length) {
             popups[0].remove();
           }
         });
 
-        map.on('click', 'unclustered-point', (e) => {
+        map.on("click", "unclustered-point", (e) => {
           const { id } = e.features[0].properties;
           window.location.href = `/exhibit?id=${id}&mapType=${mapType}`;
         });
 
-        map.on('mouseenter', 'clusters', () => {
-          map.getCanvas().style.cursor = 'pointer';
+        map.on("mouseenter", "clusters", () => {
+          map.getCanvas().style.cursor = "pointer";
         });
 
-        map.on('mouseleave', 'clusters', () => {
-          map.getCanvas().style.cursor = '';
+        map.on("mouseleave", "clusters", () => {
+          map.getCanvas().style.cursor = "";
         });
       }
     });
@@ -232,24 +239,34 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
   }, [center, zoom, style, overlayData, mapType]);
 
   return (
-    <div ref={mapContainerRef} style={{ width: size?.width || '100%', height: size?.height || '500px', position: 'relative', borderRadius: "20px"}}>
+    <div
+      ref={mapContainerRef}
+      style={{
+        width: size?.width || "100%",
+        height: size?.height || "500px",
+        position: "relative",
+        borderRadius: "20px",
+      }}
+    >
       {/* Toggle Button */}
       <button
         onClick={handleMapToggle}
         style={{
-          position: 'absolute',
-          top: '10px',
-          left: '10px',
-          padding: '10px',
-          backgroundColor: 'var(--button-color)',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
+          position: "absolute",
+          top: "10px",
+          left: "10px",
+          padding: "10px",
+          backgroundColor: "var(--button-color)",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
           zIndex: 1,
         }}
       >
-        {mapType === 'originated' ? 'Switch To Displayed Locations' : 'Switch To Originated Locations'}
+        {mapType === "originated"
+          ? "Switch To Displayed Locations"
+          : "Switch To Originated Locations"}
       </button>
     </div>
   );

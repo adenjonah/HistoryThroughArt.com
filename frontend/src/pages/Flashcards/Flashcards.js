@@ -97,15 +97,15 @@ const Flashcards = () => {
   }
 
   const toBCE = (date) => {
-    date = date.split('/');
-    if(date.length === 2) {
-        date[0] = date[0].startsWith('-') ? (date[0].slice(1) + ' BCE') : date[0];
-        date[1] = date[1].startsWith('-') ? (date[1].slice(1) + ' BCE') : date[1];
-        return date.join(' - ');
+    date = date.split("/");
+    if (date.length === 2) {
+      date[0] = date[0].startsWith("-") ? date[0].slice(1) + " BCE" : date[0];
+      date[1] = date[1].startsWith("-") ? date[1].slice(1) + " BCE" : date[1];
+      return date.join(" - ");
     }
 
-    return date[0].startsWith('-') ? (date.slice(1) + ' BCE') : date;
-  }
+    return date[0].startsWith("-") ? date.slice(1) + " BCE" : date;
+  };
 
   return (
     <div className="flashcards-container">

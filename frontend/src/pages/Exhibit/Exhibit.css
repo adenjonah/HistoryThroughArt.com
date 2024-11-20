@@ -1,65 +1,65 @@
 .image-container {
-    position: relative;
-    width: 100%;
-    max-width: 500px;
-    margin: auto;
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
 }
 
 .image-wrapper {
-    position: relative;
-    width: 100%;
-    padding-bottom: 90%;
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding-bottom: 90%;
+  overflow: hidden;
 }
 
 .image-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .image {
-    object-fit: contain;
-    height: 100%;
+  object-fit: contain;
+  height: 100%;
 }
 
 .selection-buttons-wrapper {
-    position: relative;
-    width: 100%;
-    padding-top: 50px;
+  position: relative;
+  width: 100%;
+  padding-top: 50px;
 }
 
 .selection-buttons {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .grid-lines {
-    border: 1px solid red; /* Change color as needed */
+  border: 1px solid red; /* Change color as needed */
 }
 
 .video-player {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .video-player-wrapper {
-    padding-bottom: 56.25%;
-    position: relative;
-    height: 0;
+  padding-bottom: 56.25%;
+  position: relative;
+  height: 0;
 }
 
 .minimap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

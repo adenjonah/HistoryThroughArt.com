@@ -1,19 +1,19 @@
 .contentBox {
-    width: 70%; /* Adjust width as needed */
-    margin: 0 auto; /* Center horizontally */
+  width: 70%; /* Adjust width as needed */
+  margin: 0 auto; /* Center horizontally */
 }
 
 .w3-card.ArtCard {
-    cursor: pointer;
-    background-color: var(--foreground-color);
+  cursor: pointer;
+  background-color: var(--foreground-color);
 }
 
 .w3-card.ControlBar {
-    background-color: var(--foreground-color);
+  background-color: var(--foreground-color);
 }
 
 @media (max-width: 767px) {
-    .contentBox {
-        width: 90%; /* Adjust width as needed */
-    }
+  .contentBox {
+    width: 90%; /* Adjust width as needed */
+  }
 }

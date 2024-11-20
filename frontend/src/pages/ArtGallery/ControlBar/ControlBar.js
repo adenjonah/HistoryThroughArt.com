@@ -1,61 +1,67 @@
-import React, { useState } from 'react';
-import SearchComponent from './SearchComponent';
-import ActiveFiltersComponent from './ActiveFiltersComponent';
+import React, { useState } from "react";
+import SearchComponent from "./SearchComponent";
+import ActiveFiltersComponent from "./ActiveFiltersComponent";
 import "./ControlBar.css";
 
 function ControlBar({
-    search,
-    setSearch,
-    layout,
-    setLayout,
-    setSort,
-    sort,
-    unitFilters,
-    setUnitFilters,
-    searchBy,
-    setSearchBy
+  search,
+  setSearch,
+  layout,
+  setLayout,
+  setSort,
+  sort,
+  unitFilters,
+  setUnitFilters,
+  searchBy,
+  setSearchBy,
 }) {
-    const [clearFilters, setClearFilters] = useState(true);
+  const [clearFilters, setClearFilters] = useState(true);
 
-    const handleClearFilters = () => {
-        setUnitFilters({
-            unit1: false, unit2: false, unit3: false, unit4: false,
-            unit5: false, unit6: false, unit7: false, unit8: false
-        });
-        setSort('ID Ascending');
-        setSearch('');
-        setClearFilters(true);
-    };
+  const handleClearFilters = () => {
+    setUnitFilters({
+      unit1: false,
+      unit2: false,
+      unit3: false,
+      unit4: false,
+      unit5: false,
+      unit6: false,
+      unit7: false,
+      unit8: false,
+    });
+    setSort("ID Ascending");
+    setSearch("");
+    setClearFilters(true);
+  };
 
-    // const toggleLayout = () => {
-    //     setLayout(prevLayout => prevLayout === 'column' ? 'table' : 'column');
-    // };
+  // const toggleLayout = () => {
+  //     setLayout(prevLayout => prevLayout === 'column' ? 'table' : 'column');
+  // };
 
-    // Check if any filters are active
-    const areFiltersActive = Object.values(unitFilters).some(filter => filter);
+  // Check if any filters are active
+  const areFiltersActive = Object.values(unitFilters).some((filter) => filter);
 
-    return (
-        <div className="w3-card-4 w3-padding w3-center control-bar-container">
-            <SearchComponent
-                search={search}
-                setSearch={setSearch}
-                setClearFilters={setClearFilters}
-                unitFilters={unitFilters}
-                setUnitFilters={setUnitFilters}
-                sort={sort}
-                setSort={setSort}
-                searchBy={searchBy}
-                setSearchBy={setSearchBy}
-            />
-            {areFiltersActive && (
-                <ActiveFiltersComponent
-                    unitFilters={unitFilters}
-                    handleClearFilters={handleClearFilters}
-                    clearFilters={clearFilters}
-                />
-            )}
-        </div>
-    );
+  return (
+    <div className="w3-card-4 w3-padding w3-center control-bar-container">
+      <SearchComponent
+        search={search}
+        setSearch={setSearch}
+        setClearFilters={setClearFilters}
+        unitFilters={unitFilters}
+        setUnitFilters={setUnitFilters}
+        sort={sort}
+        setSort={setSort}
+        searchBy={searchBy}
+        setSearchBy={setSearchBy}
+      />
+      {areFiltersActive && (
+        <ActiveFiltersComponent
+          unitFilters={unitFilters}
+          handleClearFilters={handleClearFilters}
+          clearFilters={clearFilters}
+        />
+      )}
+    </div>
+  );
 }
 
 export default ControlBar;

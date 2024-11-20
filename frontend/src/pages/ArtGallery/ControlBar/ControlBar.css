@@ -1,135 +1,135 @@
 /* Adjusted Styles */
 .control-bar-container {
-    background-color: var(--foreground-color);
-    border-radius: 10px;
-    margin: 30px;
-    width: 100%; /* Make control bar wider */
-    max-width: 1200px; /* Set a maximum width for larger screens */
-    margin-left: auto;
-    margin-right: auto; /* Center the control bar */
+  background-color: var(--foreground-color);
+  border-radius: 10px;
+  margin: 30px;
+  width: 100%; /* Make control bar wider */
+  max-width: 1200px; /* Set a maximum width for larger screens */
+  margin-left: auto;
+  margin-right: auto; /* Center the control bar */
 }
 
 .control-bar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
 }
 
 .sort-select-container,
 .filter-button-container,
 .toggle-layout-container {
-    margin: 0 10px;
+  margin: 0 10px;
 }
 
 .control-bar-item {
-    padding: 6px 10px; /* Reduced padding */
-    border-radius: 5px;
-    border: 1px solid #ced4da;
-    background-color: #ffffff;
-    cursor: pointer;
-    font-size: 14px; /* Made text smaller */
+  padding: 6px 10px; /* Reduced padding */
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  background-color: #ffffff;
+  cursor: pointer;
+  font-size: 14px; /* Made text smaller */
 }
 
 .active-filters {
-    margin: 10px;
-    width: 95%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    font-size: 12px; /* Made text smaller */
-    color: #333;
+  margin: 10px;
+  width: 95%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 12px; /* Made text smaller */
+  color: #333;
 }
 
 .bottom-filter-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .clear-filter-button {
-    height: 28px;
-    width: 130px;
-    font-size: 10px; /* Made text significantly smaller */
-    padding: 4px 8px; /* Adjusted padding */
+  height: 28px;
+  width: 130px;
+  font-size: 10px; /* Made text significantly smaller */
+  padding: 4px 8px; /* Adjusted padding */
 }
 
 .filter-tag {
-    background-color: #e9ecef;
-    color: #495057;
-    padding: 4px 8px; /* Reduced padding */
-    border-radius: 3px;
-    margin-left: 5px;
-    font-size: 10px; /* Made text smaller */
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 4px 8px; /* Reduced padding */
+  border-radius: 3px;
+  margin-left: 5px;
+  font-size: 10px; /* Made text smaller */
 }
 
 /* Media Queries for Mobile Devices */
 @media (max-width: 768px) {
-    .control-bar-container {
-        margin: 20px;
-        width: 95%; /* Adjusted width for mobile */
-    }
+  .control-bar-container {
+    margin: 20px;
+    width: 95%; /* Adjusted width for mobile */
+  }
 
-    .control-bar {
-        flex-direction: column;
-        align-items: stretch;
-    }
+  .control-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
-    .sort-select-container,
-    .filter-button-container,
-    .toggle-layout-container {
-        margin: 10px 0;
-    }
+  .sort-select-container,
+  .filter-button-container,
+  .toggle-layout-container {
+    margin: 10px 0;
+  }
 
-    .control-bar-item {
-        width: 100%;
-        margin-bottom: 8px;
-        font-size: 12px; /* Further reduced font size */
-    }
+  .control-bar-item {
+    width: 100%;
+    margin-bottom: 8px;
+    font-size: 12px; /* Further reduced font size */
+  }
 
-    .active-filters {
-        flex-direction: column;
-        align-items: flex-start;
-        font-size: 11px; /* Smaller text */
-    }
+  .active-filters {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 11px; /* Smaller text */
+  }
 
-    .filter-tag {
-        margin: 5px 5px 0 0;
-        font-size: 9px; /* Smaller text */
-        padding: 3px 6px; /* Adjusted padding */
-    }
+  .filter-tag {
+    margin: 5px 5px 0 0;
+    font-size: 9px; /* Smaller text */
+    padding: 3px 6px; /* Adjusted padding */
+  }
 
-    .clear-filter-button {
-        width: 100%;
-        margin-top: 10px;
-        font-size: 9px; /* Significantly smaller text */
-        height: 26px; /* Adjusted height */
-    }
+  .clear-filter-button {
+    width: 100%;
+    margin-top: 10px;
+    font-size: 9px; /* Significantly smaller text */
+    height: 26px; /* Adjusted height */
+  }
 }
 
 @media (max-width: 480px) {
-    .control-bar-container {
-        margin: 10px;
-        width: 100%;
-    }
+  .control-bar-container {
+    margin: 10px;
+    width: 100%;
+  }
 
-    .control-bar-item {
-        padding: 4px 6px; /* Further reduced padding */
-        font-size: 11px; /* Smaller text */
-    }
+  .control-bar-item {
+    padding: 4px 6px; /* Further reduced padding */
+    font-size: 11px; /* Smaller text */
+  }
 
-    .active-filters {
-        font-size: 10px; /* Smaller text */
-    }
+  .active-filters {
+    font-size: 10px; /* Smaller text */
+  }
 
-    .filter-tag {
-        font-size: 8px; /* Smaller text */
-        padding: 2px 4px; /* Reduced padding */
-    }
+  .filter-tag {
+    font-size: 8px; /* Smaller text */
+    padding: 2px 4px; /* Reduced padding */
+  }
 
-    .clear-filter-button {
-        height: 40px;
-        font-size: 8px; /* Smallest text size */
-    }
+  .clear-filter-button {
+    height: 40px;
+    font-size: 8px; /* Smallest text size */
+  }
 }

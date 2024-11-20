@@ -1,102 +1,102 @@
 /* Existing styles */
 
 .catalog.column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .catalog.table {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Three columns */
-    gap: 20px; /* Spacing between grid items */
-    justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three columns */
+  gap: 20px; /* Spacing between grid items */
+  justify-content: center;
 }
 
 .ArtCard {
-    background-color: var(--foreground-color);
-    border-radius: 20px;
-    margin: 20px;
-    display: flex;
-    flex-direction: column; /* Vertical stacking */
-    height: 350px;
-    padding: 10px;
-    box-sizing: border-box;
-    align-items: center;
-    text-align: center;
-    overflow: hidden;
+  background-color: var(--foreground-color);
+  border-radius: 20px;
+  margin: 20px;
+  display: flex;
+  flex-direction: column; /* Vertical stacking */
+  height: 350px;
+  padding: 10px;
+  box-sizing: border-box;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
 }
 
 .spotlight-container {
-    width: 300px; /* Image container width */
-    max-height: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid var(--border-color);
-    border-radius: 8px; /* Rounded corners for image */
-    margin-bottom: 10px; /* Space below image */
+  width: 300px; /* Image container width */
+  max-height: 40%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid var(--border-color);
+  border-radius: 8px; /* Rounded corners for image */
+  margin-bottom: 10px; /* Space below image */
 }
 
 .spotlight-image {
-    width: 100%; /* Fill container width */
-    height: 100%; /* Fill container height */
-    object-fit: contain; /* Preserve aspect ratio */
-    border-radius: 4px; /* Match container's rounded corners */
+  width: 100%; /* Fill container width */
+  height: 100%; /* Fill container height */
+  object-fit: contain; /* Preserve aspect ratio */
+  border-radius: 4px; /* Match container's rounded corners */
 }
 
 .identifier {
-    width: 100%;
-    margin-top: 10px;
-    overflow: hidden; /* Hide overflow */
-    text-overflow: ellipsis; /* Ellipsis for overflow text */
-    white-space: nowrap; /* No wrapping */
-    box-sizing: border-box; /* Include padding and borders in width/height */
+  width: 100%;
+  margin-top: 10px;
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Ellipsis for overflow text */
+  white-space: nowrap; /* No wrapping */
+  box-sizing: border-box; /* Include padding and borders in width/height */
 }
 
 .catalog.table .identifier {
-    white-space: normal; /* Allow wrapping in grid layout */
-    text-overflow: clip; /* No ellipsis in grid layout */
+  white-space: normal; /* Allow wrapping in grid layout */
+  text-overflow: clip; /* No ellipsis in grid layout */
 }
 
 .text-heading {
-    font-size: 16px; /* Default font size for headings */
+  font-size: 16px; /* Default font size for headings */
 }
 
 .text-subheading {
-    font-size: 14px; /* Default font size for subheadings */
+  font-size: 14px; /* Default font size for subheadings */
 }
 
 /* Updated mobile device media queries */
 @media (max-width: 767px) {
-    .catalog.table {
-        grid-template-columns: 1fr; /* Single column layout */
-        gap: 10px; /* Adjust gap for smaller screens */
-        justify-content: center; /* Center the grid within its container */
-        justify-items: center; /* Center items within their grid cells */
-    }
+  .catalog.table {
+    grid-template-columns: 1fr; /* Single column layout */
+    gap: 10px; /* Adjust gap for smaller screens */
+    justify-content: center; /* Center the grid within its container */
+    justify-items: center; /* Center items within their grid cells */
+  }
 
-    .ArtCard {
-        width: 300px; /* Set art cards to 300px wide */
-        height: auto; /* Let height adjust based on content */
-        margin: 10px; /* Adjust margin */
-    }
+  .ArtCard {
+    width: 300px; /* Set art cards to 300px wide */
+    height: auto; /* Let height adjust based on content */
+    margin: 10px; /* Adjust margin */
+  }
 
-    .spotlight-container {
-        width: 100%; /* Make image container full width of ArtCard */
-    }
+  .spotlight-container {
+    width: 100%; /* Make image container full width of ArtCard */
+  }
 
-    .identifier {
-        white-space: normal; /* Allow text to wrap */
-        text-overflow: clip; /* No ellipsis on mobile */
-    }
+  .identifier {
+    white-space: normal; /* Allow text to wrap */
+    text-overflow: clip; /* No ellipsis on mobile */
+  }
 
-    .text-heading {
-        font-size: 14px; /* Adjust font size for mobile */
-    }
+  .text-heading {
+    font-size: 14px; /* Adjust font size for mobile */
+  }
 
-    .text-subheading {
-        font-size: 12px; /* Adjust font size for mobile */
-    }
+  .text-subheading {
+    font-size: 12px; /* Adjust font size for mobile */
+  }
 }
