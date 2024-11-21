@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./Flashcards.css";
-import artPiecesData from "../../Data/artworks.json"; // Import the JSON data
+import artPiecesData from "../../Data/artworks.json";
 
 const Flashcards = () => {
   const [currentCard, setCurrentCard] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [deck, setDeck] = useState([...artPiecesData]); // Use JSON data as the deck
-  const [excludedCardIds, setExcludedCardIds] = useState([]); // Cards to exclude
-  const [selectedUnits, setSelectedUnits] = useState([]); // Units to include
+  const [deck, setDeck] = useState([...artPiecesData]);
+  const [excludedCardIds, setExcludedCardIds] = useState([]);
+  const [selectedUnits, setSelectedUnits] = useState([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [showSettings, setShowSettings] = useState(false); // Toggle settings modal
+  const [showSettings, setShowSettings] = useState(false); 
 
-  // Shuffle flashcards based on unit and exclusions
   const shuffleDeck = useCallback(() => {
     const filteredDeck = artPiecesData.filter(
       (card) =>
@@ -22,45 +21,39 @@ const Flashcards = () => {
     setDeck(shuffledDeck);
     setCurrentCard(0);
     setIsFlipped(false);
-  }, [selectedUnits, excludedCardIds]); // Dependencies for shuffleDeck
+  }, [selectedUnits, excludedCardIds]);
 
   useEffect(() => {
-    shuffleDeck(); // Shuffle deck on component mount and when dependencies change
-  }, [shuffleDeck]); // Include shuffleDeck in the dependency array
+    shuffleDeck();
+  }, [shuffleDeck]);
 
   const handleFlip = () => {
     if (!isTransitioning) {
-      setIsFlipped(!isFlipped); // Flip the card to show the back
+      setIsFlipped(!isFlipped);
     }
   };
 
   const handleAction = (action) => {
     if (isTransitioning) return;
 
-    setIsTransitioning(true); // Block interaction during transition
+    setIsTransitioning(true);
 
     setTimeout(() => {
       let updatedDeck = [...deck];
 
       if (action === "great") {
-        // Remove the card if marked as "Great"
         updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
       } else if (action === "bad") {
-        // Add a duplicate of the current card to the deck if marked as "Bad"
         updatedDeck.push(deck[currentCard]);
         shuffleDeck();
       }
-
-      // Move to the next card or reset to 0 if necessary
       setCurrentCard((prev) => (prev + 1) % updatedDeck.length);
 
-      // Shuffle the updated deck to randomly place the duplicate
       setDeck(updatedDeck.sort(() => Math.random() - 0.5));
 
-      // Ensure the new card starts with the front side facing up
       setIsFlipped(false);
       setIsTransitioning(false);
-    }, 300); // Adjust delay as needed for smooth transitions
+    }, 300);
   };
 
   const resetDeck = () => {
@@ -113,19 +106,17 @@ const Flashcards = () => {
       <div className="progress">{deck.length} cards remaining</div>
       <div
         className={`flashcard ${isFlipped ? "flipped" : ""}`}
-        onClick={!isTransitioning ? handleFlip : null} // Allow flip on click
+        onClick={!isTransitioning ? handleFlip : null}
       >
         <div className="flashcard-inner">
-          {/* Front: Show the spotlight image */}
           <div className="flashcard-front">
             <img
-              src={require(`../../artImages/${deck[currentCard].image[0]}`)} // Use image path from JSON
+              src={require(`../../artImages/${deck[currentCard].image[0]}`)}
               alt={deck[currentCard].name}
               className="flashcard-image"
             />
           </div>
 
-          {/* Back: Show name and identifiers */}
           <div className="flashcard-back">
             {isFlipped && (
               <>
@@ -169,12 +160,10 @@ const Flashcards = () => {
         Reset Deck
       </button>
 
-      {/* Settings Button */}
       <button className="settings-button" onClick={toggleSettings}>
         <i className="fas fa-cog"></i> Settings
       </button>
 
-      {/* Sliding Settings Modal */}
       <div className={`settings-modal ${showSettings ? "show" : ""}`}>
         <h3>Settings</h3>
         <div className="unit-selection">

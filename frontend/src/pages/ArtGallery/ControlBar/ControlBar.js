@@ -32,12 +32,7 @@ function ControlBar({
     setSearch("");
     setClearFilters(true);
   };
-
-  // const toggleLayout = () => {
-  //     setLayout(prevLayout => prevLayout === 'column' ? 'table' : 'column');
-  // };
-
-  // Check if any filters are active
+  
   const areFiltersActive = Object.values(unitFilters).some((filter) => filter);
 
   return (

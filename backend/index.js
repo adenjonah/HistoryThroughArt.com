@@ -23,20 +23,9 @@ app.get('/museum', (req, res) => {
             console.error('Error reading file:', err);
         } else {
 
-            //Parse the json data and then send it to frontend
             res.json(JSON.parse(data));
         }
     });
-
-  // db.fetchArtworks((err, rows) => {
-  //   if(err) {
-  //     res.status(500).send('Internal Server Error');
-  //   }
-  //   else {
-  //     res.json(rows);
-  //   }
-  // });
-
 });
 
 app.get('/museum-images', (req, res) => {

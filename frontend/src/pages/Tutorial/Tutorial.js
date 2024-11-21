@@ -1,6 +1,6 @@
 import React from "react";
-import "../Home/Home.css"; // Assuming the CSS file is shared
-import "./Tutorial.css"; // Create this CSS file if you want to style the page differently
+import "../Home/Home.css";
+import "./Tutorial.css";
 
 function Tutorial() {
   return (

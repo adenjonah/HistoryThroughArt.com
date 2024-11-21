@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import "./VideoPlayer.css"; // Make sure to create and import this CSS file
-import artPiecesData from "../../Data/artworks.json"; // Import the JSON data
+import "./VideoPlayer.css";
+import artPiecesData from "../../Data/artworks.json";
 
 function VideoPlayer({ id }) {
   const [artVideos, setArtVideos] = useState([]);
@@ -13,13 +13,11 @@ function VideoPlayer({ id }) {
   const intervalRef = useRef(null);
 
   useEffect(() => {
-    // Load the YouTube Iframe API script
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName("script")[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    // This function will be called by the YouTube API when it's ready
     window.onYouTubeIframeAPIReady = () => {
       playerRef.current = new window.YT.Player(iframeRef.current, {
         events: {
@@ -29,7 +27,6 @@ function VideoPlayer({ id }) {
       });
     };
 
-    // Clean up the YouTube API script when the component unmounts
     return () => {
       if (playerRef.current) {
         playerRef.current.destroy();
@@ -39,7 +36,6 @@ function VideoPlayer({ id }) {
   }, [selectedVideo]);
 
   const onPlayerReady = () => {
-    // Start updating the current time every 500 milliseconds
     intervalRef.current = setInterval(() => {
       if (playerRef.current && playerRef.current.getCurrentTime) {
         setCurrentTime(playerRef.current.getCurrentTime());
@@ -48,11 +44,9 @@ function VideoPlayer({ id }) {
   };
 
   const onPlayerStateChange = (event) => {
-    // You can handle different player states if needed
   };
 
   useEffect(() => {
-    // Find the relevant art piece by ID and extract its videos and transcripts
     const foundArtPiece = artPiecesData.find(
       (piece) => piece.id.toString() === id
     );
@@ -101,7 +95,6 @@ function VideoPlayer({ id }) {
     return `${minutes}:${seconds < 10 ? "0" : ""}${Math.floor(seconds)}`;
   };
 
-  // Memoize getActiveTranscriptIndex using useCallback
   const getActiveTranscriptIndex = useCallback(() => {
     const transcript = artVideos[selectedVideo]?.transcript || [];
     for (let i = 0; i < transcript.length; i++) {
@@ -115,7 +108,6 @@ function VideoPlayer({ id }) {
     return -1;
   }, [artVideos, selectedVideo, currentTime]);
 
-  // Scroll the active transcript line into view
   useEffect(() => {
     if (visibleTranscript && transcriptRef.current) {
       const activeIndex = getActiveTranscriptIndex();
@@ -134,7 +126,6 @@ function VideoPlayer({ id }) {
     <div className="w3-container">
       {artVideos.length > 0 && (
         <div className="w3-row">
-          {/* Video Player Column */}
           <div
             className={`w3-col s12 ${
               visibleTranscript ? "m9 l9" : "m12 l12"
@@ -152,7 +143,6 @@ function VideoPlayer({ id }) {
             </div>
           </div>
 
-          {/* Transcript Column */}
           {visibleTranscript && (
             <div className={`w3-col s12 m3 l3 w3-padding`}>
               <div className="w3-center">
@@ -194,7 +184,6 @@ function VideoPlayer({ id }) {
             </div>
           )}
 
-          {/* Show Transcript Button when Transcript is Hidden */}
           {!visibleTranscript && (
             <div className="w3-col s12 w3-center w3-padding">
               <button

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import VideoPlayer from "./VideoPlayer";
 import PhotoGallery from "./PhotoGallery";
 import MiniMap from "./MiniMap";
-import artPiecesData from "../../Data/artworks.json"; // Import the JSON data
+import artPiecesData from "../../Data/artworks.json";
 
 function Exhibit() {
-  const [artPiece, setArtPiece] = useState(null); // Initialize as null to handle loading state
+  const [artPiece, setArtPiece] = useState(null);
 
-  // Gets the parameter in the search query
   const urlParam = new URLSearchParams(window.location.search);
   const exhibitID = urlParam.get("id");
 
@@ -16,14 +15,12 @@ function Exhibit() {
   );
 
   useEffect(() => {
-    // Find the art piece by ID within the JSON data
     const foundArtPiece = artPiecesData.find(
       (piece) => piece.id.toString() === exhibitID
     );
     setArtPiece(foundArtPiece);
   }, [exhibitID]);
 
-  //Formats the date to either BCE or CE
   const formatDate = (date) => {
     let dateParts = date.split("/");
 
@@ -43,7 +40,6 @@ function Exhibit() {
     return dateParts;
   };
 
-  // Displays loading if not loaded yet
   if (!artPiece) {
     return (
       <div className="w3-container w3-center">

@@ -25,9 +25,7 @@ function Catalog({
       return "";
     }
   };
-  // Load the artworks data from the JSON file
   useEffect(() => {
-    //Loads all images and puts them into an array
     const preloadImages = () => {
       const image = artPiecesData.map((item) => {
         const img = new Image();
@@ -46,17 +44,10 @@ function Catalog({
     return date.replace(/[bce]/gi, "").trim();
   };
   const extractYear = (dateString) => {
-    //Get the first date in the range and return it as an int
-    return parseInt(
-      dateString
-        .split("/")[0]
-        .split("~")[0] // Remove everything after '~'
-        .trim()
-    );
+    return parseInt(dateString.split("/")[0].split("~")[0].trim());
   };
 
   useEffect(() => {
-    //The order Korus teaches the art pieces
     const korusArray = [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 19, 25, 30, 13, 15, 17, 18,
       20, 21, 22, 23, 24, 26, 27, 28, 33, 34, 35, 36, 37, 38, 41, 29, 31, 32,

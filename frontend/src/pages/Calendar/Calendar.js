@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import "./Calendar.css"; // Import the Calendar CSS file
-import dueDatesData from "./DueDates.json"; // Import the JSON file with due dates
-import artPiecesData from "../../Data/artworks.json"; // Import the JSON file with art piece details
+import "./Calendar.css";
+import dueDatesData from "./DueDates.json";
+import artPiecesData from "../../Data/artworks.json";
 
 function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState(new Date()); // Selected date points to today
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [assignments, setAssignments] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
 
@@ -14,7 +14,6 @@ function CalendarPage() {
     setSelectedDate(date);
     const formattedDate = date.toISOString().split("T")[0];
 
-    // Filter assignments and quizzes for the selected date
     const dueAssignments = dueDatesData.assignments.filter((assignment) => {
       return assignment.dueDate === formattedDate;
     });
@@ -26,7 +25,6 @@ function CalendarPage() {
     setQuizzes(dueQuizzes);
   };
 
-  // console.log(assignments);
   const renderAssignments = () => {
     if (assignments.length === 0) {
       return null;
@@ -37,15 +35,13 @@ function CalendarPage() {
         <h3>Homework Due:</h3>
         <ul>
           {assignments.map((assignment) => {
-            // Checks if the assignment ID is not a number
             if (isNaN(parseInt(assignment.id))) {
               return <li key={assignment.id}>{assignment.id}</li>;
             } else {
-              // Find the corresponding art piece by its numeric ID
               const artPiece = artPiecesData.find(
                 (piece) => piece.id === parseInt(assignment.id)
               );
-              if (!artPiece) return null; // Handle case where art piece is not found
+              if (!artPiece) return null;
 
               return (
                 <li key={assignment.id}>

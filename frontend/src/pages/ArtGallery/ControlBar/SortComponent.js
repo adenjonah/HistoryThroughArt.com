@@ -1,4 +1,3 @@
-// SortComponent.js
 import React from "react";
 import "./SearchComponent.css";
 function SortComponent({ sort, setSort, setClearFilters }) {

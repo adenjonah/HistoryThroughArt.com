@@ -13,7 +13,7 @@ import Map from "./pages/Map/Map";
 import ArtGallery from "./pages/ArtGallery/ArtGallery";
 import Calendar from "./pages/Calendar/Calendar";
 import Tutorial from "./pages/Tutorial/Tutorial";
-import Flashcards from "./pages/Flashcards/Flashcards"; // Import Flashcards component
+import Flashcards from "./pages/Flashcards/Flashcards";
 
 function App() {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -31,7 +31,6 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/tutorial" element={<Tutorial />} />
           <Route path="/flashcards" element={<Flashcards />} />{" "}
-          {/* Add Flashcards Route */}
         </Routes>
       </div>
       <button
