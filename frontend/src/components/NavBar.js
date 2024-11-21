@@ -6,14 +6,12 @@ function NavBar({ menuOpened, setMenuOpened }) {
   const navigate = useNavigate();
 
   const toggleMenu = (event) => {
-    event.stopPropagation(); // Prevent the click from propagating to the document listener
+    event.stopPropagation();
     const sidebar = document.getElementById("mySidebar");
     if (menuOpened) {
-      // Close menu
       sidebar.style.display = "none";
       setMenuOpened(false);
     } else {
-      // Open menu
       if (window.innerWidth <= 992)
         sidebar.className =
           "w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left sidebar spacerSidebar";

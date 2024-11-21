@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./Exhibit.css";
-import artPiecesData from "../../Data/artworks.json"; // Import the JSON data
+import artPiecesData from "../../Data/artworks.json";
 
 const images = require.context("../../artImages", false, /\.webp$/);
 
@@ -19,7 +19,6 @@ function PhotoGallery({ id }) {
   };
 
   useEffect(() => {
-    // Find the relevant art piece by ID and extract its images
     const foundArtPiece = artPiecesData.find(
       (piece) => piece.id.toString() === id
     );
@@ -68,7 +67,7 @@ function PhotoGallery({ id }) {
 
     const link = document.createElement("a");
     link.href = imagePath;
-    link.download = currentImageName; // This sets the filename for the download
+    link.download = currentImageName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -114,7 +113,6 @@ function PhotoGallery({ id }) {
           </div>
         )}
       </div>
-      {/* Selection for multiple photos*/}
       {artImages.length > 1 && (
         <div className="w3-center w3-padding-top">
           {artImages.map((imageName, index) => (
@@ -135,7 +133,6 @@ function PhotoGallery({ id }) {
           ))}
         </div>
       )}
-      {/* Download Image Button */}
       <div className="w3-padding-top">
         <button
           className="w3-button w3-blue w3-ripple"

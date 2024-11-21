@@ -1,5 +1,5 @@
 import React from "react";
-import "../Home/Home.css"; // Assuming the CSS file is shared
+import "../Home/Home.css";
 import "./About.css";
 import JonahHeadshot from "./jonah-headshot.webp";
 import CalebHeadshot from "./caleb-headshot.webp";

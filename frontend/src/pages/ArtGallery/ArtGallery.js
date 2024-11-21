@@ -7,7 +7,7 @@ function Museum() {
   const [search, setSearch] = useState("");
   const [searchBy, setSearchBy] = useState("all");
   const [artPiecesArray, setArtPiecesArray] = useState([]);
-  const [layout, setLayout] = useState("table"); // New state for layout
+  const [layout, setLayout] = useState("table");
   const [sort, setSort] = useState("ID Ascending");
   const [unitFilters, setUnitFilters] = useState({
     unit1: false,
