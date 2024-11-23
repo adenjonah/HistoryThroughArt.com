@@ -26,7 +26,7 @@ function Home() {
     >
       <div className="w3-display-middle text">
         <h1 className="w3-xxlarge w3-text-white">
-          Welcome to History Through Art!
+          Welcome to HistoryThroughArt.com!
         </h1>
         <p className="w3-large w3-text-white">
           This site is intended to be a learning aid for students exploring the
