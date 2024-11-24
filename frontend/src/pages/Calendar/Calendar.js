@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.css";
@@ -10,9 +10,21 @@ function CalendarPage() {
   const [assignments, setAssignments] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
 
+
+  const formatDate = (date) => {
+      date = date.toLocaleDateString("en-US").split("/");
+      if(date.length === 3) {
+          const year = date[2];
+          const day = date[1];
+          const month = date[0];
+          return `${year}-${month}-${day}`;
+      }
+      return "";
+  }
   const onDateClick = (date) => {
+    const formattedDate = formatDate(date);
+
     setSelectedDate(date);
-    const formattedDate = date.toISOString().split("T")[0];
 
     const dueAssignments = dueDatesData.assignments.filter((assignment) => {
       return assignment.dueDate === formattedDate;
@@ -24,6 +36,11 @@ function CalendarPage() {
     setAssignments(dueAssignments);
     setQuizzes(dueQuizzes);
   };
+
+    // Calls onDateClick when the page first loads. Makes sure that the current date is selected.
+    useEffect(() => {
+        onDateClick(new Date());
+    }, );
 
   const renderAssignments = () => {
     if (assignments.length === 0) {
