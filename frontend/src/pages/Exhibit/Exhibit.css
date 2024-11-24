@@ -63,3 +63,27 @@
   align-items: center;
   justify-content: center;
 }
+
+.w3-modal-content-custom {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;  /* Ensures image maintains aspect ratio */
+  margin: 0 auto; /* Centers the image */
+  display: block;
+  overflow-x: hidden;
+}
+
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+  position: fixed; /* Make it cover the entire screen */
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999; /* Make sure it's on top */
+}
+
+.modal-image {
+  width: auto;
+  object-fit: contain;
+}

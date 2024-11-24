@@ -40,7 +40,10 @@ function CalendarPage() {
     // Calls onDateClick when the page first loads. Makes sure that the current date is selected.
     useEffect(() => {
         onDateClick(new Date());
-    }, );
+
+        // stupid error shut up
+        // eslint-disable-next-line
+    }, []);
 
   const renderAssignments = () => {
     if (assignments.length === 0) {
