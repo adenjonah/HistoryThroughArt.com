@@ -31,11 +31,11 @@
 }
 
 .scrolling-background1 {
-  animation: scroll1 75s linear infinite;
+  animation: scroll1 200s linear infinite;
 }
 
 .scrolling-background2 {
-  animation: scroll2 75s linear infinite;
+  animation: scroll2 200s linear infinite;
 }
 
 @keyframes scroll1 {
