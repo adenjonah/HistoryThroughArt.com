@@ -8,34 +8,8 @@ function PhotoGallery({ id }) {
   const [artImages, setArtImages] = useState([]);
   const [slideIndex, setSlideIndex] = useState(1);
   const slideRefs = useRef([]);
-  const [photoModal, setPhotoModal] = useState(null);
-  const [modalDimensions, setModalDimensions] = useState({
-    width: "90%",
-    height: "auto",
-  });
-  const modalStyle = useRef("none");
 
-    // Opens the modal (makes the image larger)
-    const openModal = (imageName) => {
-        const img = new Image();
-        img.src = getImagePath(imageName);
-        img.onload = () => {
-            setModalDimensions({
-                width: `${Math.min(90, (img.naturalWidth / window.innerWidth) * 100)}%`, // Adjust width
-                height: `${Math.min(90, (img.naturalHeight / window.innerHeight) * 100)}%`, // Adjust height
-            });
-        };
-        setPhotoModal(getImagePath(imageName));
-        modalStyle.current = "block";
-    };
-
-    // Close modal
-    const closeModal = () => {
-        modalStyle.current = "none";
-        setPhotoModal(null);
-    };
-    
-    const getImagePath = (imageName) => {
+  const getImagePath = (imageName) => {
     try {
       return images(`./${imageName}`);
     } catch (e) {
@@ -98,7 +72,7 @@ function PhotoGallery({ id }) {
     link.click();
     document.body.removeChild(link);
   };
-  
+
   return (
     <div className="w3-container w3-center">
       <div className="w3-display-container image-container">
@@ -116,7 +90,6 @@ function PhotoGallery({ id }) {
                 src={getImagePath(imageName)}
                 alt={`Art piece ${index + 1}`}
                 className="w3-image image"
-                onClick={() => openModal(imageName)}
               />
             </div>
           ))}
@@ -168,22 +141,6 @@ function PhotoGallery({ id }) {
           Download Image
         </button>
       </div>
-
-        {/* Modal */}
-        <div id="modal01" className={`w3-modal`} onClick={closeModal} style={{ display: modalStyle.current }}>
-            <img
-                id="img01"
-                className="w3-modal-content-custom w3-animate-zoom"
-                src={photoModal}
-                alt="Modal Art"
-                style={{
-                    width: modalDimensions.width,
-                    height: modalDimensions.height,
-                    minWidth: window.innerWidth / 1.25,
-                    minHeight: window.innerHeight / 1.25,
-                }}
-            />
-        </div>
     </div>
   );
 }
