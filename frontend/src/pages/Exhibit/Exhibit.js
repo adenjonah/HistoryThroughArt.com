@@ -50,7 +50,7 @@ function Exhibit() {
 
   return (
     <div className="w3-container">
-      <h1 className="w3-center title">{artPiece.name}</h1>
+      <h1 className="w3-center title">{artPiece.id + ". " + artPiece.name}</h1>
       <div className="w3-row-padding w3-margin-top">
         <div className="w3-col s12">
           <VideoPlayer id={exhibitID} />

@@ -42,7 +42,7 @@
   background-color: var(--accent-color);
   margin-top: 60px;
   margin-right: 200px;
-  z-index: 9999;
+  z-index: 9998;
 }
 
 .sidebar.open {
