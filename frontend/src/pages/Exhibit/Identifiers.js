@@ -34,8 +34,7 @@ function Identifiers({ artPiece }) {
         className="text-lg font-semibold mb-4"
         style={{ color: "var(--accent-color)" }}
       >
-        Here's some more information on{" "}
-        <span style={{ color: "var(--accent-color)" }}>{artPiece.name}</span>:
+        <span style={{ color: "var(--accent-color)" }}>Identifiers</span>:
       </h2>
       <div className="space-y-2">
         {artPiece.artist_culture !== "None" && (
