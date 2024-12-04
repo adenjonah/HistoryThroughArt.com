@@ -59,3 +59,25 @@
 .sidebar-item:hover {
   background-color: var(--foreground-color);
 }
+
+/* Base styles */
+.enhanced-menu-button {
+  background-color: #55286f; /* Accent color for visibility */
+  color: #ffffff; /* Contrasting text color */
+  border: none; /* Remove default borders */
+  border-radius: 5px; /* Add a rounded appearance */
+  padding: 10px 15px; /* Increase padding for larger click area */
+  font-size: 18px; /* Make icon/text larger */
+  font-weight: bold; /* Improve text visibility */
+  cursor: pointer; /* Ensure it looks clickable */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+/* Hover and active states */
+.enhanced-menu-button:hover {
+  background-color: #6a39a2; /* Slightly lighter accent color */
+}
+
+.enhanced-menu-button:active {
+  transform: scale(0.95); /* Add a "pressed" effect */
+}

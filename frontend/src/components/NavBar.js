@@ -39,8 +39,12 @@ function NavBar({ menuOpened, setMenuOpened }) {
   return (
     <div>
       <div className="w3-container navbar">
-        <button className="w3-button navbar-menu-button" onClick={toggleMenu}>
-          &#9776;{" "}
+        <button
+          className="w3-button navbar-menu-button enhanced-menu-button"
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+        >
+          &#9776;
         </button>
         <span className="navbar-title" onClick={() => navigate("/")}>
           History Through Art
