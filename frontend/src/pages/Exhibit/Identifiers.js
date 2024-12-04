@@ -31,10 +31,10 @@ function Identifiers({ artPiece }) {
       }}
     >
       <h2
-        className="text-lg font-semibold mb-4"
-        style={{ color: "var(--accent-color)" }}
+        className="text-2xl font-bold mb-6"
+        style={{ color: "var(--accent-color)", textAlign: "center" }}
       >
-        <span style={{ color: "var(--accent-color)" }}>Identifiers</span>:
+        Identifiers
       </h2>
       <div className="space-y-2">
         {artPiece.artist_culture !== "None" && (
