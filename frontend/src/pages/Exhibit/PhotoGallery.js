@@ -141,20 +141,20 @@ function PhotoGallery({ id }) {
   return (
     <div className="w3-container w3-center ">
       <div className="w3-display-container image-container">
-        <div className={"image-wrapper"}>
+        <div className="image-wrapper">
           {artImages.map((imageName, index) => (
             <div
               key={index}
-              className={"image-slide"}
+              className="image-slide flex justify-center items-center h-full w-full"
               style={{
-                display: index === slideIndex - 1 ? "block" : "none",
+                display: index === slideIndex - 1 ? "flex" : "none",
               }}
               ref={(el) => (slideRefs.current[index] = el)}
             >
               <img
                 src={getImagePath(imageName)}
                 alt={`Art piece ${index + 1}`}
-                className="w3-image image"
+                className="max-h-full max-w-full object-contain mx-auto"
                 onClick={() => openModal(imageName)}
               />
             </div>
