@@ -10,7 +10,7 @@ function PhotoGallery({ id }) {
   const [artImages, setArtImages] = useState([]);
   const [slideIndex, setSlideIndex] = useState(1);
   const slideRefs = useRef([]);
-  const [modalDimensions, setModalDimensions] = useState({
+  const [, setModalDimensions] = useState({
     width: "90%",
     height: "auto",
   });
@@ -108,11 +108,6 @@ function PhotoGallery({ id }) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  const handleModalClick = (event) => {
-    //openModal(artImages[slideIndex]);
-    event.stopPropagation();
   };
 
   const currentImageSrc = useCallback(() => {
