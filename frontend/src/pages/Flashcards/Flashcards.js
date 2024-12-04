@@ -9,7 +9,7 @@ const Flashcards = () => {
   const [excludedCardIds, setExcludedCardIds] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [showSettings, setShowSettings] = useState(false); 
+  const [showSettings, setShowSettings] = useState(false);
 
   const shuffleDeck = useCallback(() => {
     const filteredDeck = artPiecesData.filter(
@@ -161,7 +161,7 @@ const Flashcards = () => {
       </button>
 
       <button className="settings-button" onClick={toggleSettings}>
-        <i className="fas fa-cog"></i> Settings
+        <i className="fas fa-cog"></i>
       </button>
 
       <div className={`settings-modal ${showSettings ? "show" : ""}`}>
