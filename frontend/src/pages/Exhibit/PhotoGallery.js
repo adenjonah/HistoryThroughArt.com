@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./Exhibit.css";
 import artPiecesData from "../../Data/artworks.json";
-import "./PhotoSelectorIcons"
+import "./PhotoSelectorIcons";
 import PhotoSelectorIcons from "./PhotoSelectorIcons";
 
 const images = require.context("../../artImages", false, /\.webp$/);
@@ -19,35 +19,34 @@ function PhotoGallery({ id }) {
 
   const vhPercentModalImage = 70;
 
-    // Opens the modal (makes the image larger)
-    const openModal = (imageName) => {
+  // Opens the modal (makes the image larger)
+  const openModal = (imageName) => {
+    if (!imageName) {
+      return; // Exit early if the image is undefined
+    }
+    const img = new Image();
+    img.src = getImagePath(imageName);
+    // Calculate the desired height (70% of viewport height)
+    const desiredHeight = window.innerHeight * (vhPercentModalImage / 100);
 
-        if (!imageName) {
-            return; // Exit early if the image is undefined
-        }
-        const img = new Image();
-        img.src = getImagePath(imageName);
-        // Calculate the desired height (70% of viewport height)
-        const desiredHeight = window.innerHeight * (vhPercentModalImage / 100);
+    // Calculate the width based on the aspect ratio
+    const aspectRatio = img.naturalWidth / img.naturalHeight;
+    const calculatedWidth = desiredHeight * aspectRatio;
 
-        // Calculate the width based on the aspect ratio
-        const aspectRatio = img.naturalWidth / img.naturalHeight;
-        const calculatedWidth = desiredHeight * aspectRatio;
+    // Now update the modal dimensions with the calculated width
+    setModalDimensions({
+      width: `${Math.min(calculatedWidth, window.innerWidth)}px`, // Ensure the image doesn't exceed the viewport width
+      height: `${desiredHeight}px`,
+    });
+    setModalStyle("block");
+  };
 
-        // Now update the modal dimensions with the calculated width
-        setModalDimensions({
-            width: `${Math.min(calculatedWidth, window.innerWidth)}px`, // Ensure the image doesn't exceed the viewport width
-            height: `${desiredHeight}px`,
-        });
-        setModalStyle("block");
-    };
+  // Close modal
+  const closeModal = () => {
+    setModalStyle("none");
+  };
 
-    // Close modal
-    const closeModal = () => {
-        setModalStyle("none");
-    };
-
-    const getImagePath = (imageName) => {
+  const getImagePath = (imageName) => {
     try {
       return images(`./${imageName}`);
     } catch (e) {
@@ -112,35 +111,35 @@ function PhotoGallery({ id }) {
   };
 
   const handleModalClick = (event) => {
-     //openModal(artImages[slideIndex]);
-      event.stopPropagation();
-  }
+    //openModal(artImages[slideIndex]);
+    event.stopPropagation();
+  };
 
-    const currentImageSrc = useCallback(() => {
-        return getImagePath(artImages[slideIndex - 1]);
-    }, [artImages, slideIndex]);  // Add the necessary dependencies here
+  const currentImageSrc = useCallback(() => {
+    return getImagePath(artImages[slideIndex - 1]);
+  }, [artImages, slideIndex]); // Add the necessary dependencies here
 
-    useEffect(() => {
-        const img = new Image();
-        img.src = currentImageSrc();
-        img.onload = () => {
-            // Calculate the desired height (70% of viewport height)
-            const desiredHeight = window.innerHeight * 0.7;
+  useEffect(() => {
+    const img = new Image();
+    img.src = currentImageSrc();
+    img.onload = () => {
+      // Calculate the desired height (70% of viewport height)
+      const desiredHeight = window.innerHeight * 0.7;
 
-            // Calculate the width based on the aspect ratio
-            const aspectRatio = img.naturalWidth / img.naturalHeight;
-            const calculatedWidth = desiredHeight * aspectRatio;
+      // Calculate the width based on the aspect ratio
+      const aspectRatio = img.naturalWidth / img.naturalHeight;
+      const calculatedWidth = desiredHeight * aspectRatio;
 
-            // Now update the modal dimensions with the calculated width
-            setModalDimensions({
-                width: `${Math.min(calculatedWidth, window.innerWidth)}px`, // Ensure the image doesn't exceed the viewport width
-                height: `${desiredHeight}px`,
-            });
-        };
-    }, [slideIndex, currentImageSrc]);
+      // Now update the modal dimensions with the calculated width
+      setModalDimensions({
+        width: `${Math.min(calculatedWidth, window.innerWidth)}px`, // Ensure the image doesn't exceed the viewport width
+        height: `${desiredHeight}px`,
+      });
+    };
+  }, [slideIndex, currentImageSrc]);
 
   return (
-    <div className="w3-container w3-center " >
+    <div className="w3-container w3-center ">
       <div className="w3-display-container image-container">
         <div className={"image-wrapper"}>
           {artImages.map((imageName, index) => (
@@ -161,9 +160,13 @@ function PhotoGallery({ id }) {
             </div>
           ))}
         </div>
-
       </div>
-     <PhotoSelectorIcons artImages={artImages} slideIndex={slideIndex} setSlideIndex={setSlideIndex} pushSlides={pushSlides} />
+      <PhotoSelectorIcons
+        artImages={artImages}
+        slideIndex={slideIndex}
+        setSlideIndex={setSlideIndex}
+        pushSlides={pushSlides}
+      />
       <div className="w3-padding-top">
         <button
           className="w3-button w3-blue w3-ripple"
@@ -173,29 +176,38 @@ function PhotoGallery({ id }) {
         </button>
       </div>
 
-        {/* Modal */}
-        <div id="modal01" className={`w3-modal`} onClick={closeModal} style={{ display: modalStyle }}>
-            <div className={`w3-modal-content-custom modal-content`}>
-                <img
-                    id="img01"
-                    className="w3-animate-zoom modal-image"
-                    src={currentImageSrc()}
-                    alt="Modal Art"
-                    style={{
-                        maxHeight: `${vhPercentModalImage}vh`, // 70% of the viewport height
-                        minWidth: modalDimensions.width,
-                    }}
-                    onClick={handleModalClick}
-                />
-                <div className={`w3-container w3-bottom`}>
-                    <div className={`w3-bar w3-center`} onClick={handleModalClick} style={{minWidth: "100px"}}>
-                        <PhotoSelectorIcons artImages={artImages} slideIndex={slideIndex} setSlideIndex={setSlideIndex}
-                                            pushSlides={pushSlides}/>
-                    </div>
-                </div>
-            </div>
+      <div
+        id="modal01"
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${
+          modalStyle === "block" ? "flex" : "hidden"
+        }`}
+        onClick={closeModal}
+      >
+        <div
+          className="relative max-w-full max-h-full bg-white rounded shadow-lg p-4"
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+        >
+          <img
+            id="img01"
+            className="object-contain max-h-[70vh] max-w-[90vw] w-auto"
+            src={currentImageSrc()}
+            alt="Modal Art"
+            style={{
+              display: modalStyle === "block" ? "block" : "none",
+              margin: modalStyle === "block" ? "auto" : "0",
+              transform: modalStyle === "block" ? "translate(0, 0)" : "none",
+            }}
+          />
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+            <PhotoSelectorIcons
+              artImages={artImages}
+              slideIndex={slideIndex}
+              setSlideIndex={setSlideIndex}
+              pushSlides={pushSlides}
+            />
+          </div>
         </div>
-
+      </div>
     </div>
   );
 }
