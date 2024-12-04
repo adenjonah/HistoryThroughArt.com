@@ -33,28 +33,29 @@ function Exhibit() {
   return (
     <div className="w3-container">
       <h1 className="w3-center title">{artPiece.id + ". " + artPiece.name}</h1>
+      {/* Video Section */}
       <div className="w3-row-padding w3-margin-top">
         <div className="w3-col s12">
           <VideoPlayer id={exhibitID} />
         </div>
       </div>
-      <div className="w3-row-padding w3-margin-top">
+      {/* Identifiers and Photo Gallery */}
+      <div className="w3-row-padding w3-margin-top grid-container">
+        <div className="w3-col s12 m6 l6 identifiers-section">
+          <Identifiers artPiece={artPiece} />
+        </div>
+        <div className="w3-col s12 m6 l6 photo-gallery-section">
+          <PhotoGallery id={exhibitID} />
+        </div>
+      </div>
+      {/* Centered Map Section */}
+      <div className="w3-row-padding w3-margin-top flex-center">
         <MiniMap
           mapType={mapType}
           setMapType={setMapType}
           artPiece={artPiece}
         />
-        <div className="w3-col s12 m6 l6 grid-item">
-          <PhotoGallery id={exhibitID} />
-        </div>
       </div>
-      <div className="w3-row-padding w3-margin-top">
-        <div className="w3-col s12">
-          <Identifiers artPiece={artPiece} />
-        </div>
-      </div>
-
-      <span className={`w3-circle w3-badge`}></span>
     </div>
   );
 }

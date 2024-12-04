@@ -20,7 +20,7 @@ function MiniMap({ artPiece }) {
           center={artPieceMapLocation}
           zoom={artPieceMapLocation[0] === null ? 0 : 5}
           size={{ width: "100%", height: "500px" }}
-          onMapTypeChange={handleMapTypeChange} 
+          onMapTypeChange={handleMapTypeChange}
           mapType={mapType}
         />
         <div className="w3-display-topleft w3-padding w3-marginleft w3-large">
@@ -29,8 +29,8 @@ function MiniMap({ artPiece }) {
               ? "Art piece is not currently displayed"
               : "Currently Displayed"
             : artPiece.originatedLongitude === null
-            ? "No originated location for this art piece"
-            : "Originated"}
+            ? ""
+            : ""}
         </div>
       </div>
     </div>

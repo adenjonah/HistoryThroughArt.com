@@ -74,6 +74,12 @@
   z-index: 9999; /* Make sure it's on top */
 }
 
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .modal-image {
   width: auto;
   object-fit: contain;
