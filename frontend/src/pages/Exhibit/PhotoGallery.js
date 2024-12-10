@@ -113,7 +113,7 @@ function PhotoGallery({ id }) {
   }, [slideIndex, currentImageSrc]);
 
   return (
-    <div className="w3-container w3-center">
+    <div className="w3-container w3-center border border-white">
       <div className="w3-display-container image-container">
         {/* Adjusted the wrapper and slide to use Tailwind for responsive design */}
         <div className="image-wrapper relative w-full h-[50vh] overflow-hidden">

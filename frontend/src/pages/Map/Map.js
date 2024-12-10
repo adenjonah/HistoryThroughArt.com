@@ -10,7 +10,7 @@ function Map() {
 
       <div
         className="w3-display-container"
-        style={{ width: "80%", maxWidth: "100%", Height: "60vh" }}
+        style={{ width: "80%", maxWidth: "100%", Height: "100%" }}
       >
         <MapBox />
       </div>
