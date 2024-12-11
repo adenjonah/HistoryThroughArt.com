@@ -22,7 +22,7 @@ function Identifiers({ artPiece }) {
 
   return (
     <div
-      className="max-w-xl mx-auto p-6 rounded-lg shadow-md"
+      className="flex flex-col justify-center items-center w-full h-full p-4"
       style={{
         backgroundColor: "var(--foreground-color)",
         color: "var(--accent-color)",
@@ -31,12 +31,21 @@ function Identifiers({ artPiece }) {
       }}
     >
       <h2
-        className="text-2xl font-bold mb-6"
-        style={{ color: "var(--accent-color)", textAlign: "center" }}
+        className="text-center font-bold mb-4"
+        style={{
+          fontSize: "5vw", // Dynamically sized header
+          color: "var(--accent-color)",
+        }}
       >
         Identifiers
       </h2>
-      <div className="space-y-2">
+      <div
+        className="space-y-4 text-center"
+        style={{
+          fontSize: "2.5vw", // Responsive font size for content
+          lineHeight: "1.5", // Improves readability
+        }}
+      >
         {artPiece.artist_culture !== "None" && (
           <p>
             <strong>Artist/Culture:</strong> {artPiece.artist_culture}
