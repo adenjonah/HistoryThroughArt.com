@@ -21,7 +21,7 @@
 .scrolling-background1,
 .scrolling-background2 {
   position: absolute;
-  background-image: url("../../../public/gandr-collage (2).webp");
+  background-image: url("../../../public/homepageBackground.webp");
   width: 200%;
   height: 100%;
   background-size: cover;
