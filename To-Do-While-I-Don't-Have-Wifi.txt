@@ -1,0 +1,16 @@
+1. Replace favicon.ico
+2. Double Check that Summer Trees Pic is Correct
+3. Image 386 has weird bottom text
+4. Bad photos
+    Low quality: 405, 406, 402, 401, 398, 396, 383, 377, 371, 370, 351, 352, 340, 336, 330, 326, 314, 312, 308, 303, 302, 301, 297, 290, 289, 281, 280, 275, 273, 268, 265, 264, 263, 261, 257, 253, 248, 233, 212, 197, 175, 171, 156, 153, 152, 144, 143, 142, 141, 140, 138, 132, 131, 81, 80, 69, 67, 66, 64, 58, 48, 50, 46, 41, 36, 25, 9
+
+    Weird Artifacts or Identifying info: 390, 386, 384(BQ), 376, 368?, 345, 334, 324, 309, 300, 288, 278, 274, 262, 260, 259, 254, 235, 203?, 196, 154, 117-119, 109, 65?, 32, 27, 
+
+    333 and 335 are repeats
+
+    Is 234 supposed to be of it on view?
+
+    There are double Alhambra pics?
+
+    82?
+5. Consistent case (camelCase, snake_case, or Pascal), maybe follow some styling guide for React/TS projects

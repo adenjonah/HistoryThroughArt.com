@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import VideoPlayer from "./VideoPlayer";
 import PhotoGallery from "./PhotoGallery";
 import MiniMap from "./MiniMap";
-import artPiecesData from "../../Data/artworks.json";
+import artPiecesData from "../../data/artworks.json";
 import Identifiers from "./Identifiers";
 
 function Exhibit() {
