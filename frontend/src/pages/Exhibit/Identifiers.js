@@ -33,7 +33,7 @@ function Identifiers({ artPiece }) {
       <h2
         className="text-center font-bold mb-4"
         style={{
-          fontSize: "5vw", // Dynamically sized header
+          fontSize: "2.5vw", // Dynamically sized header
           color: "var(--accent-color)",
         }}
       >
@@ -42,7 +42,7 @@ function Identifiers({ artPiece }) {
       <div
         className="space-y-4 text-center"
         style={{
-          fontSize: "2.5vw", // Responsive font size for content
+          fontSize: "1.75vw", // Responsive font size for content
           lineHeight: "1.5", // Improves readability
         }}
       >
