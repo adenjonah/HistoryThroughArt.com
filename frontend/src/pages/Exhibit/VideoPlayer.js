@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import "./VideoPlayer.css";
-import artPiecesData from "../../Data/artworks.json";
+import artPiecesData from "../../data/artworks.json";
 
 function VideoPlayer({ id }) {
   const [artVideos, setArtVideos] = useState([]);

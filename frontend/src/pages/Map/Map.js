@@ -1,6 +1,5 @@
 import React from "react";
 import MapBox from "./MapBox";
-import "./Map.css";
 
 function Map() {
   return (

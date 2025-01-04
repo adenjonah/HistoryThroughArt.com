@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./Exhibit.css";
-import artPiecesData from "../../Data/artworks.json";
+import artPiecesData from "../../data/artworks.json";
 import "./PhotoSelectorIcons";
 import PhotoSelectorIcons from "./PhotoSelectorIcons";
 

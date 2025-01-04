@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./Flashcards.css";
-import artPiecesData from "../../Data/artworks.json";
+import artPiecesData from "../../data/artworks.json";
 
 const Flashcards = () => {
   const [currentCard, setCurrentCard] = useState(0);

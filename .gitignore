@@ -123,4 +123,4 @@ package-lock-DESKTOP-UODP4MO.json
 
 *.cmd
 *.ps1
-/frontend/src/Data/venv
+/frontend/src/data/venv

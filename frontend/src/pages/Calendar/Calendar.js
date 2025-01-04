@@ -3,7 +3,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.css";
 import dueDatesData from "./DueDates.json";
-import artPiecesData from "../../Data/artworks.json";
+import artPiecesData from "../../data/artworks.json";
 
 function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());

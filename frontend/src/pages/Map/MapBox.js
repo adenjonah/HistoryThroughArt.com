@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import artPiecesData from "../../Data/artworks.json";
+import artPiecesData from "../../data/artworks.json";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const images = require.context("../../artImages", false, /\.webp$/);

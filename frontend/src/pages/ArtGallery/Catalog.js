@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "./ArtCard";
 import "./Catalog.css";
-import artPiecesData from "../../Data/artworks.json";
+import artPiecesData from "../../data/artworks.json";
 const images = require.context("../../artImages", false, /\.webp$/);
 
 function Catalog({
