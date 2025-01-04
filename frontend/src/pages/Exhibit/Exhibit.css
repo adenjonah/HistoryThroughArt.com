@@ -6,14 +6,27 @@
 }
 
 .image-wrapper {
+  display: flex; /* Flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   position: relative;
   width: 100%;
-  overflow: hidden;
+  height: 100%;
+}
+
+.image-slide {
+  display: flex; /* Flexbox to ensure the image is centered */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  width: 100%;
+  height: 100%;
 }
 
 .image {
-  object-fit: contain;
-  height: 100%;
+  display: block; /* Ensure no inline spacing issues */
+  margin: auto; /* Center image inside its container */
+  max-width: 100%; /* Scale image proportionally */
+  max-height: 100%; /* Prevent overflow */
 }
 
 .selection-buttons-wrapper {
@@ -55,13 +68,33 @@
   justify-content: center;
 }
 
+.w3-modal {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999; /* Make sure it's on top */
+
+}
+
 .w3-modal-content-custom {
+  display: block;
+  margin: 0 auto;
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  overflow: hidden;
+  padding: 0;
+}
+
+.modal-image {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* Ensures image maintains aspect ratio */
-  margin: 0 auto; /* Centers the image */
   display: block;
-  overflow-x: hidden;
+  margin: auto;
 }
 
 .modal-overlay {
