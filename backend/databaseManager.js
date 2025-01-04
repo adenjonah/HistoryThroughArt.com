@@ -110,7 +110,7 @@ class DatabaseManager {
     //                 if (err) {
     //                     console.error('Error writing to file:', err);
     //                 } else {
-    //                     console.log('Data successfully written to artworks.json');
+    //                     console.log('data successfully written to artworks.json');
     //                 }
     //             });
     //

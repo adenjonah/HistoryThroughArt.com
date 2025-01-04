@@ -1,6 +1,5 @@
 import React from "react";
 import "../Home/Home.css";
-import "./Tutorial.css";
 
 function Tutorial() {
   return (
