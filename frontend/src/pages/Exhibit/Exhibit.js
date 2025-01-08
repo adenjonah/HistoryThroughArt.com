@@ -34,8 +34,8 @@ function Exhibit() {
     <div className="w3-container">
       <h1 className="w3-center title">{artPiece.id + ". " + artPiece.name}</h1>
       {/* Video Section */}
-      <div className="w3-row-padding m-[50px]">
-        <div className="w3-col s12">
+      <div className="w3-row-padding p-0 md:m-[50px]">
+        <div className="w3-col p-0 s12">
           <VideoPlayer id={exhibitID} />
         </div>
       </div>
