@@ -134,7 +134,7 @@ function VideoPlayer({ id }) {
               visibleTranscript ? "m9 l9" : "m12 l12"
             } w3-padding`}
           >
-            <div className="w3-responsive p-0 w3-display-container video-player-wrapper">
+            <div className="w3-responsive p-0 w3-display-container video-player-wrapper rounded-lg border border-transparent overflow-hidden">
               <iframe
                 ref={iframeRef}
                 key={selectedVideo}

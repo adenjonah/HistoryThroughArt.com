@@ -22,7 +22,7 @@ function Identifiers({ artPiece }) {
 
   return (
     <div
-      className="flex flex-col justify-center items-center w-full h-full p-4"
+      className="flex flex-col justify-center items-center w-full h-full p-4 border rounded-lg"
       style={{
         backgroundColor: "var(--foreground-color)",
         color: "var(--accent-color)",
