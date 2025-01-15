@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./Exhibit.css";
 import artPiecesData from "../../data/artworks.json";
-import "./PhotoSelectorIcons"
+import "./PhotoSelectorIcons";
 import PhotoSelectorIcons from "./PhotoSelectorIcons";
 
 const images = require.context("../../artImages", false, /\.webp$/);
@@ -21,7 +21,6 @@ function PhotoGallery({ id }) {
 
   // Opens the modal (makes the image larger)
   const openModal = (imageName) => {
-
     if (!imageName) {
       return; // Exit early if the image is undefined
     }
@@ -58,7 +57,7 @@ function PhotoGallery({ id }) {
 
   useEffect(() => {
     const foundArtPiece = artPiecesData.find(
-        (piece) => piece.id.toString() === id
+      (piece) => piece.id.toString() === id
     );
     if (foundArtPiece && foundArtPiece.image) {
       setArtImages(foundArtPiece.image);
@@ -66,27 +65,27 @@ function PhotoGallery({ id }) {
   }, [id]);
 
   const showSlides = useCallback(
-      (n) => {
-        if (slideRefs.current.length === 0) return;
+    (n) => {
+      if (slideRefs.current.length === 0) return;
 
-        let i;
-        if (n > slideRefs.current.length) {
-          setSlideIndex(1);
-        } else if (n < 1) {
-          setSlideIndex(slideRefs.current.length);
-        } else {
-          setSlideIndex(n);
-        }
+      let i;
+      if (n > slideRefs.current.length) {
+        setSlideIndex(1);
+      } else if (n < 1) {
+        setSlideIndex(slideRefs.current.length);
+      } else {
+        setSlideIndex(n);
+      }
 
-        for (i = 0; i < slideRefs.current.length; i++) {
-          slideRefs.current[i].style.display = "none";
-        }
+      for (i = 0; i < slideRefs.current.length; i++) {
+        slideRefs.current[i].style.display = "none";
+      }
 
-        if (slideRefs.current[slideIndex - 1]) {
-          slideRefs.current[slideIndex - 1].style.display = "block";
-        }
-      },
-      [slideIndex]
+      if (slideRefs.current[slideIndex - 1]) {
+        slideRefs.current[slideIndex - 1].style.display = "block";
+      }
+    },
+    [slideIndex]
   );
 
   useEffect(() => {
@@ -114,11 +113,11 @@ function PhotoGallery({ id }) {
   const handleModalClick = (event) => {
     //openModal(artImages[slideIndex]);
     event.stopPropagation();
-  }
+  };
 
   const currentImageSrc = useCallback(() => {
     return getImagePath(artImages[slideIndex - 1]);
-  }, [artImages, slideIndex]);  // Add the necessary dependencies here
+  }, [artImages, slideIndex]); // Add the necessary dependencies here
 
   useEffect(() => {
     const img = new Image();
@@ -140,64 +139,82 @@ function PhotoGallery({ id }) {
   }, [slideIndex, currentImageSrc]);
 
   return (
-      <div className="w3-container w3-center" >
-        <div className="w3-display-container image-container">
-          <div className={"image-wrapper "}>
-            {artImages.map((imageName, index) => (
-                <div
-                    key={index}
-                    className={"image-slide"}
-                    style={{
-                      display: index === slideIndex - 1 ? "block" : "none",
-                    }}
-                    ref={(el) => (slideRefs.current[index] = el)}
-                >
-                  <img
-                      src={getImagePath(imageName)}
-                      alt={`Art piece ${index + 1}`}
-                      className="w3-image image"
-                      onClick={() => openModal(imageName)}
-                  />
-                </div>
-            ))}
-          </div>
-
-        </div>
-        <PhotoSelectorIcons artImages={artImages} slideIndex={slideIndex} setSlideIndex={setSlideIndex} pushSlides={pushSlides} />
-        <div className="w3-padding-top">
-          <button
-              className="w3-button w3-blue w3-ripple"
-              onClick={handleDownload}
-          >
-            Download Image
-          </button>
-        </div>
-
-        {/* Modal */}
-        <div id="modal01" className={`w3-modal`} onClick={closeModal} style={{display: modalStyle}}>
-          <div className={`w3-modal-content-custom modal-content `}>
-            <img
-                id="img01"
-                className="w3-animate-zoom modal-image"
-                src={currentImageSrc()}
-                alt="Modal Art"
-                style={{
-                  maxHeight: `${vhPercentModalImage}vh`, // 70% of the viewport height
-                  minWidth: modalDimensions.width,
-                }}
-                onClick={handleModalClick}
-            />
-
-          </div>
-          <div className={`w3-container w3-bottom`}>
-            <div className={`w3-bar`} onClick={handleModalClick} style={{minWidth: "100px"}}>
-              <PhotoSelectorIcons artImages={artImages} slideIndex={slideIndex} setSlideIndex={setSlideIndex}
-                                  pushSlides={pushSlides}/>
+    <div className="w3-container w3-center">
+      <div className="w3-display-container image-container">
+        <div className="image-wrapper">
+          {artImages.map((imageName, index) => (
+            <div
+              key={index}
+              className="image-slide"
+              style={{
+                display: index === slideIndex - 1 ? "block" : "none",
+              }}
+              ref={(el) => (slideRefs.current[index] = el)}
+            >
+              {/* Wrapper with rounded border */}
+              <div className="rounded-lg border border-transparent overflow-hidden inline-block">
+                <img
+                  src={getImagePath(imageName)}
+                  alt={`Art piece ${index + 1}`}
+                  className="w3-image image"
+                  onClick={() => openModal(imageName)}
+                />
+              </div>
             </div>
+          ))}
+        </div>
+      </div>
+      <PhotoSelectorIcons
+        artImages={artImages}
+        slideIndex={slideIndex}
+        setSlideIndex={setSlideIndex}
+        pushSlides={pushSlides}
+      />
+      <div className="w3-padding-top">
+        <button
+          className="w3-button w3-blue w3-ripple"
+          onClick={handleDownload}
+        >
+          Download Image
+        </button>
+      </div>
+
+      {/* Modal */}
+      <div
+        id="modal01"
+        className={`w3-modal`}
+        onClick={closeModal}
+        style={{ display: modalStyle }}
+      >
+        <div className="w3-modal-content-custom modal-content">
+          <img
+            id="img01"
+            className="w3-animate-zoom modal-image"
+            src={currentImageSrc()}
+            alt="Modal Art"
+            style={{
+              maxHeight: `${vhPercentModalImage}vh`, // 70% of the viewport height
+              minWidth: modalDimensions.width,
+            }}
+            onClick={handleModalClick}
+          />
+        </div>
+        <div className="w3-container w3-bottom">
+          <div
+            className="w3-bar"
+            onClick={handleModalClick}
+            style={{ minWidth: "100px" }}
+          >
+            <PhotoSelectorIcons
+              artImages={artImages}
+              slideIndex={slideIndex}
+              setSlideIndex={setSlideIndex}
+              pushSlides={pushSlides}
+            />
           </div>
         </div>
-
       </div>
+    </div>
   );
 }
 

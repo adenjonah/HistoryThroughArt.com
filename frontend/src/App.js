@@ -1,6 +1,5 @@
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { useState } from "react";
-
 import "./App.css";
 import "./w3.css";
 
@@ -15,13 +14,47 @@ import Calendar from "./pages/Calendar/Calendar";
 import Tutorial from "./pages/Tutorial/Tutorial";
 import Flashcards from "./pages/Flashcards/Flashcards";
 
+const NewFeatureModal = ({ onClose }) => {
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <button className="modal-close-button" onClick={onClose}>
+          &times;
+        </button>
+        <h2>Please Submit Feedback!</h2>
+        <p>
+          Tomorrow, Jonah will be visiting during Korus' class to talk about
+          what you like and dislike about the site, please fill out the feedback
+          form (in the bottom right corner) tonight with any questions, feature
+          improvements, or issues so that he can prepare what to talk about!
+        </p>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [menuOpened, setMenuOpened] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    // Check local storage to see if the modal has been dismissed
+    const isModalDismissed = localStorage.getItem("newFeatureModalDismissed");
+    if (!isModalDismissed) {
+      setShowModal(true);
+    }
+  }, []);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    localStorage.setItem("newFeatureModalDismissed", "true");
+  };
 
   return (
     <>
       <NavBar menuOpened={menuOpened} setMenuOpened={setMenuOpened} />
       <div className={`spacer ${menuOpened ? "spaceopen" : "spaceclosed"}`}>
+        {showModal && <NewFeatureModal onClose={handleCloseModal} />}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -30,7 +63,7 @@ function App() {
           <Route path="/artgallery" element={<ArtGallery />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/tutorial" element={<Tutorial />} />
-          <Route path="/flashcards" element={<Flashcards />} />{" "}
+          <Route path="/flashcards" element={<Flashcards />} />
         </Routes>
       </div>
       <button
