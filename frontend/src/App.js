@@ -39,9 +39,9 @@ function App() {
 
   useEffect(() => {
     // Check local storage to see if the modal has been dismissed
-    const isModalDismissed = localStorage.getItem("newFeatureModalDismissed");
+    const isModalDismissed = localStorage.getItem("newFeatureModalDismissed1");
     if (!isModalDismissed) {
-      setShowModal(true);
+      setShowModal(false);
     }
   }, []);
 
