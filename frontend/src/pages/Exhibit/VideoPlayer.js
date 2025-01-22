@@ -138,7 +138,7 @@ function VideoPlayer({ id }) {
               <iframe
                 ref={iframeRef}
                 key={selectedVideo}
-                src={`${artVideos[selectedVideo].videoLink}?enablejsapi=1`}
+                src={`${artVideos[selectedVideo].videoLink}?enablejsapi=1&modestbranding=1&rel=0`}
                 allowFullScreen
                 title={`Video ${selectedVideo + 1}`}
                 className="video-player"

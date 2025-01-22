@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 function ActiveFiltersComponent({
   unitFilters,
   handleClearFilters,
   clearFilters,
+  setUnitFilters, // Ensure this is received as a prop
 }) {
   const activeFilters = Object.keys(unitFilters).filter(
     (unit) => unitFilters[unit]
   );
+
+  // Save unitFilters to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("unitFilters", JSON.stringify(unitFilters));
+  }, [unitFilters]);
+
+  // Load unitFilters from localStorage on mount
+  useEffect(() => {
+    const savedFilters = JSON.parse(localStorage.getItem("unitFilters"));
+    if (savedFilters) {
+      setUnitFilters(savedFilters); // Call setUnitFilters here
+    }
+  }, [setUnitFilters]);
 
   return (
     <div className="bottom-filter-section">
