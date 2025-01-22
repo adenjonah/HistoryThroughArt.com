@@ -1,3 +1,4 @@
+// SearchComponent.js
 import React, { useState, useRef, useEffect } from "react";
 import SortComponent from "./SortComponent";
 import "./SearchComponent.css";
@@ -16,30 +17,30 @@ function SearchComponent({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const handleSearchChange = (event) => {
-    const searchValue = event.target.value;
-    setSearch(searchValue);
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
     setClearFilters(
-      searchValue.length === 0 &&
+      value.length === 0 &&
         Object.values(unitFilters).every((v) => !v) &&
         sort === "ID Ascending"
     );
   };
 
-  const handleSearchByChange = (event) => {
-    const searchValue = event.target.value;
-    setSearchBy(searchValue);
+  const handleSearchByChange = (e) => {
+    const value = e.target.value;
+    setSearchBy(value);
     setClearFilters(
-      searchValue.length === 0 &&
+      value.length === 0 &&
         Object.values(unitFilters).every((v) => !v) &&
         sort === "ID Ascending"
     );
   };
 
   const handleFilterChange = (unit) => {
-    setUnitFilters((prevFilters) => ({
-      ...prevFilters,
-      [unit]: !prevFilters[unit],
+    setUnitFilters((prev) => ({
+      ...prev,
+      [unit]: !prev[unit],
     }));
     setClearFilters(false);
   };
@@ -48,75 +49,89 @@ function SearchComponent({
     setDropdownOpen(!dropdownOpen);
   };
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setDropdownOpen(false);
     }
   };
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <div className="w3-row w3-padding">
-      <div className="w3-col s4 m4 l2">
-        <select
-          className="w3-select w3-border w3-light-gray"
-          value={searchBy}
-          onChange={handleSearchByChange}
-        >
-          <option value={"all"}>By All</option>
-          <option value="name">By Name</option>
-          <option value="id">By ID</option>
-          <option value="year">By Year</option>
-          <option value="location">By Location</option>
-        </select>
-      </div>
-      <div className="w3-col s8 m8 l5">
-        <input
-          type="text"
-          className="w3-input w3-border"
-          placeholder="Search..."
-          value={search}
-          onChange={handleSearchChange}
-        />
-      </div>
-      <div className="w3-col s6 m6 l2" ref={dropdownRef}>
-        <button
-          className="w3-button w3-border w3-light-gray"
-          onClick={toggleDropdown}
-        >
-          Filters {dropdownOpen ? "▲" : "▼"}
-        </button>
-        {dropdownOpen && (
-          <div
-            className="dropdown-content w3-border w3-light-gray"
-            style={{ position: "absolute", zIndex: 1 }}
+    <div className="p-4 m-4 border border-gray-300 bg-white rounded shadow-sm">
+      <div className="grid grid-cols-12 gap-2">
+        <div className="col-span-4 sm:col-span-4 md:col-span-4 lg:col-span-2">
+          <select
+            className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-gray-700"
+            value={searchBy}
+            onChange={handleSearchByChange}
           >
-            {Object.keys(unitFilters).map((unit) => (
-              <div
-                key={unit}
-                className="dropdown-item"
-                onClick={() => handleFilterChange(unit)}
-              >
-                <label>
-                  <input type="checkbox" checked={unitFilters[unit]} readOnly />
-                  {unit.replace("unit", "Unit ")} {unitFilters[unit] ? "✓" : ""}
-                </label>
-              </div>
-            ))}
-          </div>
-        )}
+            <option value="all">By All</option>
+            <option value="name">By Name</option>
+            <option value="id">By ID</option>
+            <option value="year">By Year</option>
+            <option value="location">By Location</option>
+          </select>
+        </div>
+
+        <div className="col-span-8 sm:col-span-8 md:col-span-8 lg:col-span-5">
+          <input
+            type="text"
+            className="w-full p-2 border border-gray-300 rounded text-gray-700"
+            placeholder="Search..."
+            value={search}
+            onChange={handleSearchChange}
+          />
+        </div>
+
+        <div
+          className="col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-2 relative"
+          ref={dropdownRef}
+        >
+          <button
+            className="flex items-center w-full px-4 py-2 border border-gray-300 rounded bg-gray-200 text-gray-700 justify-between"
+            onClick={toggleDropdown}
+          >
+            <span>Filters</span>
+            <span>{dropdownOpen ? "▲" : "▼"}</span>
+          </button>
+          {dropdownOpen && (
+            <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded shadow z-10">
+              {Object.keys(unitFilters).map((unit) => (
+                <div
+                  key={unit}
+                  className="p-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => handleFilterChange(unit)}
+                >
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-4 w-4"
+                      checked={unitFilters[unit]}
+                      readOnly
+                    />
+                    <span>
+                      {unit.replace("unit", "Unit ")}
+                      {unitFilters[unit] ? " ✓" : ""}
+                    </span>
+                  </label>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-3">
+          <SortComponent
+            sort={sort}
+            setSort={setSort}
+            setClearFilters={setClearFilters}
+          />
+        </div>
       </div>
-      <SortComponent
-        sort={sort}
-        setSort={setSort}
-        setClearFilters={setClearFilters}
-      />
     </div>
   );
 }

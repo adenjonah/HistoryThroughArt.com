@@ -1,3 +1,4 @@
+// App.js
 import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
@@ -21,13 +22,22 @@ const NewFeatureModal = ({ onClose }) => {
         <button className="modal-close-button" onClick={onClose}>
           &times;
         </button>
-        <h2>Please Submit Feedback!</h2>
-        <p>
-          Tomorrow, Jonah will be visiting during Korus' class to talk about
-          what you like and dislike about the site, please fill out the feedback
-          form (in the bottom right corner) tonight with any questions, feature
-          improvements, or issues so that he can prepare what to talk about!
-        </p>
+        <h2>New Features!</h2>
+
+        <ul className="list-disc list-inside pl-4 text-left">
+          <li>Nicer looking search bar</li>
+          <li>Sorting and Filtering stays set when you refresh the page</li>
+          <li>Default to Korus Sort</li>
+          <li>
+            Pronunciation of art titles (not perfect on non-english words)
+          </li>
+          <li>
+            Navigation buttons to go forward and back at the bottom of each
+            exhibit (based on Korus order)
+          </li>
+          <li>Bug fixes on dates and photos</li>
+          <li>Attempted to fix logo problem (lmk)</li>
+        </ul>
       </div>
     </div>
   );
@@ -39,15 +49,17 @@ function App() {
 
   useEffect(() => {
     // Check local storage to see if the modal has been dismissed
-    const isModalDismissed = localStorage.getItem("newFeatureModalDismissed1");
+    const isModalDismissed = localStorage.getItem("newFeatureModalDismissed2");
+    // If it's NOT dismissed, show the modal:
     if (!isModalDismissed) {
-      setShowModal(false);
+      setShowModal(true);
     }
   }, []);
 
   const handleCloseModal = () => {
     setShowModal(false);
-    localStorage.setItem("newFeatureModalDismissed", "true");
+    // Use the same localStorage key to mark this as dismissed
+    localStorage.setItem("newFeatureModalDismissed2", "true");
   };
 
   return (
