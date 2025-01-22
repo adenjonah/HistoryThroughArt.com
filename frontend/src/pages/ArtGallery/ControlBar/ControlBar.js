@@ -28,11 +28,11 @@ function ControlBar({
       unit7: false,
       unit8: false,
     });
-    setSort("ID Ascending");
+    setSort("Korus Sort");
     setSearch("");
     setClearFilters(true);
   };
-  
+
   const areFiltersActive = Object.values(unitFilters).some((filter) => filter);
 
   return (
@@ -42,7 +42,7 @@ function ControlBar({
         setSearch={setSearch}
         setClearFilters={setClearFilters}
         unitFilters={unitFilters}
-        setUnitFilters={setUnitFilters}
+        setUnitFilters={setUnitFilters} // Pass setUnitFilters
         sort={sort}
         setSort={setSort}
         searchBy={searchBy}
@@ -53,6 +53,7 @@ function ControlBar({
           unitFilters={unitFilters}
           handleClearFilters={handleClearFilters}
           clearFilters={clearFilters}
+          setUnitFilters={setUnitFilters} // Pass setUnitFilters
         />
       )}
     </div>

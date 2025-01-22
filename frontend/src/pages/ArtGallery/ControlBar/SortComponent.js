@@ -1,11 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./SearchComponent.css";
+
 function SortComponent({ sort, setSort, setClearFilters }) {
   const handleSortChange = (event) => {
     const value = event.target.value;
     setSort(value);
     setClearFilters(value === "ID Ascending");
+
+    // Save sort preference to localStorage
+    localStorage.setItem("sort", value);
   };
+
+  // Load sort preference from localStorage on mount
+  useEffect(() => {
+    const savedSort = localStorage.getItem("sort");
+    if (savedSort) {
+      setSort(savedSort);
+      setClearFilters(savedSort === "ID Ascending");
+    }
+  }, [setSort, setClearFilters]);
 
   return (
     <div className="w3-col s6 m6 l3">

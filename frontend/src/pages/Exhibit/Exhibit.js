@@ -75,9 +75,6 @@ function Exhibit() {
     );
   }
 
-  const forwardID = exhibitID === 250 ? 1 : exhibitID + 1;
-  const backID = exhibitID === 1 ? 250 : exhibitID - 1;
-
   return (
     <div className="w3-container">
       <div className="w3-center title-container">
