@@ -7,7 +7,7 @@
   align-items: center;
   text-align: center;
   min-height: calc(100vh - 60px);
-  max-height: calc(100vh - 60);
+  max-height: calc(100vh - 60px);
   width: 100%;
   overflow-x: hidden;
   padding: 0 20px; /* Some padding for desktop and mobile */
@@ -21,9 +21,11 @@
 .scrolling-background1,
 .scrolling-background2 {
   position: absolute;
-  background-image: url("../../../public/homepageBackground.webp");
+  top: 0;
+  left: 0;
   width: 200%;
   height: 100%;
+  background-image: url("../../../public/homepageBackground.webp");
   background-size: cover;
   background-position: top left;
   opacity: 0.5;
