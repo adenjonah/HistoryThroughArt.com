@@ -1,5 +1,5 @@
 // App.js
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./w3.css";
@@ -47,18 +47,8 @@ function App() {
   const [menuOpened, setMenuOpened] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    // Check local storage to see if the modal has been dismissed
-    const isModalDismissed = localStorage.getItem("newFeatureModalDismissed2");
-    // If it's NOT dismissed, show the modal:
-    if (!isModalDismissed) {
-      setShowModal(true);
-    }
-  }, []);
-
   const handleCloseModal = () => {
     setShowModal(false);
-    // Use the same localStorage key to mark this as dismissed
     localStorage.setItem("newFeatureModalDismissed2", "true");
   };
 
