@@ -49,11 +49,6 @@ body {
   background: var(--button-color);
 }
 
-@media (min-width: 992px) {
-  .spacer {
-    margin-left: 200px;
-  }
-}
 
 .feedback-button {
   position: fixed;

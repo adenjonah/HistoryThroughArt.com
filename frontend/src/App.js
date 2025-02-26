@@ -55,7 +55,7 @@ function App() {
   return (
     <>
       <NavBar menuOpened={menuOpened} setMenuOpened={setMenuOpened} />
-      <div className={`spacer ${menuOpened ? "spaceopen" : "spaceclosed"}`}>
+      <div>
         {showModal && <NewFeatureModal onClose={handleCloseModal} />}
         <Routes>
           <Route path="/" element={<Home />} />
