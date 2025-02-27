@@ -1,4 +1,33 @@
 import React from "react";
+import backgroundImage from "./homepageBackground.webp";
+import styled from "@emotion/styled";
+
+// Styled components for the animated backgrounds
+const ScrollingBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-image: url(${props => props.image});
+  background-size: cover;
+  background-position: top left;
+  opacity: 0.5;
+  z-index: 0;
+  animation: ${props => props.animation} 200s linear infinite;
+
+  @keyframes scroll1 {
+    0% { transform: translateX(0%); }
+    50% { transform: translateX(-100%); }
+    50.01% { transform: translateX(100%); }
+    100% { transform: translateX(0%); }
+  }
+
+  @keyframes scroll2 {
+    from { transform: translateX(100%); }
+    to { transform: translateX(-100%); }
+  }
+`;
 
 function Home() {
   const handleFeelingLucky = () => {
@@ -48,8 +77,8 @@ function Home() {
       </div>
 
       {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-[200%] h-full bg-cover bg-top-left opacity-100 z-0 scrolling-background1"></div>
-      <div className="absolute top-0 left-0 w-[200%] h-full bg-cover bg-top-left opacity-100 z-0 scrolling-background2"></div>
+      <ScrollingBackground image={backgroundImage} animation="scroll1" />
+      <ScrollingBackground image={backgroundImage} animation="scroll2" />
     </div>
   );
 }
