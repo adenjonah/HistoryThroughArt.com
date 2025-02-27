@@ -1,5 +1,5 @@
 module.exports = {
-  // ... other config
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       keyframes: {
@@ -19,5 +19,6 @@ module.exports = {
         'scroll2': 'scroll2 200s linear infinite'
       }
     }
-  }
-} 
+  },
+  plugins: [],
+}; 
