@@ -28,19 +28,19 @@ function Home() {
         <div className="flex flex-col lg:flex-row justify-center items-center gap-4">
           <button
             onClick={handleStartLearning}
-            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300"
+            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
           >
             Tutorial
           </button>
           <button
             onClick={handleFeelingLucky}
-            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300"
+            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
           >
             Random Art
           </button>
           <button
             onClick={handleViewMap}
-            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300"
+            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
           >
             View Map
           </button>
