@@ -1,5 +1,4 @@
 import React from "react";
-import "./Home.css";
 
 function Home() {
   const handleFeelingLucky = () => {
@@ -16,51 +15,41 @@ function Home() {
   };
 
   return (
-    <div
-      className="w3-container w3-display-container w3-center"
-      style={{
-        minHeight: "calc(100vh - 60px)",
-        zIndex: 0,
-        overflowX: "hidden",
-      }}
-    >
-      <div className="w3-display-middle text">
-        <h1 className="w3-xxlarge w3-text-white">
-          Welcome to HistoryThroughArt.com!
+    <div className="relative flex flex-col justify-center items-center text-center min-h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] w-full overflow-x-hidden">
+      <div className="z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-4xl text-white mb-6">
+          Welcome to HistoryThroughArt
         </h1>
-        <p className="w3-large w3-text-white">
-          This site is intended to be a learning aid for students exploring the
-          content of the AP Art History curriculum.
+        <p className="text-lg text-white mb-8">
+          Your interactive learning companion for exploring the AP Art History curriculum.
         </p>
-        <div className="w3-row w3-center w3-margin-top">
-          <div className="w3-col s12 m12 l12 w3-margin-bottom">
-            <button
-              onClick={handleStartLearning}
-              className="w3-button button w3-round w3-block"
-            >
-              How To Use This Site
-            </button>
-          </div>
-          <div className="w3-col s12 m12 l12 w3-margin-bottom">
-            <button
-              onClick={handleFeelingLucky}
-              className="w3-button button w3-round w3-block"
-            >
-              Random Art Piece
-            </button>
-          </div>
-          <div className="w3-col s12 m12 l12 w3-margin-bottom">
-            <button
-              onClick={handleViewMap}
-              className="w3-button button w3-round w3-block"
-            >
-              View Map
-            </button>
-          </div>
+
+        {/* Buttons Grid - Always single column until lg breakpoint */}
+        <div className="flex flex-col lg:flex-row justify-center items-center gap-4">
+          <button
+            onClick={handleStartLearning}
+            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
+          >
+            Tutorial
+          </button>
+          <button
+            onClick={handleFeelingLucky}
+            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
+          >
+            Random Art
+          </button>
+          <button
+            onClick={handleViewMap}
+            className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
+          >
+            View Map
+          </button>
         </div>
       </div>
-      <div className="scrolling-background1"></div>
-      <div className="scrolling-background2"></div>
+
+      {/* Background Elements */}
+      <div className="absolute top-0 left-0 w-[200%] h-full bg-cover bg-top-left opacity-100 z-0 scrolling-background1"></div>
+      <div className="absolute top-0 left-0 w-[200%] h-full bg-cover bg-top-left opacity-100 z-0 scrolling-background2"></div>
     </div>
   );
 }

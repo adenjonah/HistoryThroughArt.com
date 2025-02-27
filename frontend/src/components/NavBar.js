@@ -1,4 +1,3 @@
-import "./NavBar.css";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,77 +6,80 @@ function NavBar({ menuOpened, setMenuOpened }) {
 
   const toggleMenu = (event) => {
     event.stopPropagation();
-    const sidebar = document.getElementById("mySidebar");
-    if (menuOpened) {
-      sidebar.style.display = "none";
-      setMenuOpened(false);
-    } else {
-      if (window.innerWidth <= 992)
-        sidebar.className =
-          "w3-sidebar w3-bar-block w3-collapse w3-card w3-animate-left sidebar spacerSidebar";
-      sidebar.style.display = "block";
-      setMenuOpened(true);
-    }
+    setMenuOpened(!menuOpened);
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      const sidebar = document.getElementById("mySidebar");
-      if (menuOpened && sidebar && !sidebar.contains(event.target)) {
-        sidebar.style.display = "none";
+      if (menuOpened && !event.target.closest('.navbar-container')) {
         setMenuOpened(false);
       }
     };
 
     document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    return () => document.removeEventListener("click", handleClickOutside);
   }, [menuOpened, setMenuOpened]);
 
   return (
-    <div>
-      <div className="w3-container navbar">
-        <button
-          className="w3-button navbar-menu-button enhanced-menu-button"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          &#9776;
-        </button>
-        <span className="navbar-title" onClick={() => navigate("/")}>
-          History Through Art
-        </span>
-      </div>
-      <div
-        className="w3-sidebar w3-bar-block w3-collapse w3-card sidebar spacerSidebar"
-        style={{ width: "200px" }}
-        id="mySidebar"
+    <div className="relative">
+      {/* Fixed Navbar */}
+      <nav className="fixed top-0 left-0 right-0 h-[60px] bg-[var(--accent-color)] shadow-lg z-50">
+        <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-full">
+            {/* Logo/Title */}
+            <div 
+              onClick={() => navigate("/")}
+              className="text-[var(--text-color)] text-2xl font-bold cursor-pointer hover:text-[var(--foreground-color)] transition-colors duration-200"
+            >
+              History Through Art
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-8">
+              <a href="/" className="text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors duration-200">Home</a>
+              <a href="/artgallery" className="text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors duration-200">Art Gallery</a>
+              <a href="/flashcards" className="text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors duration-200">Flashcards</a>
+              <a href="/map" className="text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors duration-200">Map</a>
+              <a href="/calendar" className="text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors duration-200">Calendar</a>
+              <a href="/tutorial" className="text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors duration-200">How-To</a>
+              <a href="/about" className="text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors duration-200">About Us</a>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div
+              onClick={toggleMenu}
+              aria-label="Toggle menu"
+              className="lg:hidden p-2 rounded-lg text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-all duration-200 cursor-pointer"
+            >
+              {menuOpened ? (
+                <div className="text-2xl">✖</div>
+              ) : (
+                <div className="text-2xl">☰</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Dropdown */}
+      <div 
+        className={`fixed top-[60px] left-0 right-0 bg-[var(--accent-color)] shadow-lg lg:hidden transition-all duration-300 ease-in-out z-40 ${
+          menuOpened ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        }`}
       >
-        <a href="/" className="w3-bar-item w3-button">
-          <i className="fas fa-home"></i> Home
-        </a>
-        <a href="/artgallery" className="w3-bar-item w3-button">
-          <i className="fas fa-palette"></i> Art Gallery
-        </a>
-        <a href="/flashcards" className="w3-bar-item w3-button">
-          <i className="fas fa-clipboard-list"></i> Flashcards
-        </a>
-        <a href="/map" className="w3-bar-item w3-button">
-          <i className="fas fa-map"></i> Map
-        </a>
-        <a href="/calendar" className="w3-bar-item w3-button">
-          <i className="fas fa-calendar-alt"></i> Calendar
-        </a>
-        <a href="/tutorial" className="w3-bar-item w3-button">
-          <i className="fas fa-video"></i> How-To
-        </a>
-        <a href="/about" className="w3-bar-item w3-button">
-          <i className="fas fa-info-circle"></i> About Us
-        </a>
+        <div className="flex flex-col py-2">
+          <a href="/" className="px-4 py-2 text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-colors duration-200">Home</a>
+          <a href="/artgallery" className="px-4 py-2 text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-colors duration-200">Art Gallery</a>
+          <a href="/flashcards" className="px-4 py-2 text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-colors duration-200">Flashcards</a>
+          <a href="/map" className="px-4 py-2 text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-colors duration-200">Map</a>
+          <a href="/calendar" className="px-4 py-2 text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-colors duration-200">Calendar</a>
+          <a href="/tutorial" className="px-4 py-2 text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-colors duration-200">How-To</a>
+          <a href="/about" className="px-4 py-2 text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-colors duration-200">About Us</a>
+        </div>
       </div>
-      <div className="spacerMain" />
+
+      {/* Spacer for content below navbar */}
+      <div className="h-[60px]"></div>
     </div>
   );
 }
