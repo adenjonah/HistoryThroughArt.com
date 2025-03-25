@@ -159,7 +159,87 @@
       {"id":  "94", "dueDate":  "2025-1-28"},
       {"id":  "95", "dueDate":  "2025-1-28"},
       {"id":  "97", "dueDate":  "2025-1-29"},
-      {"id":  "99", "dueDate":  "2025-1-29"}
+      {"id":  "99", "dueDate":  "2025-1-29"},
+
+      {"id":  "213", "dueDate":  "2025-3-3"},
+      {"id":  "214", "dueDate":  "2025-3-3"},
+      {"id":  "215", "dueDate":  "2025-3-5"},
+      {"id":  "216", "dueDate":  "2025-3-5"},
+      {"id":  "217", "dueDate":  "2025-3-6"},
+      {"id":  "218", "dueDate":  "2025-3-6"},
+      {"id":  "219", "dueDate":  "2025-3-7"},
+      {"id":  "220", "dueDate":  "2025-3-7"},
+      {"id":  "221", "dueDate":  "2025-3-10"},
+      {"id":  "222", "dueDate":  "2025-3-10"},
+      {"id":  "223", "dueDate":  "2025-3-11"},
+      {"id":  "123", "dueDate":  "2025-3-11"},
+      {"id":  "113", "dueDate":  "2025-3-13"},
+      {"id":  "115", "dueDate":  "2025-3-13"},
+      {"id":  "Snow Makeup Day", "dueDate":  "2025-3-14"},
+      {"id":  "116", "dueDate":  "2025-3-17"},
+      {"id":  "119", "dueDate":  "2025-3-17"},
+      {"id":  "120", "dueDate":  "2025-3-18"},
+      {"id":  "121", "dueDate":  "2025-3-18"},
+      {"id":  "122", "dueDate":  "2025-3-19"},
+      {"id":  "124", "dueDate":  "2025-3-19"},
+      {"id":  "125", "dueDate":  "2025-3-20"},
+      {"id":  "126", "dueDate":  "2025-3-20"},
+      {"id":  "128", "dueDate":  "2025-3-21"},
+      {"id":  "129", "dueDate":  "2025-3-21"},
+      {"id":  "130", "dueDate":  "2025-3-24"},
+      {"id":  "131", "dueDate":  "2025-3-24"},
+      {"id":  "132", "dueDate":  "2025-3-26"},
+      {"id":  "133", "dueDate":  "2025-3-27"},
+      {"id":  "134", "dueDate":  "2025-3-27"},
+      {"id":  "135", "dueDate":  "2025-3-28"},
+      {"id":  "136", "dueDate":  "2025-3-28"},
+      {"id":  "137", "dueDate":  "2025-3-31"},
+      {"id":  "138", "dueDate":  "2025-3-31"},
+
+      {"id":  "139", "dueDate":  "2025-4-1"},
+      {"id":  "140", "dueDate":  "2025-4-1"},
+      {"id":  "141", "dueDate":  "2025-4-2"},
+      {"id":  "142", "dueDate":  "2025-4-2"},
+      {"id":  "143", "dueDate":  "2025-4-3"},
+      {"id":  "144", "dueDate":  "2025-4-3"},
+      {"id":  "145", "dueDate":  "2025-4-4"},
+      {"id":  "146", "dueDate":  "2025-4-4"},
+      {"id":  "Practice Exam - Lasts 4 Hours", "dueDate":  "2025-4-6"},
+      {"id":  "Practice Exam - Lasts 4 Hours", "dueDate":  "2025-4-12"},
+      {"id":  "Practice Exam - Lasts 4 Hours", "dueDate":  "2025-4-13"},
+      {"id":  "147", "dueDate":  "2025-4-14"},
+      {"id":  "148", "dueDate":  "2025-4-14"},
+      {"id":  "149", "dueDate":  "2025-4-15"},
+      {"id":  "150", "dueDate":  "2025-4-15"},
+      {"id":  "151", "dueDate":  "2025-4-16"},
+      {"id":  "152", "dueDate":  "2025-4-16"},
+      {"id":  "224", "dueDate":  "2025-4-18"},
+      {"id":  "225", "dueDate":  "2025-4-18"},
+      {"id":  "226", "dueDate":  "2025-4-21"},
+      {"id":  "227", "dueDate":  "2025-4-21"},
+      {"id":  "228", "dueDate":  "2025-4-22"},
+      {"id":  "229", "dueDate":  "2025-4-22"},
+      {"id":  "230", "dueDate":  "2025-4-23"},
+      {"id":  "231", "dueDate":  "2025-4-23"},
+      {"id":  "232", "dueDate":  "2025-4-24"},
+      {"id":  "233", "dueDate":  "2025-4-24"},
+      {"id":  "234", "dueDate":  "2025-4-25"},
+      {"id":  "235", "dueDate":  "2025-4-25"},
+      {"id":  "236", "dueDate":  "2025-4-28"},
+      {"id":  "237", "dueDate":  "2025-4-28"},
+      {"id":  "238", "dueDate":  "2025-4-29"},
+      {"id":  "239", "dueDate":  "2025-4-29"},
+      {"id":  "240", "dueDate":  "2025-4-30"},
+      {"id":  "241", "dueDate":  "2025-4-30"},
+
+      {"id":  "242", "dueDate":  "2025-5-1"},
+      {"id":  "243", "dueDate":  "2025-5-1"},
+      {"id":  "244", "dueDate":  "2025-5-2"},
+      {"id":  "245", "dueDate":  "2025-5-2"},
+
+
+      {"id":  "Exam Day! Good Luck Everyone!", "dueDate":  "2025-5-15"}
+
 
 
 
@@ -182,7 +262,13 @@
       { "title": "Northern Renaissance Quiz", "dueDate": "2025-1-7" },
       { "title": "Baroque Quiz", "dueDate": "2025-1-13" },
       { "title": "Inca, Maya, and Aztec Empires Quiz", "dueDate": "2025-1-21" },
-      { "title": "North America & Influence of Europe Quiz", "dueDate": "2025-1-30" }
+      { "title": "North America & Influence of Europe Quiz", "dueDate": "2025-1-30" },
+
+      { "title": "Quiz on Africa, C/C Essay", "dueDate": "2025-3-4" },
+      { "title": "Quiz on Pacific - VC on anything", "dueDate": "2025-3-12" },
+      { "title": "Realism, Impressionism, Post Impressionism, Symbolism, Cubism Quiz", "dueDate": "2025-3-25" },
+
+      { "title": "132-151 Modern Art Quiz", "dueDate": "2025-4-17" }
 
 
     ]
