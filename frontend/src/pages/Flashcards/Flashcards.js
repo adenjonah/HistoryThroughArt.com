@@ -81,7 +81,11 @@ const Flashcards = () => {
   if (deck.length === 0) {
     return (
       <div className="flashcards-container">
-        <h2>All cards marked as Great! Reset the deck to continue.</h2>
+        <h1 className="title">Flashcards</h1>
+        <div className="end-of-deck-message">
+          <h2>All cards marked as Great!</h2>
+          <p>Reset the deck to continue studying.</p>
+        </div>
         <button className="reset-button" onClick={resetDeck}>
           Reset Deck
         </button>

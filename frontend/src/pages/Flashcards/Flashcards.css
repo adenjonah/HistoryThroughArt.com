@@ -15,6 +15,19 @@
   margin: 20px;
 }
 
+/* End-of-deck message styling */
+.end-of-deck-message {
+  background-color: var(--foreground-color);
+  color: var(--accent-color);
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 90%;
+}
+
 .progress {
   background-color: var(--foreground-color);
   border-radius: 10px;
