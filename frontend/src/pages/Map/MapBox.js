@@ -239,7 +239,8 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange }) => {
       ref={mapContainerRef}
       style={{
         width: size?.width || "100%",
-        height: size?.height || "500px",
+        height: size?.height || "calc(100% - 20px)",
+        minHeight: "600px", 
         position: "relative",
         borderRadius: "20px",
       }}
