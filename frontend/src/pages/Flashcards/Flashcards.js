@@ -42,6 +42,7 @@ const Flashcards = () => {
   const [currentCard, setCurrentCard] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [deck, setDeck] = useState([]);
+  const [excludedCardIds, setExcludedCardIds] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -70,35 +71,22 @@ const Flashcards = () => {
   }, []);
 
   // Memoize shuffleDeck function to avoid recreation on every render
-  const shuffleDeck = useCallback((forceNewDeck = false) => {
-    // If we're not forcing a new deck (like during a reset), don't overwrite the deck
-    if (!forceNewDeck && deck.length > 0) {
-      return; // Keep the existing deck
-    }
-    
-    // First, get all cards that are due by the selected date
-    const cardsDueByDate = getCardsDueByDate(displayCardsDueBy);
-    
-    // Filter to get only the cards that follow Korus' teaching order
-    const cardsInKorusOrder = getCardsInKorusOrder(cardsDueByDate);
-    
-    // Create a set for O(1) lookup
-    const korusOrderSet = new Set(cardsInKorusOrder);
-    
-    // Filter the artworks based on Korus order and selected units
-    let filteredDeck = artPiecesData.filter(card => 
-      korusOrderSet.has(card.id) && 
-      (selectedUnits.length === 0 || selectedUnits.includes(card.unit))
+  const shuffleDeck = useCallback((isInitial = false) => {
+    const filteredDeck = artPiecesData.filter(
+      (card) =>
+        (selectedUnits.length === 0 || selectedUnits.includes(card.unit)) &&
+        !excludedCardIds.includes(card.id)
     );
-    
-    // Always shuffle the deck
     const shuffledDeck = [...filteredDeck].sort(() => Math.random() - 0.5);
     setDeck(shuffledDeck);
     setCurrentCard(0);
     setIsFlipped(false);
-
-    // We no longer clear localStorage here to ensure progress is saved
-  }, [selectedUnits, displayCardsDueBy, getCardsDueByDate, getCardsInKorusOrder, deck]);
+    // Clear saved deck if this is a manual reset (not initial load)
+    if (!isInitial) {
+      localStorage.removeItem("flashcards_deck");
+      localStorage.removeItem("flashcards_currentCard");
+    }
+  }, [selectedUnits, excludedCardIds]);
 
   // Format date to YYYY-MM-DD for the date input
   const formatDateForInput = (date) => {
@@ -118,110 +106,70 @@ const Flashcards = () => {
     }
   }, [selectedUnits, displayCardsDueBy, isInitialized, shuffleDeck, deck]);
 
-  // Save progress immediately when it changes
+  // Load saved progress from localStorage - runs only once
   useEffect(() => {
-    // Only save after initial loading is complete and when we have valid data
-    if (isInitialized && deck.length > 0) {
-      // Save all state to localStorage for complete persistence
+    try {
+      const savedExcludedIds = localStorage.getItem("flashcards_excludedIds");
+      const savedSelectedUnits = localStorage.getItem("flashcards_selectedUnits");
+      const savedDeck = localStorage.getItem("flashcards_deck");
+      const savedCurrentCard = localStorage.getItem("flashcards_currentCard");
+
+      if (savedExcludedIds) {
+        setExcludedCardIds(JSON.parse(savedExcludedIds));
+      }
+      
+      if (savedSelectedUnits) {
+        setSelectedUnits(JSON.parse(savedSelectedUnits));
+      }
+
+      if (savedDeck && savedCurrentCard) {
+        const parsedDeck = JSON.parse(savedDeck);
+        if (Array.isArray(parsedDeck) && parsedDeck.length > 0) {
+          setDeck(parsedDeck);
+          const cardIndex = parseInt(savedCurrentCard, 10);
+          setCurrentCard(isNaN(cardIndex) ? 0 : cardIndex);
+        } else {
+          shuffleDeck(true);
+        }
+      } else {
+        shuffleDeck(true);
+      }
+    } catch (error) {
+      console.error("Error loading saved progress:", error);
+      shuffleDeck(true);
+    } finally {
+      setIsInitialized(true);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Create a memoized function to handle the saving logic
+  const saveProgress = useCallback(() => {
+    if (!isInitialized || !deck || deck.length === 0) return;
+
+    try {
+      setIsSaving(true);
       localStorage.setItem("flashcards_deck", JSON.stringify(deck));
       localStorage.setItem("flashcards_currentCard", currentCard.toString());
-      localStorage.setItem("flashcards_isFlipped", JSON.stringify(isFlipped));
+      localStorage.setItem("flashcards_excludedIds", JSON.stringify(excludedCardIds));
       localStorage.setItem("flashcards_selectedUnits", JSON.stringify(selectedUnits));
-      localStorage.setItem("flashcards_displayCardsDueBy", displayCardsDueBy.toISOString());
-      localStorage.setItem("flashcards_showSettings", JSON.stringify(showSettings));
       
-      // Show saving indicator
-      setIsSaving(true);
-      
-      // Hide the saving indicator after a delay
       const timer = setTimeout(() => {
         setIsSaving(false);
       }, 1000);
       
       return () => clearTimeout(timer);
+    } catch (error) {
+      console.error("Error saving progress:", error);
+      setIsSaving(false);
     }
-  }, [
-    deck, 
-    currentCard,
-    isFlipped,
-    selectedUnits, 
-    displayCardsDueBy,
-    showSettings,
-    isInitialized
-  ]);
+  }, [deck, currentCard, excludedCardIds, selectedUnits, isInitialized]);
 
-  // Load saved progress from localStorage - runs only once
+  // Save progress whenever relevant state changes
   useEffect(() => {
-    // Load all saved settings
-    const savedDeck = localStorage.getItem("flashcards_deck");
-    const savedCurrentCard = localStorage.getItem("flashcards_currentCard");
-    const savedIsFlipped = localStorage.getItem("flashcards_isFlipped");
-    const savedSelectedUnits = localStorage.getItem("flashcards_selectedUnits");
-    const savedDisplayCardsDueBy = localStorage.getItem("flashcards_displayCardsDueBy");
-    const savedShowSettings = localStorage.getItem("flashcards_showSettings");
-
-    let needsNewDeck = false;
-
-    // Load saved deck and current card
-    if (savedDeck && savedCurrentCard) {
-      try {
-        const parsedDeck = JSON.parse(savedDeck);
-        if (Array.isArray(parsedDeck) && parsedDeck.length > 0) {
-          setDeck(parsedDeck);
-          setCurrentCard(parseInt(savedCurrentCard, 10) || 0);
-          
-          // Restore flipped state
-          if (savedIsFlipped) {
-            setIsFlipped(JSON.parse(savedIsFlipped));
-          }
-        } else {
-          needsNewDeck = true;
-        }
-      } catch (error) {
-        console.error("Error loading saved flashcards:", error);
-        needsNewDeck = true;
-      }
-    } else {
-      needsNewDeck = true;
+    if (isInitialized && deck.length > 0) {
+      saveProgress();
     }
-    
-    // Load selected units
-    if (savedSelectedUnits) {
-      try {
-        setSelectedUnits(JSON.parse(savedSelectedUnits));
-      } catch (error) {
-        console.error("Error loading saved units:", error);
-      }
-    }
-    
-    // Load due date
-    if (savedDisplayCardsDueBy) {
-      try {
-        setDisplayCardsDueBy(new Date(savedDisplayCardsDueBy));
-      } catch (error) {
-        console.error("Error loading saved date:", error);
-      }
-    }
-
-    // Load settings panel state
-    if (savedShowSettings) {
-      try {
-        setShowSettings(JSON.parse(savedShowSettings));
-      } catch (error) {
-        console.error("Error loading settings panel state:", error);
-      }
-    }
-    
-    setIsInitialized(true);
-
-    // Only generate a new deck if we couldn't load one
-    if (needsNewDeck) {
-      // We use setTimeout to ensure all state is set before shuffleDeck runs
-      setTimeout(() => shuffleDeck(true), 0);
-    }
-    
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Intentionally leaving shuffleDeck out of deps to avoid re-running on mount
+  }, [deck, currentCard, excludedCardIds, selectedUnits, saveProgress, isInitialized]);
 
   const handleFlip = () => {
     if (!isTransitioning) {
@@ -232,60 +180,55 @@ const Flashcards = () => {
   const handleAction = (action) => {
     if (isTransitioning) return;
 
-    // Start transition
     setIsTransitioning(true);
 
-    // First, handle card flip if it's currently flipped
-    if (isFlipped) {
-      setIsFlipped(false);
-      setTimeout(processCard, 300); // Wait for flip animation to complete
-    } else {
-      processCard();
-    }
-
-    function processCard() {
+    const processCard = () => {
       let updatedDeck = [...deck];
       let nextCardIndex = currentCard;
 
-      if (action === "great") {
-        // Remove current card from deck
-        updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
-        
-        // If we removed the last card in the deck or the current card was the last one
-        if (updatedDeck.length === 0 || currentCard >= updatedDeck.length) {
-          nextCardIndex = 0;
-        }
-        // Otherwise, keep the same index (which will show the next card since we removed the current one)
-      } else if (action === "bad") {
-        // Move current card to the end
-        const currentCardData = deck[currentCard];
-        updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
-        updatedDeck.push(currentCardData);
-        
-        // If we were at the last card, go to the first card
-        if (currentCard >= updatedDeck.length - 1) {
-          nextCardIndex = 0;
-        }
-        // Otherwise, keep the same index (which will show the next card)
-      } else {
-        // For "good", just move to the next card
-        nextCardIndex = (currentCard + 1) % updatedDeck.length;
+      switch (action) {
+        case "great":
+          // Remove current card from deck
+          updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
+          nextCardIndex = updatedDeck.length === 0 ? 0 : currentCard % updatedDeck.length;
+          break;
+
+        case "bad":
+          // Move current card to the end
+          if (currentCard < updatedDeck.length) {
+            const currentCardData = updatedDeck[currentCard];
+            updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
+            updatedDeck.push(currentCardData);
+            nextCardIndex = currentCard >= updatedDeck.length - 1 ? 0 : currentCard;
+          }
+          break;
+
+        case "good":
+          // Just move to next card
+          nextCardIndex = (currentCard + 1) % updatedDeck.length;
+          break;
+
+        default:
+          break;
       }
-      
-      // Update the deck
+
       setDeck(updatedDeck);
-      
-      // Move to next card
       setCurrentCard(nextCardIndex);
-      
-      // End transition
       setIsTransitioning(false);
+    };
+
+    // Handle card flip animation before processing
+    if (isFlipped) {
+      setIsFlipped(false);
+      setTimeout(processCard, 300);
+    } else {
+      processCard();
     }
   };
 
   const resetDeck = () => {
-    // Create a new deck with forceNewDeck=true to force regeneration
-    shuffleDeck(true);
+    if (isTransitioning) return;
+    shuffleDeck();
   };
 
   const toggleSettings = () => {
