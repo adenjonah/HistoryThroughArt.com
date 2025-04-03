@@ -40,7 +40,7 @@ function Museum() {
 
   return (
     <div>
-      <h1 className="title">Art Gallery</h1>
+      <h1 className="title w3-center">Art Gallery</h1>
       <div className="contentBox w3-center">
         <ControlBar
           search={search}

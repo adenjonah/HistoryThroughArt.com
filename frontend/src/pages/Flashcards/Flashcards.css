@@ -200,52 +200,86 @@
 .settings-modal {
   position: fixed;
   top: 0;
-  right: 0;
-  width: 300px; /* Set width of the sliding modal */
-  height: 100vh;
-  background-color: var(--foreground-color);
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  right: -100%;
+  height: 100%;
+  width: 300px;
+  background-color: var(--background-color-secondary);
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  z-index: 10;
   padding: 20px;
-  transform: translateX(100%); /* Initially off-screen */
-  transition: transform 0.3s ease-in-out; /* Smooth slide in */
-  z-index: 1000; /* Ensure it is above other content */
+  color: var(--text-color);
 }
 
 .settings-modal.show {
-  transform: translateX(0); /* Slide in from the right */
+  right: 0;
 }
 
 .settings-modal h3 {
   margin-top: 0;
-  font-size: 24px;
-  color: var(--accent-color);
-  padding-bottom: 10px;
+  color: var(--text-color);
 }
 
-.settings-modal label {
+.settings-modal h4 {
+  margin: 15px 0 5px;
+  color: var(--text-color);
+}
+
+.unit-selection,
+.exclude-ids,
+.korus-order-setting,
+.due-date-setting {
+  margin-bottom: 20px;
+}
+
+.unit-selection label,
+.korus-order-setting label,
+.due-date-setting label {
   display: block;
-  margin: 10px 0;
-  font-size: 18px;
-  color: var(--accent-color);
+  margin-bottom: 5px;
 }
 
-.settings-modal input[type="text"] {
+.exclude-ids input {
   width: 100%;
-  padding: 8px;
+  padding: 5px;
   margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
 }
 
 .close-settings {
-  display: inline-block;
-  padding: 10px 15px;
+  width: 100%;
+  padding: 10px;
   background-color: var(--button-color);
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   margin-top: 20px;
+}
+
+.slider {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.slider-value {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.slider-hint {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: var(--text-color-secondary, #777);
+  font-style: italic;
+}
+
+.korus-max-number {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
 }
 
 .popup-banner {
@@ -293,4 +327,68 @@
     padding: 15px 30px;
     font-size: 18px;
   }
+}
+
+.date-selector {
+  margin-top: 10px;
+  padding: 15px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+}
+
+.date-input {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 16px;
+}
+
+.unit-hint {
+  margin: 5px 0 15px;
+  font-size: 0.9em;
+  color: var(--text-color-secondary, #777);
+  font-style: italic;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.today-button,
+.current-class-button {
+  background-color: var(--button-color);
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.current-class-button {
+  background-color: var(--accent-color);
+  font-weight: bold;
+}
+
+.today-button:hover,
+.current-class-button:hover {
+  opacity: 0.9;
+}
+
+.card-count-info {
+  margin: 10px 0;
+  padding: 8px;
+  background-color: var(--foreground-color);
+  color: var(--accent-color);
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: bold;
 }
