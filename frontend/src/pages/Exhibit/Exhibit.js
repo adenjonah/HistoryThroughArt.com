@@ -112,29 +112,37 @@ function Exhibit() {
       </div>
       {/* Navigation Buttons */}
       <div
-        className="shadow-md py-10 flex justify-center"
+        className="shadow-md py-6 md:py-10 w-full"
         style={{ backgroundColor: "var(--background-color)" }}
       >
-        <button
-          className="px-6 py-3 mx-40 text-lg font-medium rounded focus:outline-none"
-          style={{
-            backgroundColor: "var(--button-color)",
-            color: "var(--button-text-color)",
-          }}
-          onClick={() => handleNavigation(getPreviousID())}
-        >
-          ← Previous Exhibit
-        </button>
-        <button
-          className="px-6 py-3 mx-40 text-lg font-medium rounded focus:outline-none"
-          style={{
-            backgroundColor: "var(--button-color)",
-            color: "var(--button-text-color)",
-          }}
-          onClick={() => handleNavigation(getNextID())}
-        >
-          Next Exhibit →
-        </button>
+        <div className="flex flex-wrap justify-center gap-3 md:gap-8 px-2 max-w-4xl mx-auto">
+          <button
+            className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-lg font-medium rounded focus:outline-none flex-1 md:flex-initial max-w-[45%] md:max-w-none"
+            style={{
+              backgroundColor: "var(--button-color)",
+              color: "var(--button-text-color)",
+            }}
+            onClick={() => handleNavigation(getPreviousID())}
+          >
+            <span className="flex items-center justify-center">
+              <span className="mr-1">←</span> 
+              <span className="whitespace-nowrap overflow-hidden text-ellipsis">Previous</span>
+            </span>
+          </button>
+          <button
+            className="px-3 py-2 md:px-6 md:py-3 text-sm md:text-lg font-medium rounded focus:outline-none flex-1 md:flex-initial max-w-[45%] md:max-w-none"
+            style={{
+              backgroundColor: "var(--button-color)",
+              color: "var(--button-text-color)",
+            }}
+            onClick={() => handleNavigation(getNextID())}
+          >
+            <span className="flex items-center justify-center">
+              <span className="whitespace-nowrap overflow-hidden text-ellipsis">Next</span>
+              <span className="ml-1">→</span>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );
