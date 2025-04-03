@@ -28,6 +28,41 @@
   max-width: 90%;
 }
 
+/* Full page view button */
+.full-page-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--foreground-color);
+  color: var(--accent-color);
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.full-page-button:hover {
+  opacity: 1;
+}
+
+/* Saving indicator */
+.saving-indicator {
+  font-size: 14px;
+  color: var(--accent-color);
+  margin-top: 5px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.saving-indicator.show {
+  opacity: 1;
+}
+
 .progress {
   background-color: var(--foreground-color);
   border-radius: 10px;
@@ -41,27 +76,19 @@
   height: 55%;
   perspective: 1000px;
   margin-bottom: 20px;
-}
-
-@media (max-width: 768px) {
-  .flashcard {
-    width: 90%;
-    height: 50%;
-    margin-bottom: 10px;
-  }
-
-  .action-buttons button {
-    padding: 15px 30px;
-    font-size: 18px;
-  }
+  cursor: pointer;
+  position: relative;
 }
 
 .flashcard-inner {
+  position: relative;
   width: 100%;
   height: 100%;
+  text-align: center;
   transition: transform 0.6s;
   transform-style: preserve-3d;
-  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 .flashcard.flipped .flashcard-inner {
@@ -109,9 +136,19 @@
 
 .action-buttons button {
   padding: 10px 20px;
+  margin: 0 5px;
   border: none;
   border-radius: 5px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-buttons button:disabled,
+.reset-button:disabled,
+.settings-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .bad-button {
@@ -243,4 +280,17 @@
   font-size: 18px;
   cursor: pointer;
   margin-left: 20px;
+}
+
+@media (max-width: 768px) {
+  .flashcard {
+    width: 90%;
+    height: 50%;
+    margin-bottom: 10px;
+  }
+
+  .action-buttons button {
+    padding: 15px 30px;
+    font-size: 18px;
+  }
 }

@@ -1,17 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import "./Flashcards.css";
 import artPiecesData from "../../data/artworks.json";
 
 const Flashcards = () => {
   const [currentCard, setCurrentCard] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [deck, setDeck] = useState([...artPiecesData]);
+  const [deck, setDeck] = useState([]);
   const [excludedCardIds, setExcludedCardIds] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const shuffleDeck = useCallback(() => {
+  // Memoize shuffleDeck function to avoid recreation on every render
+  const shuffleDeck = useCallback((isInitial = false) => {
     const filteredDeck = artPiecesData.filter(
       (card) =>
         (selectedUnits.length === 0 || selectedUnits.includes(card.unit)) &&
@@ -21,11 +25,66 @@ const Flashcards = () => {
     setDeck(shuffledDeck);
     setCurrentCard(0);
     setIsFlipped(false);
+
+    // Clear saved deck if this is a manual reset (not initial load)
+    if (!isInitial) {
+      localStorage.removeItem("flashcards_deck");
+      localStorage.removeItem("flashcards_currentCard");
+    }
   }, [selectedUnits, excludedCardIds]);
 
+  // Load saved progress from localStorage - runs only once
   useEffect(() => {
-    shuffleDeck();
-  }, [shuffleDeck]);
+    const savedExcludedIds = localStorage.getItem("flashcards_excludedIds");
+    const savedSelectedUnits = localStorage.getItem("flashcards_selectedUnits");
+    const savedDeck = localStorage.getItem("flashcards_deck");
+    const savedCurrentCard = localStorage.getItem("flashcards_currentCard");
+
+    if (savedExcludedIds) {
+      setExcludedCardIds(JSON.parse(savedExcludedIds));
+    }
+    
+    if (savedSelectedUnits) {
+      setSelectedUnits(JSON.parse(savedSelectedUnits));
+    }
+
+    if (savedDeck && savedCurrentCard) {
+      setDeck(JSON.parse(savedDeck));
+      setCurrentCard(parseInt(savedCurrentCard, 10));
+    } else {
+      // If no saved deck, initialize with the full deck
+      shuffleDeck(true);
+    }
+    
+    setIsInitialized(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally leaving shuffleDeck out of deps to avoid re-running on mount
+
+  // Create a memoized function to handle the saving logic
+  const saveProgress = useCallback(() => {
+    if (isInitialized && deck.length > 0) {
+      setIsSaving(true);
+      localStorage.setItem("flashcards_deck", JSON.stringify(deck));
+      localStorage.setItem("flashcards_currentCard", currentCard.toString());
+      localStorage.setItem("flashcards_excludedIds", JSON.stringify(excludedCardIds));
+      localStorage.setItem("flashcards_selectedUnits", JSON.stringify(selectedUnits));
+      
+      // Hide the saving indicator after a delay
+      const timer = setTimeout(() => {
+        setIsSaving(false);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [deck, currentCard, excludedCardIds, selectedUnits, isInitialized]);
+
+  // Save progress whenever relevant state changes
+  useEffect(() => {
+    // Only save after initial loading is complete and when deck changes
+    if (isInitialized && deck.length > 0) {
+      saveProgress();
+    }
+  }, [deck, currentCard, excludedCardIds, selectedUnits, saveProgress, isInitialized]);
 
   const handleFlip = () => {
     if (!isTransitioning) {
@@ -36,24 +95,55 @@ const Flashcards = () => {
   const handleAction = (action) => {
     if (isTransitioning) return;
 
+    // Start transition
     setIsTransitioning(true);
 
-    setTimeout(() => {
+    // First, handle card flip if it's currently flipped
+    if (isFlipped) {
+      setIsFlipped(false);
+      setTimeout(processCard, 300); // Wait for flip animation to complete
+    } else {
+      processCard();
+    }
+
+    function processCard() {
       let updatedDeck = [...deck];
+      let nextCardIndex = currentCard;
 
       if (action === "great") {
+        // Remove current card from deck
         updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
+        
+        // If we removed the last card in the deck or the current card was the last one
+        if (updatedDeck.length === 0 || currentCard >= updatedDeck.length) {
+          nextCardIndex = 0;
+        }
+        // Otherwise, keep the same index (which will show the next card since we removed the current one)
       } else if (action === "bad") {
-        updatedDeck.push(deck[currentCard]);
-        shuffleDeck();
+        // Move current card to the end
+        const currentCardData = deck[currentCard];
+        updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
+        updatedDeck.push(currentCardData);
+        
+        // If we were at the last card, go to the first card
+        if (currentCard >= updatedDeck.length - 1) {
+          nextCardIndex = 0;
+        }
+        // Otherwise, keep the same index (which will show the next card)
+      } else {
+        // For "good", just move to the next card
+        nextCardIndex = (currentCard + 1) % updatedDeck.length;
       }
-      setCurrentCard((prev) => (prev + 1) % updatedDeck.length);
-
-      setDeck(updatedDeck.sort(() => Math.random() - 0.5));
-
-      setIsFlipped(false);
+      
+      // Update the deck
+      setDeck(updatedDeck);
+      
+      // Move to next card
+      setCurrentCard(nextCardIndex);
+      
+      // End transition
       setIsTransitioning(false);
-    }, 300);
+    }
   };
 
   const resetDeck = () => {
@@ -65,7 +155,11 @@ const Flashcards = () => {
   };
 
   const handleExcludedIdsChange = (event) => {
-    const ids = event.target.value.split(",").map(Number);
+    const ids = event.target.value
+      .split(",")
+      .map((id) => id.trim())
+      .filter((id) => id)
+      .map(Number);
     setExcludedCardIds(ids);
   };
 
@@ -101,13 +195,33 @@ const Flashcards = () => {
       return date.join(" - ");
     }
 
-    return date[0].startsWith("-") ? date.slice(1) + " BCE" : date;
+    return date[0].startsWith("-") ? date[0].slice(1) + " BCE" : date[0];
   };
+
+  // Ensure we have a valid card to display
+  const cardToShow = deck[currentCard] || deck[0];
+  if (!cardToShow) {
+    return (
+      <div className="flashcards-container">
+        <h1 className="title">Flashcards</h1>
+        <div className="end-of-deck-message">
+          <h2>Error loading cards</h2>
+          <p>Please reset the deck to continue.</p>
+        </div>
+        <button className="reset-button" onClick={resetDeck}>
+          Reset Deck
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flashcards-container">
       <h1 className="title">Flashcards</h1>
       <div className="progress">{deck.length} cards remaining</div>
+      <div className={`saving-indicator ${isSaving ? "show" : ""}`}>
+        Progress saved
+      </div>
       <div
         className={`flashcard ${isFlipped ? "flipped" : ""}`}
         onClick={!isTransitioning ? handleFlip : null}
@@ -115,26 +229,40 @@ const Flashcards = () => {
         <div className="flashcard-inner">
           <div className="flashcard-front">
             <img
-              src={require(`../../artImages/${deck[currentCard].image[0]}`)}
-              alt={deck[currentCard].name}
+              src={require(`../../artImages/${cardToShow.image[0]}`)}
+              alt={cardToShow.name}
               className="flashcard-image"
             />
+            <Link
+              to={`/exhibit?id=${cardToShow.id}`}
+              className="full-page-button"
+              onClick={(e) => e.stopPropagation()}
+            >
+              View Details
+            </Link>
           </div>
 
           <div className="flashcard-back">
             {isFlipped && (
               <>
                 <h3 className="flashcard-title">
-                  {deck[currentCard].id}.{" "}
-                  <strong>{deck[currentCard].name}</strong>
+                  {cardToShow.id}.{" "}
+                  <strong>{cardToShow.name}</strong>
                 </h3>
-                <p>Location: {deck[currentCard].location}</p>
+                <p>Location: {cardToShow.location}</p>
                 <p>
                   Artist/Culture:{" "}
-                  {deck[currentCard].artist_culture || "Unknown"}
+                  {cardToShow.artist_culture || "Unknown"}
                 </p>
-                <p>Date: {toBCE(deck[currentCard].date)}</p>
-                <p>Materials: {deck[currentCard].materials}</p>
+                <p>Date: {toBCE(cardToShow.date)}</p>
+                <p>Materials: {cardToShow.materials}</p>
+                <Link
+                  to={`/exhibit?id=${cardToShow.id}`}
+                  className="full-page-button"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  View Details
+                </Link>
               </>
             )}
           </div>
@@ -144,27 +272,38 @@ const Flashcards = () => {
         <button
           className="bad-button"
           onClick={!isTransitioning ? () => handleAction("bad") : null}
+          disabled={isTransitioning}
         >
           Bad
         </button>
         <button
           className="good-button"
           onClick={!isTransitioning ? () => handleAction("good") : null}
+          disabled={isTransitioning}
         >
           Good
         </button>
         <button
           className="great-button"
           onClick={!isTransitioning ? () => handleAction("great") : null}
+          disabled={isTransitioning}
         >
           Great
         </button>
       </div>
-      <button className="reset-button" onClick={resetDeck}>
+      <button 
+        className="reset-button" 
+        onClick={!isTransitioning ? resetDeck : null}
+        disabled={isTransitioning}
+      >
         Reset Deck
       </button>
 
-      <button className="settings-button" onClick={toggleSettings}>
+      <button 
+        className="settings-button" 
+        onClick={!isTransitioning ? toggleSettings : null}
+        disabled={isTransitioning}
+      >
         <i className="fas fa-cog"></i>
       </button>
 
@@ -189,10 +328,15 @@ const Flashcards = () => {
           <input
             type="text"
             placeholder="Comma-separated IDs"
+            value={excludedCardIds.join(", ")}
             onChange={handleExcludedIdsChange}
           />
         </div>
-        <button className="close-settings" onClick={toggleSettings}>
+        <button 
+          className="close-settings" 
+          onClick={toggleSettings}
+          disabled={isTransitioning}
+        >
           Close
         </button>
       </div>
