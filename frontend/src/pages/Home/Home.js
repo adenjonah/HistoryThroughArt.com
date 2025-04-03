@@ -30,13 +30,12 @@ const ScrollingBackground = styled.div`
 `;
 
 function Home() {
-  const handleFeelingLucky = () => {
-    const randomId = Math.floor(Math.random() * 250) + 1;
-    window.location.href = `/exhibit?id=${randomId}`;
+  const handleFlashcards = () => {
+    window.location.href = "/flashcards";
   };
 
-  const handleStartLearning = () => {
-    window.location.href = "/tutorial";
+  const handleGallery = () => {
+    window.location.href = "/artgallery";
   };
 
   const handleViewMap = () => {
@@ -56,22 +55,22 @@ function Home() {
         {/* Buttons Grid - Always single column until lg breakpoint */}
         <div className="flex flex-col lg:flex-row justify-center items-center gap-4">
           <button
-            onClick={handleStartLearning}
+            onClick={handleFlashcards}
             className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
           >
-            Tutorial
+            Flashcards
           </button>
           <button
-            onClick={handleFeelingLucky}
+            onClick={handleGallery}
             className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
           >
-            Random Art
+            Gallery
           </button>
           <button
             onClick={handleViewMap}
             className="w-[160px] bg-[var(--button-color)] text-[var(--button-text-color)] py-3 px-6 rounded-lg font-medium hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300 border-none"
           >
-            View Map
+            Map
           </button>
         </div>
       </div>
