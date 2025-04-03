@@ -1,5 +1,4 @@
 import React from "react";
-import backgroundImage from "./homepageBackground.webp";
 import styled from "@emotion/styled";
 
 // Styled components for the animated backgrounds
@@ -9,7 +8,7 @@ const ScrollingBackground = styled.div`
   left: 0;
   width: 200%;
   height: 100%;
-  background-image: url(${props => props.image});
+  background-image: url('/homepageBackground.webp');
   background-size: cover;
   background-position: top left;
   opacity: 0.5;
@@ -76,8 +75,8 @@ function Home() {
       </div>
 
       {/* Background Elements */}
-      <ScrollingBackground image={backgroundImage} animation="scroll1" />
-      <ScrollingBackground image={backgroundImage} animation="scroll2" />
+      <ScrollingBackground animation="scroll1" />
+      <ScrollingBackground animation="scroll2" />
     </div>
   );
 }
