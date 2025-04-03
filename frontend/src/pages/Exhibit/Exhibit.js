@@ -76,66 +76,87 @@ function Exhibit() {
   }
 
   return (
-    <div className="w3-container">
-      <div className="w3-center title-container">
-        <h1 className="title">{artPiece.id + ". " + artPiece.name}</h1>
-        <button
-          className="pronounce-button"
-          onClick={pronounceTitle}
-          aria-label={`Pronounce ${artPiece.name}`}
-        >
-          🔊
-        </button>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center py-4 md:py-6">
+        <div className="flex items-center justify-center gap-2 flex-wrap">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold title">
+            {artPiece.id + ". " + artPiece.name}
+          </h1>
+          <button
+            className="pronounce-button ml-2 h-8 w-8 flex items-center justify-center rounded-full focus:outline-none"
+            onClick={pronounceTitle}
+            aria-label={`Pronounce ${artPiece.name}`}
+          >
+            🔊
+          </button>
+        </div>
       </div>
+
       {/* Video Section */}
-      <div className="w3-row-padding p-0 md:m-[50px]">
-        <div className="w3-col p-0 s12">
+      <div className="my-4 md:my-8 lg:my-10">
+        <div className="w-full">
           <VideoPlayer id={exhibitID.toString()} />
         </div>
       </div>
+
       {/* Identifiers and Photo Gallery */}
-      <div className="w3-row-padding m-[50px] grid-container flex justify-center items-center h-full">
-        <div className="w3-col s12 m10 l6 identifiers-section">
+      <div className="my-6 md:my-10 lg:grid lg:grid-cols-2 lg:gap-8">
+        <div className="mb-6 lg:mb-0">
           <Identifiers artPiece={artPiece} />
         </div>
-        <div className="w3-col s12 m10 l6 photo-gallery-section">
+        <div className="mt-6 lg:mt-0">
           <PhotoGallery id={exhibitID.toString()} />
         </div>
       </div>
+
       {/* Centered Map Section */}
-      <div className="w3-row-padding flex-center m-[50px]">
+      <div className="my-6 md:my-10">
         <MiniMap
           mapType={mapType}
           setMapType={setMapType}
           artPiece={artPiece}
         />
       </div>
-      {/* Navigation Buttons */}
-      <div
-        className="shadow-md py-10 flex justify-center"
-        style={{ backgroundColor: "var(--background-color)" }}
-      >
-        <button
-          className="px-6 py-3 mx-40 text-lg font-medium rounded focus:outline-none"
-          style={{
-            backgroundColor: "var(--button-color)",
-            color: "var(--button-text-color)",
-          }}
-          onClick={() => handleNavigation(getPreviousID())}
+
+      {/* Navigation Buttons - Fixed at bottom with margin */}
+      <div className="mt-8 md:mt-12 lg:mt-16 mb-6">
+        <div
+          className="shadow-md py-4 sm:py-6 lg:py-8 w-full rounded-lg"
+          style={{ backgroundColor: "var(--background-color)" }}
         >
-          ← Previous Exhibit
-        </button>
-        <button
-          className="px-6 py-3 mx-40 text-lg font-medium rounded focus:outline-none"
-          style={{
-            backgroundColor: "var(--button-color)",
-            color: "var(--button-text-color)",
-          }}
-          onClick={() => handleNavigation(getNextID())}
-        >
-          Next Exhibit →
-        </button>
+          <div className="flex justify-center gap-4 sm:gap-6 md:gap-8 px-2">
+            <button
+              className="px-4 py-2 sm:px-5 md:px-8 md:py-3 text-sm md:text-base lg:text-lg font-medium rounded-md focus:outline-none shadow-sm hover:shadow transition-all duration-200 w-[45%] md:w-[35%] lg:w-[25%]"
+              style={{
+                backgroundColor: "var(--button-color)",
+                color: "var(--button-text-color)",
+              }}
+              onClick={() => handleNavigation(getPreviousID())}
+            >
+              <span className="flex items-center justify-center">
+                <span className="mr-1 md:mr-2 text-lg md:text-xl">←</span> 
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis">Previous</span>
+              </span>
+            </button>
+            <button
+              className="px-4 py-2 sm:px-5 md:px-8 md:py-3 text-sm md:text-base lg:text-lg font-medium rounded-md focus:outline-none shadow-sm hover:shadow transition-all duration-200 w-[45%] md:w-[35%] lg:w-[25%]"
+              style={{
+                backgroundColor: "var(--button-color)",
+                color: "var(--button-text-color)",
+              }}
+              onClick={() => handleNavigation(getNextID())}
+            >
+              <span className="flex items-center justify-center">
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis">Next</span>
+                <span className="ml-1 md:ml-2 text-lg md:text-xl">→</span>
+              </span>
+            </button>
+          </div>
+        </div>
       </div>
+      
+      {/* Add bottom spacing for mobile */}
+      <div className="h-6 md:h-12"></div>
     </div>
   );
 }
