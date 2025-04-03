@@ -6,6 +6,23 @@
   color: var(--text-color);
 }
 
+/* Global text color for calendar page */
+.flex.flex-col.items-center.p-6.max-w-4xl.mx-auto,
+.flex.flex-col.items-center.p-6.max-w-4xl.mx-auto * {
+  color: var(--text-color);
+}
+
+/* Override for accent-colored elements */
+h1.text-3xl.font-bold.mb-3,
+.accent-text {
+  color: var(--accent-color) !important;
+}
+
+/* Override for button text */
+.bg-\[var\(--button-color\)\] {
+  color: var(--button-text-color) !important;
+}
+
 .details-section {
   margin-top: 20px;
   padding: 10px;
@@ -36,46 +53,331 @@
 
 /* Style the calendar container */
 .react-calendar {
-  background-color: var(--foreground-color); /* Dark background from the site */
-  color: var(--text-color); /* Text color matching the site's text */
+  background-color: var(--foreground-color) !important; 
+  color: var(--text-color) !important;
+  border: none !important;
   border-radius: 10px;
-  padding: 20px;
+  padding: 16px;
   width: 100%;
   max-width: 600px;
+  font-family: inherit;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Calendar header (month/year display) */
+.react-calendar__navigation__label__labelText {
+  color: var(--text-color) !important;
+  font-weight: 600;
+}
+
+/* Month and year select styles */
+.react-calendar__navigation__label {
+  color: var(--text-color) !important;
+  font-weight: bold;
+}
+
+/* Weekday header styling */
+.react-calendar__month-view__weekdays {
+  color: var(--accent-color) !important;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 10px 0;
+}
+
+/* Remove abbr underline */
+.react-calendar__month-view__weekdays abbr {
+  text-decoration: none !important;
+  cursor: default;
 }
 
 /* Tile (day button) styling */
 .react-calendar__tile {
-  background-color: var(--button-color); /* Foreground color for tiles */
-  color: var(--button-text-color); /* Text color for tiles */
-  transition: background-color 0.3s ease;
+  background-color: var(--button-color) !important; 
+  color: var(--button-text-color) !important;
+  transition: all 0.2s ease;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  margin: 2px;
+  padding: 0 !important;
+  font-weight: 500;
+  border: 2px solid transparent !important; /* Add transparent border to prevent layout shift */
+  box-sizing: border-box;
+}
+
+/* Tile text styling for consistent transitions */
+.react-calendar__tile abbr {
+  color: var(--button-text-color) !important;
+  transition: color 0.2s ease;
+  position: relative;
+  z-index: 2;
 }
 
 /* Hover effect for tiles */
 .react-calendar__tile:hover {
-  background-color: var(--accent-color); /* Button color on hover */
-  color: var(--button-text-color); /* Ensure text remains readable */
+  background-color: var(--accent-color) !important;
+  transform: scale(1.05);
+}
+
+/* Ensure hover text color changes for better contrast - !important to override other rules */
+.react-calendar__tile:hover abbr {
+  color: var(--text-color) !important;
+}
+
+/* Override any previous settings for hover state */
+.react-calendar__month-view__days__day:hover abbr {
+  color: var(--text-color) !important;
+}
+
+/* Today's date styling */
+.react-calendar__tile--now {
+  background-color: #7047A3 !important; /* Slightly different purple for today */
+  font-weight: bold;
+}
+
+.react-calendar__tile--now abbr {
+  color: white !important; /* Light colored text for today */
 }
 
 /* Selected date styling */
 .react-calendar__tile--active {
-  background-color: var(--accent-color); /* Accent color for active date */
-  color: var(--text-color); /* Text color for active date */
+  background-color: var(--accent-color) !important;
+  font-weight: bold;
+  border: 2px solid white !important; /* Add border to differentiate selected date */
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4) !important; /* Add glow effect */
 }
 
-/* Navigation (prev/next buttons) styling */
+.react-calendar__tile--active abbr {
+  color: white !important; /* Light colored text for selected date */
+}
+
+/* When both today and selected */
+.react-calendar__tile--now.react-calendar__tile--active {
+  background: linear-gradient(45deg, #7047A3, var(--accent-color)) !important;
+  border: 2px solid white !important;
+}
+
+/* Ensure all light text is actually visible */
+.react-calendar__tile--active abbr,
+.react-calendar__tile--now abbr,
+.react-calendar__tile:hover abbr {
+  color: white !important;
+  font-weight: bold;
+}
+
+/* Navigation (prev/next buttons) styling - Base styles for all screens */
 .react-calendar__navigation button {
-  background-color: var(--button-color); /* Button background */
-  color: var(--button-text-color); /* Button text color */
-  border: none;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 5px;
-  transition: background-color 0.3s ease;
+  background-color: var(--button-color) !important;
+  color: var(--button-text-color) !important;
+  border: none !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  min-width: 44px;
+  height: 44px;
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Hover effect for navigation buttons */
 .react-calendar__navigation button:hover {
-  background-color: var(--accent-color); /* Accent color on hover */
-  color: var(--text-color); /* Text color on hover */
+  background-color: var(--accent-color) !important;
+  color: var(--text-color) !important;
 }
+
+/* Disabled date styling */
+.react-calendar__tile:disabled,
+.react-calendar__tile--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Month navigation buttons */
+.react-calendar__navigation__arrow {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Neighboring month days */
+.react-calendar__month-view__days__day--neighboringMonth {
+  opacity: 0.5;
+}
+
+/* Additional styles for custom calendar */
+.custom-calendar {
+  width: 100% !important;
+  border: none !important;
+  background-color: var(--foreground-color) !important;
+}
+
+.custom-calendar .react-calendar__tile abbr {
+  color: inherit !important;
+}
+
+.calendar-nav-arrow {
+  font-size: 1.5rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Override any react-calendar inline styles */
+.react-calendar,
+.react-calendar *,
+.react-calendar *:before,
+.react-calendar *:after {
+  color: var(--text-color) !important;
+}
+
+.react-calendar__month-view__days__day {
+  color: var(--button-text-color) !important;
+}
+
+/* Fix for weekday headers */
+.react-calendar__month-view__weekdays__weekday abbr {
+  color: var(--accent-color) !important;
+}
+
+/* Hover day number color - add high specificity for priority */
+.custom-calendar .react-calendar__month-view__days .react-calendar__tile:hover abbr {
+  color: white !important;
+}
+
+/* Make sure all day numbers have the hover transition effect */
+.custom-calendar .react-calendar__month-view__days .react-calendar__tile abbr {
+  transition: color 0.2s ease;
+}
+
+/* Active and today transitions */
+.react-calendar__tile--active,
+.react-calendar__tile--now {
+  transition: all 0.2s ease !important;
+}
+
+/* More specific rule for selected date text color */
+.custom-calendar .react-calendar__month-view__days .react-calendar__tile--active abbr {
+  color: white !important; /* Higher specificity to ensure white text */
+}
+
+/* Additional rule for when hovering over the selected date */
+.custom-calendar .react-calendar__month-view__days .react-calendar__tile--active:hover abbr {
+  color: white !important;
+}
+
+/* For any other potential conflicts */
+.react-calendar__tile--active abbr {
+  color: white !important;
+}
+
+/* Final override for selected date - maximum specificity */
+html body .react-calendar .react-calendar__viewContainer .react-calendar__month-view .react-calendar__month-view__days .react-calendar__tile--active abbr {
+  color: white !important;
+  font-weight: bold !important;
+}
+
+/* Force white text for accessibility */
+[class*="react-calendar__tile--active"] abbr {
+  color: white !important;
+}
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  /* Improve navigation buttons on mobile */
+  .react-calendar__navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding: 0 2px;
+  }
+  
+  .react-calendar__navigation button {
+    height: 36px;
+    width: 36px !important;
+    min-width: 36px !important;
+    font-size: 1rem;
+    margin: 0 1px;
+    border-radius: 50% !important; /* Make buttons circular on mobile */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+    flex-shrink: 0;
+  }
+  
+  /* More touch-friendly hover effects on mobile */
+  .react-calendar__navigation button:hover,
+  .react-calendar__navigation button:active {
+    transform: scale(1.05);
+    background-color: var(--accent-color) !important;
+    color: white !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  /* Make year button smaller to prevent overflow */
+  .react-calendar__navigation__next2-button,
+  .react-calendar__navigation__prev2-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Make arrow buttons more prominent but not too large */
+  .react-calendar__navigation__arrow {
+    font-size: 1.2rem;
+  }
+  
+  .calendar-nav-arrow {
+    font-size: 1.3rem;
+  }
+  
+  /* Adjust label button size */
+  .react-calendar__navigation__label {
+    flex: 1 1 auto !important;
+    font-weight: bold;
+    font-size: 0.9rem !important;
+    border-radius: 18px !important;
+    padding: 0 6px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Improve calendar container padding on mobile */
+  .react-calendar {
+    padding: 10px 6px !important;
+  }
+  
+  /* Adjustments for smaller phones */
+  @media (max-width: 400px) {
+    .react-calendar__navigation {
+      margin-bottom: 10px;
+    }
+    
+    .react-calendar__navigation button {
+      height: 30px;
+      width: 30px !important;
+      min-width: 30px !important;
+    }
+    
+    .calendar-nav-arrow {
+      font-size: 1.1rem;
+    }
+    
+    .react-calendar__navigation__label {
+      font-size: 0.85rem !important;
+      padding: 0 4px !important;
+    }
+    
+    .react-calendar__tile {
+      height: 36px;
+      margin: 1px;
+    }
+  }
+}
+

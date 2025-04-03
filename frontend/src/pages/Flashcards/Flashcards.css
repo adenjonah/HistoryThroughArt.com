@@ -15,6 +15,54 @@
   margin: 20px;
 }
 
+/* End-of-deck message styling */
+.end-of-deck-message {
+  background-color: var(--foreground-color);
+  color: var(--accent-color);
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 90%;
+}
+
+/* Full page view button */
+.full-page-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--foreground-color);
+  color: var(--accent-color);
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.full-page-button:hover {
+  opacity: 1;
+}
+
+/* Saving indicator */
+.saving-indicator {
+  font-size: 14px;
+  color: var(--accent-color);
+  margin-top: 5px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.saving-indicator.show {
+  opacity: 1;
+}
+
 .progress {
   background-color: var(--foreground-color);
   border-radius: 10px;
@@ -28,27 +76,19 @@
   height: 55%;
   perspective: 1000px;
   margin-bottom: 20px;
-}
-
-@media (max-width: 768px) {
-  .flashcard {
-    width: 90%;
-    height: 50%;
-    margin-bottom: 10px;
-  }
-
-  .action-buttons button {
-    padding: 15px 30px;
-    font-size: 18px;
-  }
+  cursor: pointer;
+  position: relative;
 }
 
 .flashcard-inner {
+  position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.6s;
+  text-align: center;
+  transition: transform 0.3s;
   transform-style: preserve-3d;
-  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 .flashcard.flipped .flashcard-inner {
@@ -96,9 +136,19 @@
 
 .action-buttons button {
   padding: 10px 20px;
+  margin: 0 5px;
   border: none;
   border-radius: 5px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-buttons button:disabled,
+.reset-button:disabled,
+.settings-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .bad-button {
@@ -150,52 +200,90 @@
 .settings-modal {
   position: fixed;
   top: 0;
-  right: 0;
-  width: 300px; /* Set width of the sliding modal */
-  height: 100vh;
-  background-color: var(--foreground-color);
-  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+  right: -100%;
+  height: 100%;
+  width: 300px;
+  background-color: var(--accent-color);
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  z-index: 10;
   padding: 20px;
-  transform: translateX(100%); /* Initially off-screen */
-  transition: transform 0.3s ease-in-out; /* Smooth slide in */
-  z-index: 1000; /* Ensure it is above other content */
+  color: var(--background-color);
 }
 
 .settings-modal.show {
-  transform: translateX(0); /* Slide in from the right */
+  right: 0;
 }
 
 .settings-modal h3 {
   margin-top: 0;
-  font-size: 24px;
-  color: var(--accent-color);
-  padding-bottom: 10px;
+  color: var(--background-color);
+  font-weight: bold;
 }
 
-.settings-modal label {
+.settings-modal h4 {
+  margin: 15px 0 5px;
+  color: var(--background-color);
+  font-weight: bold;
+}
+
+.unit-selection,
+.exclude-ids,
+.korus-order-setting,
+.due-date-setting {
+  margin-bottom: 20px;
+}
+
+.unit-selection label,
+.korus-order-setting label,
+.due-date-setting label {
   display: block;
-  margin: 10px 0;
-  font-size: 18px;
-  color: var(--accent-color);
+  margin-bottom: 5px;
+  color: var(--background-color);
 }
 
-.settings-modal input[type="text"] {
+.exclude-ids input {
   width: 100%;
-  padding: 8px;
+  padding: 5px;
   margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
 }
 
 .close-settings {
-  display: inline-block;
-  padding: 10px 15px;
-  background-color: var(--button-color);
+  width: 100%;
+  padding: 10px;
+  background-color: var(--background-color);
+  color: var(--accent-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
   margin-top: 20px;
+  font-weight: bold;
+}
+
+.slider {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.slider-value {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.slider-hint {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: var(--background-color);
+  font-style: italic;
+}
+
+.korus-max-number {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
 }
 
 .popup-banner {
@@ -230,4 +318,81 @@
   font-size: 18px;
   cursor: pointer;
   margin-left: 20px;
+}
+
+@media (max-width: 768px) {
+  .flashcard {
+    width: 90%;
+    height: 50%;
+    margin-bottom: 10px;
+  }
+
+  .action-buttons button {
+    padding: 15px 30px;
+    font-size: 18px;
+  }
+}
+
+.date-selector {
+  margin-top: 10px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+.date-input {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 16px;
+}
+
+.unit-hint {
+  margin: 5px 0 15px;
+  font-size: 0.9em;
+  color: var(--background-color);
+  font-style: italic;
+  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.today-button,
+.current-class-button {
+  background-color: var(--button-color);
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  margin-top: 8px;
+  transition: background-color 0.2s;
+}
+
+.current-class-button {
+  background-color: var(--accent-color);
+  font-weight: bold;
+}
+
+.today-button:hover,
+.current-class-button:hover {
+  opacity: 0.9;
+}
+
+.card-count-info {
+  margin: 10px 0;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: var(--background-color);
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+  font-weight: bold;
 }

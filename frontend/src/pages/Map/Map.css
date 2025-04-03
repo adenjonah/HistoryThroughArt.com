@@ -1,0 +1,26 @@
+/* Map page styles */
+.map-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  height: 70vh;
+  min-height: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Media queries for responsive sizing */
+@media (min-width: 1600px) {
+  .map-container {
+    height: 80vh;
+    min-height: 700px;
+  }
+}
+
+@media (max-width: 768px) {
+  .map-container {
+    height: 60vh;
+    min-height: 400px;
+  }
+} 
