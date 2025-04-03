@@ -101,49 +101,43 @@ const Flashcards = () => {
     // First, handle card flip if it's currently flipped
     if (isFlipped) {
       setIsFlipped(false);
-      setTimeout(processCard, 300); // Wait for flip animation to complete
-    } else {
-      processCard();
     }
 
-    function processCard() {
-      let updatedDeck = [...deck];
-      let nextCardIndex = currentCard;
+    // Process the card immediately
+    let updatedDeck = [...deck];
+    let nextCardIndex = currentCard;
 
-      if (action === "great") {
-        // Remove current card from deck
-        updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
-        
-        // If we removed the last card in the deck or the current card was the last one
-        if (updatedDeck.length === 0 || currentCard >= updatedDeck.length) {
-          nextCardIndex = 0;
-        }
-        // Otherwise, keep the same index (which will show the next card since we removed the current one)
-      } else if (action === "bad") {
-        // Move current card to the end
-        const currentCardData = deck[currentCard];
-        updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
-        updatedDeck.push(currentCardData);
-        
-        // If we were at the last card, go to the first card
-        if (currentCard >= updatedDeck.length - 1) {
-          nextCardIndex = 0;
-        }
-        // Otherwise, keep the same index (which will show the next card)
-      } else {
-        // For "good", just move to the next card
-        nextCardIndex = (currentCard + 1) % updatedDeck.length;
+    if (action === "great") {
+      // Remove current card from deck
+      updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
+      
+      // If we removed the last card in the deck or the current card was the last one
+      if (updatedDeck.length === 0 || currentCard >= updatedDeck.length) {
+        nextCardIndex = 0;
       }
+    } else if (action === "bad") {
+      // Move current card to the end
+      const currentCardData = deck[currentCard];
+      updatedDeck = updatedDeck.filter((_, index) => index !== currentCard);
+      updatedDeck.push(currentCardData);
       
-      // Update the deck
-      setDeck(updatedDeck);
-      
-      // Move to next card
-      setCurrentCard(nextCardIndex);
-      
-      // End transition
-      setIsTransitioning(false);
+      // If we were at the last card, go to the first card
+      if (currentCard >= updatedDeck.length - 1) {
+        nextCardIndex = 0;
+      }
+    } else {
+      // For "good", just move to the next card
+      nextCardIndex = (currentCard + 1) % updatedDeck.length;
     }
+    
+    // Update the deck and current card immediately
+    setDeck(updatedDeck);
+    setCurrentCard(nextCardIndex);
+    
+    // End transition after a brief delay to prevent accidental clicks
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 100);
   };
 
   const resetDeck = () => {
