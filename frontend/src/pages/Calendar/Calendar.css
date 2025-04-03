@@ -172,7 +172,7 @@ h1.text-3xl.font-bold.mb-3,
   font-weight: bold;
 }
 
-/* Navigation (prev/next buttons) styling - Base styles for all screens */
+/* Navigation (prev/next buttons) styling */
 .react-calendar__navigation button {
   background-color: var(--button-color) !important;
   color: var(--button-text-color) !important;
@@ -182,9 +182,6 @@ h1.text-3xl.font-bold.mb-3,
   min-width: 44px;
   height: 44px;
   margin: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* Hover effect for navigation buttons */
@@ -225,10 +222,6 @@ h1.text-3xl.font-bold.mb-3,
 .calendar-nav-arrow {
   font-size: 1.5rem;
   line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
 }
 
 /* Override any react-calendar inline styles */
@@ -289,95 +282,3 @@ html body .react-calendar .react-calendar__viewContainer .react-calendar__month-
 [class*="react-calendar__tile--active"] abbr {
   color: white !important;
 }
-/* Media query for mobile devices */
-@media (max-width: 768px) {
-  /* Improve navigation buttons on mobile */
-  .react-calendar__navigation {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 14px;
-    padding: 0 2px;
-  }
-  
-  .react-calendar__navigation button {
-    height: 36px;
-    width: 36px !important;
-    min-width: 36px !important;
-    font-size: 1rem;
-    margin: 0 1px;
-    border-radius: 50% !important; /* Make buttons circular on mobile */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
-    flex-shrink: 0;
-  }
-  
-  /* More touch-friendly hover effects on mobile */
-  .react-calendar__navigation button:hover,
-  .react-calendar__navigation button:active {
-    transform: scale(1.05);
-    background-color: var(--accent-color) !important;
-    color: white !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
-  }
-  
-  /* Make year button smaller to prevent overflow */
-  .react-calendar__navigation__next2-button,
-  .react-calendar__navigation__prev2-button {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  
-  /* Make arrow buttons more prominent but not too large */
-  .react-calendar__navigation__arrow {
-    font-size: 1.2rem;
-  }
-  
-  .calendar-nav-arrow {
-    font-size: 1.3rem;
-  }
-  
-  /* Adjust label button size */
-  .react-calendar__navigation__label {
-    flex: 1 1 auto !important;
-    font-weight: bold;
-    font-size: 0.9rem !important;
-    border-radius: 18px !important;
-    padding: 0 6px !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  /* Improve calendar container padding on mobile */
-  .react-calendar {
-    padding: 10px 6px !important;
-  }
-  
-  /* Adjustments for smaller phones */
-  @media (max-width: 400px) {
-    .react-calendar__navigation {
-      margin-bottom: 10px;
-    }
-    
-    .react-calendar__navigation button {
-      height: 30px;
-      width: 30px !important;
-      min-width: 30px !important;
-    }
-    
-    .calendar-nav-arrow {
-      font-size: 1.1rem;
-    }
-    
-    .react-calendar__navigation__label {
-      font-size: 0.85rem !important;
-      padding: 0 4px !important;
-    }
-    
-    .react-calendar__tile {
-      height: 36px;
-      margin: 1px;
-    }
-  }
-}
-

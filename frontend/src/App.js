@@ -1,5 +1,5 @@
 // App.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import "./w3.css";
@@ -25,12 +25,18 @@ const NewFeatureModal = ({ onClose }) => {
         <h2>New Features!</h2>
 
         <ul className="list-disc list-inside pl-4 text-left">
-          <li>Flashcards now save your progress automatically!</li>
-          <li>Flashcards now default to showing only pieces you've learned</li>
-          <li>Added "View Details" button to flashcards for more information</li>
-          <li>Improved Calendar layout and visual design</li>
-          <li>Enhanced Art Gallery display for mobile devices</li>
-          <li>Fixed various identifier-related errors throughout the site</li>
+          <li>Nicer looking search bar</li>
+          <li>Sorting and Filtering stays set when you refresh the page</li>
+          <li>Default to Korus Sort</li>
+          <li>
+            Pronunciation of art titles (not perfect on non-english words)
+          </li>
+          <li>
+            Navigation buttons to go forward and back at the bottom of each
+            exhibit (based on Korus order)
+          </li>
+          <li>Bug fixes on dates and photos</li>
+          <li>Attempted to fix logo problem (lmk)</li>
         </ul>
       </div>
     </div>
@@ -41,17 +47,9 @@ function App() {
   const [menuOpened, setMenuOpened] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    // Check if the modal has been dismissed before
-    const modalDismissed = localStorage.getItem("newFeatureModalDismissed3");
-    if (!modalDismissed) {
-      setShowModal(true);
-    }
-  }, []);
-
   const handleCloseModal = () => {
     setShowModal(false);
-    localStorage.setItem("newFeatureModalDismissed3", "true");
+    localStorage.setItem("newFeatureModalDismissed2", "true");
   };
 
   return (
