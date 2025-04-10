@@ -17,20 +17,18 @@ import Flashcards from "./pages/Flashcards/Flashcards";
 
 const NewFeatureModal = ({ onClose }) => {
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay" style={{ zIndex: 99999 }}>
+      <div className="modal-content w3-animate-zoom" style={{ zIndex: 100000 }}>
         <button className="modal-close-button" onClick={onClose}>
           &times;
         </button>
-        <h2>New Features!</h2>
+        <h2 style={{ fontWeight: 'bold', fontSize: '24px', marginBottom: '15px' }}>New Features!</h2>
 
         <ul className="list-disc list-inside pl-4 text-left">
-          <li>Flashcards now save your progress automatically!</li>
-          <li>Flashcards now default to showing only pieces you've learned</li>
-          <li>Added "View Details" button to flashcards for more information</li>
-          <li>Improved Calendar layout and visual design</li>
-          <li>Enhanced Art Gallery display for mobile devices</li>
-          <li>Fixed various identifier-related errors throughout the site</li>
+          <li>Flashcards now support swiping gestures on mobile (left=Bad, up=Good, right=Great)</li>
+          <li>Added keyboard shortcuts for flashcards (1=Bad, 2=Good, 3=Great, Space=Flip)</li>
+          <li>Improved flashcard animations and transitions</li>
+          <li>Made flashcard layout better on mobile devices</li>
         </ul>
       </div>
     </div>
@@ -39,19 +37,34 @@ const NewFeatureModal = ({ onClose }) => {
 
 function App() {
   const [menuOpened, setMenuOpened] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
+  const [showModal, setShowModal] = useState(true); // Always start with the modal visible
+  
+  // Use a separate effect to force display for April 2024
   useEffect(() => {
-    // Check if the modal has been dismissed before
-    const modalDismissed = localStorage.getItem("newFeatureModalDismissed3");
-    if (!modalDismissed) {
+    // Force display modal until a specified date (April 12, 2024)
+    const forceDisplayUntil = new Date('2024-04-12T23:59:59');
+    const today = new Date();
+    
+    // If current date is before April 12, force show the modal
+    if (today <= forceDisplayUntil) {
+      console.log("Showing modal until April 12th");
+      // Clear any previous settings to ensure the modal shows
+      localStorage.removeItem("newFeatureModalDismissed3");
+      
+      // Set the modal to be visible
       setShowModal(true);
+      
+      // Log to console for debugging
+      console.log("Feature modal should be visible: forceDisplayUntil=", forceDisplayUntil, "today=", today);
     }
   }, []);
 
   const handleCloseModal = () => {
+    console.log("Modal closed by user");
     setShowModal(false);
-    localStorage.setItem("newFeatureModalDismissed3", "true");
+    
+    // Store in sessionStorage that we've closed it for this session
+    sessionStorage.setItem("newFeatureModalDismissed", "true");
   };
 
   return (
