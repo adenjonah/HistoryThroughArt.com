@@ -37,7 +37,7 @@ const NewFeatureModal = ({ onClose }) => {
 
 function App() {
   // Check if the modal has been dismissed before initializing state
-  const hasSeenNewFeatures = localStorage.getItem("newFeaturesModalSeen") === "true";
+  const hasSeenNewFeatures = localStorage.getItem("newFeaturesModalSeen1") === "true";
   
   // Initialize state variables - show modal initially unless it's been dismissed
   const [menuOpened, setMenuOpened] = useState(false);
@@ -63,7 +63,7 @@ function App() {
     
     // Store in localStorage that user has seen this version of the modal
     // This will prevent the modal from appearing again on page refresh or navigation
-    localStorage.setItem("newFeaturesModalSeen", "true");
+    localStorage.setItem("newFeaturesModalSeen1", "true");
   };
 
   return (
