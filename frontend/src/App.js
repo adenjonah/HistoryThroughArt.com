@@ -36,30 +36,23 @@ const NewFeatureModal = ({ onClose }) => {
 };
 
 function App() {
-  const [menuOpened, setMenuOpened] = useState(false);
-  const [showModal, setShowModal] = useState(false); // Start with the modal hidden
+  // Check if the modal has been dismissed before initializing state
+  const hasSeenNewFeatures = localStorage.getItem("newFeaturesModalSeen") === "true";
   
-  // Use a separate effect to force display for April 2024
+  // Initialize state variables - show modal initially unless it's been dismissed
+  const [menuOpened, setMenuOpened] = useState(false);
+  const [showModal, setShowModal] = useState(!hasSeenNewFeatures);
+  
+  // Use an effect to handle date-based expiration
   useEffect(() => {
     // Force display modal until a specified date (April 12, 2024)
     const forceDisplayUntil = new Date('2024-04-12T23:59:59');
     const today = new Date();
     
-    // If current date is before April 12, force show the modal
-    if (today <= forceDisplayUntil) {
-      // Check if the user has already dismissed this version of the modal
-      const hasSeenNewFeatures = localStorage.getItem("newFeaturesModalSeen");
-      
-      if (!hasSeenNewFeatures) {
-        console.log("Showing modal - user hasn't seen it yet");
-        setShowModal(true);
-      } else {
-        console.log("Modal already seen by user, not showing");
-        setShowModal(false);
-      }
-      
-      // Log to console for debugging
-      console.log("Feature modal visibility check: forceDisplayUntil=", forceDisplayUntil, "today=", today);
+    // If current date is after April 12, hide the modal regardless
+    if (today > forceDisplayUntil) {
+      console.log("Past expiration date, hiding modal");
+      setShowModal(false);
     }
   }, []);
 
@@ -69,7 +62,7 @@ function App() {
     setShowModal(false);
     
     // Store in localStorage that user has seen this version of the modal
-    // This will prevent the modal from appearing again on future visits
+    // This will prevent the modal from appearing again on page refresh or navigation
     localStorage.setItem("newFeaturesModalSeen", "true");
   };
 
