@@ -377,6 +377,13 @@ const Flashcards = () => {
     console.log("Resetting deck, shuffle:", shouldShuffle);
     setIsShuffled(shouldShuffle);
     
+    // Clear localStorage items related to flashcards
+    localStorage.removeItem("flashcards_deck");
+    localStorage.removeItem("flashcards_currentCard");
+    localStorage.removeItem("flashcards_isFlipped");
+    // Don't remove selected units or display date settings
+    // as these are user preferences that should persist
+    
     // Create a new deck with forceNewDeck=true to force regeneration
     if (shouldShuffle) {
       // If shuffling is requested, we'll create the ordered deck first
@@ -561,6 +568,13 @@ const Flashcards = () => {
     };
   }, [handleKeyDown]);
 
+  // Update the reset button handlers to include confirmation
+  const handleResetDeck = (shouldShuffle) => {
+    if (window.confirm("Are you sure you want to reset the deck? Your progress will be cleared.")) {
+      resetDeck(shouldShuffle);
+    }
+  };
+
   if (deck.length === 0) {
     return (
       <div className="flashcards-container">
@@ -570,10 +584,10 @@ const Flashcards = () => {
           <p>Reset the deck to continue studying.</p>
         </div>
         <div className="reset-button-container">
-          <button className="reset-button" onClick={() => resetDeck(false)}>
+          <button className="reset-button" onClick={() => handleResetDeck(false)}>
             Reset Deck (Ordered)
           </button>
-          <button className="reset-button shuffle-button" onClick={() => resetDeck(true)}>
+          <button className="reset-button shuffle-button" onClick={() => handleResetDeck(true)}>
             Reset Deck (Shuffled)
           </button>
         </div>
@@ -722,14 +736,14 @@ const Flashcards = () => {
       <div className="reset-button-container">
         <button 
           className="reset-button" 
-          onClick={!isTransitioning ? () => resetDeck(false) : null}
+          onClick={!isTransitioning ? () => handleResetDeck(false) : null}
           disabled={isTransitioning}
         >
           Reset (Ordered)
         </button>
         <button 
           className="reset-button shuffle-button" 
-          onClick={!isTransitioning ? () => resetDeck(true) : null}
+          onClick={!isTransitioning ? () => handleResetDeck(true) : null}
           disabled={isTransitioning}
         >
           Reset (Shuffled)
