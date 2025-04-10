@@ -37,7 +37,7 @@ const NewFeatureModal = ({ onClose }) => {
 
 function App() {
   const [menuOpened, setMenuOpened] = useState(false);
-  const [showModal, setShowModal] = useState(true); // Always start with the modal visible
+  const [showModal, setShowModal] = useState(false); // Start with the modal hidden
   
   // Use a separate effect to force display for April 2024
   useEffect(() => {
@@ -47,24 +47,30 @@ function App() {
     
     // If current date is before April 12, force show the modal
     if (today <= forceDisplayUntil) {
-      console.log("Showing modal until April 12th");
-      // Clear any previous settings to ensure the modal shows
-      localStorage.removeItem("newFeatureModalDismissed3");
+      // Check if the user has already dismissed this version of the modal
+      const hasSeenNewFeatures = localStorage.getItem("newFeaturesModalSeen");
       
-      // Set the modal to be visible
-      setShowModal(true);
+      if (!hasSeenNewFeatures) {
+        console.log("Showing modal - user hasn't seen it yet");
+        setShowModal(true);
+      } else {
+        console.log("Modal already seen by user, not showing");
+        setShowModal(false);
+      }
       
       // Log to console for debugging
-      console.log("Feature modal should be visible: forceDisplayUntil=", forceDisplayUntil, "today=", today);
+      console.log("Feature modal visibility check: forceDisplayUntil=", forceDisplayUntil, "today=", today);
     }
   }, []);
 
+  // Handle modal close
   const handleCloseModal = () => {
     console.log("Modal closed by user");
     setShowModal(false);
     
-    // Store in sessionStorage that we've closed it for this session
-    sessionStorage.setItem("newFeatureModalDismissed", "true");
+    // Store in localStorage that user has seen this version of the modal
+    // This will prevent the modal from appearing again on future visits
+    localStorage.setItem("newFeaturesModalSeen", "true");
   };
 
   return (
