@@ -53,6 +53,7 @@ const Flashcards = () => {
   const [cardAnimation, setCardAnimation] = useState('');
   const [nextCardReady, setNextCardReady] = useState(true);
   const [showDuplicateMessage, setShowDuplicateMessage] = useState(false);
+  const [isShuffled, setIsShuffled] = useState(false);
   
   // Refs for touch handling
   const touchStartRef = useRef({ x: 0, y: 0 });
@@ -86,24 +87,41 @@ const Flashcards = () => {
       return; // Keep the existing deck
     }
     
+    console.log("Creating new deck with due date:", displayCardsDueBy);
+    
     // First, get all cards that are due by the selected date
     const cardsDueByDate = getCardsDueByDate(displayCardsDueBy);
+    console.log("Cards due by date:", cardsDueByDate.length, "cards");
     
     // Filter to get only the cards that follow Korus' teaching order
     const cardsInKorusOrder = getCardsInKorusOrder(cardsDueByDate);
+    console.log("Cards in Korus order:", cardsInKorusOrder.length, "cards");
     
-    // Create a set for O(1) lookup
-    const korusOrderSet = new Set(cardsInKorusOrder);
+    // Create a mapping of ID to position in Korus array for sorting
+    const korusOrderMap = new Map();
+    korusArray.forEach((id, index) => {
+      korusOrderMap.set(id, index);
+    });
     
-    // Filter the artworks based on Korus order and selected units
-    let filteredDeck = artPiecesData.filter(card => 
-      korusOrderSet.has(card.id) && 
-      (selectedUnits.length === 0 || selectedUnits.includes(card.unit))
-    );
+    // Create a lookup map for artwork data by ID
+    const artworksById = new Map();
+    artPiecesData.forEach(artwork => {
+      artworksById.set(artwork.id, artwork);
+    });
     
-    // Always shuffle the deck
-    const shuffledDeck = [...filteredDeck].sort(() => Math.random() - 0.5);
-    setDeck(shuffledDeck);
+    // Build the deck following Korus' exact order
+    let filteredDeck = [];
+    for (const id of cardsInKorusOrder) {
+      const artwork = artworksById.get(id);
+      if (artwork && (selectedUnits.length === 0 || selectedUnits.includes(artwork.unit))) {
+        filteredDeck.push(artwork);
+      }
+    }
+    
+    console.log("Final filtered deck:", filteredDeck.length, "cards");
+    
+    // No need to shuffle - we want to maintain Korus' order
+    setDeck(filteredDeck);
     setCurrentCard(0);
     setIsFlipped(false);
 
@@ -139,6 +157,7 @@ const Flashcards = () => {
       localStorage.setItem("flashcards_selectedUnits", JSON.stringify(selectedUnits));
       localStorage.setItem("flashcards_displayCardsDueBy", displayCardsDueBy.toISOString());
       localStorage.setItem("flashcards_showSettings", JSON.stringify(showSettings));
+      localStorage.setItem("flashcards_isShuffled", JSON.stringify(isShuffled));
       
       // Show saving indicator
       setIsSaving(true);
@@ -157,10 +176,11 @@ const Flashcards = () => {
     selectedUnits, 
     displayCardsDueBy,
     showSettings,
-    isInitialized
+    isInitialized,
+    isShuffled
   ]);
 
-  // Load saved progress from localStorage - runs only once
+  // Load saved progress from localStorage - update to load shuffle state
   useEffect(() => {
     // Load all saved settings
     const savedDeck = localStorage.getItem("flashcards_deck");
@@ -169,6 +189,7 @@ const Flashcards = () => {
     const savedSelectedUnits = localStorage.getItem("flashcards_selectedUnits");
     const savedDisplayCardsDueBy = localStorage.getItem("flashcards_displayCardsDueBy");
     const savedShowSettings = localStorage.getItem("flashcards_showSettings");
+    const savedIsShuffled = localStorage.getItem("flashcards_isShuffled");
 
     let needsNewDeck = false;
 
@@ -183,6 +204,11 @@ const Flashcards = () => {
           // Restore flipped state
           if (savedIsFlipped) {
             setIsFlipped(JSON.parse(savedIsFlipped));
+          }
+          
+          // Restore shuffled state
+          if (savedIsShuffled) {
+            setIsShuffled(JSON.parse(savedIsShuffled));
           }
         } else {
           needsNewDeck = true;
@@ -347,9 +373,24 @@ const Flashcards = () => {
     }
   }, [isTransitioning, deck, currentCard]);
 
-  const resetDeck = () => {
+  const resetDeck = (shouldShuffle = false) => {
+    console.log("Resetting deck, shuffle:", shouldShuffle);
+    setIsShuffled(shouldShuffle);
+    
     // Create a new deck with forceNewDeck=true to force regeneration
-    shuffleDeck(true);
+    if (shouldShuffle) {
+      // If shuffling is requested, we'll create the ordered deck first
+      shuffleDeck(true);
+      
+      // Then shuffle it
+      setDeck(prevDeck => {
+        const shuffledDeck = [...prevDeck].sort(() => Math.random() - 0.5);
+        return shuffledDeck;
+      });
+    } else {
+      // Just regenerate the deck in Korus' order
+      shuffleDeck(true);
+    }
   };
 
   const toggleSettings = () => {
@@ -384,7 +425,9 @@ const Flashcards = () => {
     
     return {
       totalCards: cardsInKorusOrder.length,
-      highestCard: highestCardNum
+      highestCard: highestCardNum,
+      // Add more detailed information
+      numDueByDate: cardsDueByDate.length
     };
   }, [displayCardsDueBy, getCardsDueByDate, getCardsInKorusOrder]);
 
@@ -526,9 +569,14 @@ const Flashcards = () => {
           <h2>All cards marked as Great!</h2>
           <p>Reset the deck to continue studying.</p>
         </div>
-        <button className="reset-button" onClick={resetDeck}>
-          Reset Deck
-        </button>
+        <div className="reset-button-container">
+          <button className="reset-button" onClick={() => resetDeck(false)}>
+            Reset Deck (Ordered)
+          </button>
+          <button className="reset-button shuffle-button" onClick={() => resetDeck(true)}>
+            Reset Deck (Shuffled)
+          </button>
+        </div>
       </div>
     );
   }
@@ -567,6 +615,9 @@ const Flashcards = () => {
     <div className="flashcards-container">
       <h1 className="title">Flashcards</h1>
       <div className="progress">{deck.length > 0 ? deck.length : 0} cards remaining</div>
+      <div className="order-info">
+        Cards are {isShuffled ? 'randomly shuffled' : 'in learning sequence'}
+      </div>
       <div className={`saving-indicator ${isSaving ? "show" : ""}`}>
         Progress saved
       </div>
@@ -671,10 +722,17 @@ const Flashcards = () => {
       <div className="reset-button-container">
         <button 
           className="reset-button" 
-          onClick={!isTransitioning ? resetDeck : null}
+          onClick={!isTransitioning ? () => resetDeck(false) : null}
           disabled={isTransitioning}
         >
-          Reset Deck
+          Reset (Ordered)
+        </button>
+        <button 
+          className="reset-button shuffle-button" 
+          onClick={!isTransitioning ? () => resetDeck(true) : null}
+          disabled={isTransitioning}
+        >
+          Reset (Shuffled)
         </button>
       </div>
 
