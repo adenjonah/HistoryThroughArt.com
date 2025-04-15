@@ -778,3 +778,59 @@
   display: inline-block;
   font-style: italic;
 }
+
+/* Fix for "View Details" button on the back side */
+.full-page-button.back-side {
+  position: relative;
+  top: auto;
+  right: auto;
+  margin-top: 10px;
+  display: inline-block;
+  transform: none;
+}
+
+.details-link-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* Undo button styling */
+.undo-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.undo-button {
+  background-color: var(--accent-color);
+  color: var(--foreground-color);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  opacity: 0.9;
+}
+
+.undo-button:hover:not(:disabled) {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.undo-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .undo-button {
+    padding: 10px 18px;
+    font-size: 1rem;
+    width: 80%;
+    max-width: 300px;
+  }
+}
