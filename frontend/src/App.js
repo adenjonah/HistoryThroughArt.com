@@ -14,6 +14,7 @@ import ArtGallery from "./pages/ArtGallery/ArtGallery";
 import Calendar from "./pages/Calendar/Calendar";
 import Tutorial from "./pages/Tutorial/Tutorial";
 import Flashcards from "./pages/Flashcards/Flashcards";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 const NewFeatureModal = ({ onClose }) => {
   // Define styles to ensure visibility
@@ -123,6 +124,7 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/tutorial" element={<Tutorial />} />
           <Route path="/flashcards" element={<Flashcards />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </div>
       <button
