@@ -24,6 +24,36 @@ To get started with the APAH website:
 - **Backend**: Powered by [NodeJS](https://nodejs.org/) for handling server-side logic and interactions.
 - **Data Storage**: Utilizes [JSON](https://www.json.org/) for storing and managing static information related to the multimedia content.
 
+## Development Setup
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [Git](https://git-scm.com/)
+
+### Setup Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/HistoryThroughArt.com.git
+   cd HistoryThroughArt.com
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+4. Open your browser and navigate to `http://localhost:3000`
+
 ## Contact
 
 For questions or feedback, please contact the project maintainer at [HistoryThroughArt24@gmail.com](mailto:HistoryThroughArt24@gmail.com).
