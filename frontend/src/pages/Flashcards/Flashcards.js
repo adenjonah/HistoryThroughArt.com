@@ -774,13 +774,15 @@ const Flashcards = () => {
                     {cardToShow.id}.{" "}
                     <strong>{cardToShow.name}</strong>
                   </h3>
-                  <p>Location: {cardToShow.location}</p>
-                  <p>
-                    Artist/Culture:{" "}
-                    {cardToShow.artist_culture || "Unknown"}
-                  </p>
-                  <p>Date: {toBCE(cardToShow.date)}</p>
-                  <p>Materials: {cardToShow.materials}</p>
+                  <div className="flashcard-content">
+                    <p>Location: {cardToShow.location}</p>
+                    <p>
+                      Artist/Culture:{" "}
+                      {cardToShow.artist_culture || "Unknown"}
+                    </p>
+                    <p>Date: {toBCE(cardToShow.date)}</p>
+                    <p>Materials: {cardToShow.materials}</p>
+                  </div>
                   <div className="details-link-container">
                     <Link
                       to={`/exhibit?id=${cardToShow.id}`}
