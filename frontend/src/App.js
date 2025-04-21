@@ -79,6 +79,7 @@ const NewFeatureModal = ({ onClose }) => {
         
         <ul style={modalStyles.list}>
           <li style={modalStyles.listItem}>Added bulk image download functionality in Exhibit and PhotoGallery</li>
+          <li style={modalStyles.listItem}>Fixed Flashcard details bug</li>
         </ul>
       </div>
     </div>
