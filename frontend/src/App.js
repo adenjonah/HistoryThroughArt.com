@@ -78,11 +78,8 @@ const NewFeatureModal = ({ onClose }) => {
         <h2 style={modalStyles.header}>New Features!</h2>
         
         <ul style={modalStyles.list}>
-          <li style={modalStyles.listItem}>Flashcards now support swiping gestures on mobile (left=Bad, up=Good, right=Great)</li>
-          <li style={modalStyles.listItem}>Added keyboard shortcuts for flashcards (1=Bad, 2=Good, 3=Great, Space=Flip)</li>
-          <li style={modalStyles.listItem}>When rating as "Bad", a duplicate card is added for review</li>
-          <li style={modalStyles.listItem}>Improved flashcard animations and transitions</li>
-          <li style={modalStyles.listItem}>Made flashcard layout better on mobile devices</li>
+          <li style={modalStyles.listItem}>Added bulk image download functionality in Exhibit and PhotoGallery</li>
+          <li style={modalStyles.listItem}>Fixed Flashcard details bug</li>
         </ul>
       </div>
     </div>
@@ -91,7 +88,7 @@ const NewFeatureModal = ({ onClose }) => {
 
 function App() {
   // Use a simpler approach: check localStorage at startup only
-  const hasSeenModal = localStorage.getItem("newFeaturesModalSeen1") === "true";
+  const hasSeenModal = localStorage.getItem("newFeaturesModalSeen2") === "true";
   
   // Debug what's happening with localStorage
   console.log("Initial state check:", { hasSeenModal });
@@ -107,7 +104,7 @@ function App() {
   const handleCloseModal = () => {
     console.log("Modal closed by user - setting localStorage");
     setShowModal(false);
-    localStorage.setItem("newFeaturesModalSeen1", "true");
+    localStorage.setItem("newFeaturesModalSeen2", "true");
   };
 
   // Update our render
