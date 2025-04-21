@@ -54,6 +54,7 @@ const Flashcards = () => {
   const [nextCardReady, setNextCardReady] = useState(true);
   const [showDuplicateMessage, setShowDuplicateMessage] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [preloadedImages, setPreloadedImages] = useState([]);
   
   // Refs for touch handling

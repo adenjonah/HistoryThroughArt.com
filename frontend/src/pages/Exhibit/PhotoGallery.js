@@ -3,6 +3,7 @@ import "./Exhibit.css";
 import artPiecesData from "../../data/artworks.json";
 import "./PhotoSelectorIcons";
 import PhotoSelectorIcons from "./PhotoSelectorIcons";
+import JSZip from "jszip";
 
 const images = require.context("../../artImages", false, /\.webp$/);
 
@@ -152,6 +153,66 @@ function PhotoGallery({ id }) {
     document.body.removeChild(link);
   };
 
+  const handleDownloadZip = async () => {
+    if (!hasImages || artImages.length === 0) {
+      console.warn("Cannot download: no valid images");
+      return;
+    }
+
+    const zip = new JSZip();
+    const foundArtPiece = artPiecesData.find(
+      (piece) => piece.id.toString() === id
+    );
+    const folderName = foundArtPiece ? 
+      `${foundArtPiece.id}_${foundArtPiece.name.replace(/[^\w\s]/gi, '')}` : 
+      `artwork_${id}`;
+    
+    // Create promises to fetch all images
+    const imagePromises = artImages.map(async (imageName) => {
+      if (!imageName) return null;
+      
+      const imagePath = getImagePath(imageName);
+      if (!imagePath) return null;
+      
+      try {
+        const response = await fetch(imagePath);
+        const blob = await response.blob();
+        return { name: imageName, blob };
+      } catch (error) {
+        console.error(`Failed to fetch image ${imageName}:`, error);
+        return null;
+      }
+    });
+    
+    try {
+      // Wait for all fetch operations to complete
+      const results = await Promise.all(imagePromises);
+      
+      // Add valid results to the zip file
+      results.forEach(result => {
+        if (result) {
+          zip.file(result.name, result.blob);
+        }
+      });
+      
+      // Generate the zip file
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      
+      // Create a download link for the zip file
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = `${folderName}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Failed to create ZIP file:", error);
+    }
+  };
+
   const handleModalClick = (event) => {
     event.stopPropagation();
   };
@@ -246,11 +307,19 @@ function PhotoGallery({ id }) {
       />
       <div className="w3-padding-top">
         <button
-          className="w3-button w3-blue w3-ripple"
+          className="w3-button w3-blue w3-ripple w3-margin-right"
           onClick={handleDownload}
         >
           Download Image
         </button>
+        {artImages.length > 1 && (
+          <button
+            className="w3-button w3-purple w3-ripple"
+            onClick={handleDownloadZip}
+          >
+            Download All as ZIP
+          </button>
+        )}
       </div>
 
       {/* Modal */}

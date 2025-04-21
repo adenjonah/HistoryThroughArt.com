@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Card from "./ArtCard";
 import "./Catalog.css";
 import artPiecesData from "../../data/artworks.json";
+import JSZip from "jszip";
 const images = require.context("../../artImages", false, /\.webp$/);
 
 function Catalog({
@@ -177,6 +178,99 @@ function Catalog({
   const endIndex = startIndex + itemsPerPage;
   const currentArtPieces = artPiecesArray.slice(startIndex, endIndex);
 
+  const handleDownloadAllArtworks = async () => {
+    const zip = new JSZip();
+    let totalImages = 0;
+    let processedImages = 0;
+    
+    // Create a status message element
+    const statusElement = document.createElement('div');
+    statusElement.className = 'w3-panel w3-pale-blue w3-display-container w3-padding';
+    statusElement.style.position = 'fixed';
+    statusElement.style.top = '50%';
+    statusElement.style.left = '50%';
+    statusElement.style.transform = 'translate(-50%, -50%)';
+    statusElement.style.zIndex = '1000';
+    statusElement.style.minWidth = '300px';
+    statusElement.style.textAlign = 'center';
+    statusElement.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+    statusElement.style.borderRadius = '8px';
+    
+    document.body.appendChild(statusElement);
+    statusElement.innerHTML = '<p>Preparing to download all images...</p>';
+    
+    try {
+      // Count total images first
+      artPiecesData.forEach(artPiece => {
+        if (artPiece.image && Array.isArray(artPiece.image)) {
+          totalImages += artPiece.image.length;
+        }
+      });
+      
+      statusElement.innerHTML = `<p>Starting download of ${totalImages} images...</p>`;
+      
+      // Process each artwork
+      for (const artPiece of artPiecesData) {
+        if (!artPiece.image || !Array.isArray(artPiece.image) || artPiece.image.length === 0) {
+          continue;
+        }
+        
+        // Create a folder for each artwork
+        const folderName = `${artPiece.id}_${artPiece.name.replace(/[^\w\s]/gi, '')}`;
+        
+        // Process each image for this artwork
+        for (const imageName of artPiece.image) {
+          if (!imageName) continue;
+          
+          const imagePath = getImagePath(imageName);
+          if (!imagePath) continue;
+          
+          try {
+            const response = await fetch(imagePath);
+            const blob = await response.blob();
+            zip.file(`${folderName}/${imageName}`, blob);
+            
+            processedImages++;
+            statusElement.innerHTML = `<p>Downloaded ${processedImages} of ${totalImages} images...</p>`;
+          } catch (error) {
+            console.error(`Failed to fetch image ${imageName}:`, error);
+          }
+        }
+      }
+      
+      statusElement.innerHTML = '<p>Creating ZIP file...</p>';
+      
+      // Generate the zip file
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      
+      // Create a download link for the zip file
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = "all_artwork_images.zip";
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+      
+      statusElement.innerHTML = '<p>Download complete!</p>';
+      
+      // Remove status element after a short delay
+      setTimeout(() => {
+        document.body.removeChild(statusElement);
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to create ZIP file:", error);
+      statusElement.innerHTML = `<p>Error: ${error.message}</p>`;
+      
+      // Remove status element after a longer delay for error messages
+      setTimeout(() => {
+        document.body.removeChild(statusElement);
+      }, 5000);
+    }
+  };
+
   //Passes the image index to the Card component
   return (
     <div>
@@ -210,6 +304,17 @@ function Catalog({
             </a>
           )
         )}
+      </div>
+      <div className="w3-container w3-center w3-padding-32">
+        <button
+          className="w3-button w3-purple w3-ripple w3-round-large w3-xlarge"
+          onClick={handleDownloadAllArtworks}
+        >
+          Download All Artwork Images as ZIP
+        </button>
+        <p className="w3-small w3-text-grey">
+          This will download all images from all {artPiecesData.length} artworks.
+        </p>
       </div>
       <br />
     </div>
