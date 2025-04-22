@@ -5,7 +5,12 @@
 - [Codebase Structure](#codebase-structure)
 - [Technology Stack](#technology-stack)
 - [API Documentation](#api-documentation)
-- [Development Workflow](#development-workflow)
+- [Contributing](#contributing)
+  - [Getting Started](#getting-started)
+  - [Branching and Pull Request Strategy](#branching-and-pull-request-strategy)
+  - [Testing Preview Deployments](#testing-preview-deployments)
+  - [Bug Reports and Feature Requests](#bug-reports-and-feature-requests)
+  - [Communication Channels](#communication-channels)
 - [Conventions and Best Practices](#conventions-and-best-practices)
 - [Data Sources and Structure](#data-sources-and-structure)
 - [Deployment](#deployment)
@@ -119,9 +124,9 @@ Authentication is managed through `authService.js` which provides:
 - Session management
 - Authorization checks
 
-## Development Workflow
+## Contributing
 
-### Setup Environment
+### Getting Started
 
 1. Clone the repository:
 ```bash
@@ -136,15 +141,7 @@ cd frontend
 npm install
 ```
 
-3. Set up environment variables:
-   - Create a `.env` file in the `frontend` directory with:
-```
-REACT_APP_SUPABASE_URL=your_supabase_url
-REACT_APP_SUPABASE_ANON_KEY=your_supabase_anon_key
-REACT_APP_MAPBOX_TOKEN=your_mapbox_token
-```
-
-4. Run the development server:
+3. Start the development server:
 ```bash
 cd frontend
 npm start
@@ -158,12 +155,6 @@ chmod +x start_dev.sh
 # Run the script
 ./start_dev.sh
 ```
-
-### Database Setup
-
-1. Create a Supabase project
-2. Run the SQL scripts provided in `supabase-setup.sql`
-3. Configure CORS according to `supabase-cors-setup.md`
 
 ### Branching and Pull Request Strategy
 
@@ -204,6 +195,88 @@ We follow a structured branching strategy to ensure code quality and stability:
    - Every pull request triggers a Vercel preview deployment
    - Integration tests should be run on preview deployments
    - Production deployment happens automatically on merge to `main`
+
+6. **Code Review Standards**
+   - All PRs must be reviewed by at least one other developer
+   - Automated tests must pass before merging
+   - Check that the Vercel preview builds correctly
+   - Test functionality on the preview deployment before approval
+
+### Testing Preview Deployments
+
+When a pull request is created, Vercel automatically creates a preview deployment. This deployment is crucial for testing changes before they're merged:
+
+1. **Accessing the Preview**
+   - Find the "Preview" link in the pull request comments added by the Vercel bot
+   - The preview URL will follow the pattern: `https://history-through-art-git-feature-name.vercel.app`
+
+2. **Required Integration Tests**
+   - Verify all affected features work as expected
+   - Test responsive design on multiple screen sizes
+   - Check that analytics tracking is functioning correctly
+   - Ensure all links and navigation elements work properly
+   - Validate that content is loading correctly
+
+3. **Cross-Browser Testing**
+   - Test on Chrome, Firefox, and Safari at minimum
+   - Verify functionality on mobile devices if applicable
+
+4. **Performance Checks**
+   - Run Lighthouse tests to check performance metrics
+   - Address any critical performance issues before merging
+
+5. **Approval Process**
+   - Document testing results in the PR comments
+   - Issues found must be addressed before approval
+   - Clearly state "Approved" when testing is complete and successful
+
+### Bug Reports and Feature Requests
+
+Before starting work on a new feature or bug fix, follow these steps:
+
+1. **Check Existing Issues**
+   - Search the GitHub issue tracker to see if the bug or feature has already been reported
+   - If it exists, add comments with any additional information you have
+
+2. **Creating New Issues**
+   - For bugs: Create a new issue with the "bug" label
+     - Include steps to reproduce
+     - Describe expected vs. actual behavior
+     - Include browser/device information if relevant
+   - For features: Create a new issue with the "enhancement" label
+     - Clearly describe the feature and its benefits
+     - Include mockups or diagrams if applicable
+
+3. **Issue Assignment**
+   - Feel free to work on any open issue
+   - All work is asynchronous - no need to ask for permission to begin work
+   - Simply start by creating a feature branch and submitting a PR when ready
+   - Reference the issue number in your pull request with "Fixes #123" or "Relates to #123"
+
+4. **Work Tracking**
+   - Move issues to the appropriate project board column when you start working on them
+   - Update issue status as you make progress
+
+### Communication Channels
+
+Stay connected with the team through these communication channels:
+
+1. **GitHub Discussions**
+   - Use for technical discussions about features and implementation details
+   - Tag relevant team members for specific questions
+
+2. **Discord Server**
+   - Join our Discord server: [https://discord.gg/cMkzPGTNQK](https://discord.gg/cMkzPGTNQK)
+   - Use the #history-through-art channel for project discussions
+   - All communication is asynchronous - no need to wait for real-time responses
+
+3. **Code Review Comments**
+   - Use GitHub's review feature for inline comments
+   - Keep feedback constructive and specific
+
+4. **Getting Help**
+   - For questions, post in the appropriate Discord channel
+   - Include screenshots or code snippets when describing issues
 
 ## Conventions and Best Practices
 
