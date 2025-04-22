@@ -45,6 +45,23 @@ function SearchComponent({
     setClearFilters(false);
   };
 
+  const getContentAreaName = (unitKey) => {
+    const contentAreas = {
+      unit1: "Global Prehistory",
+      unit2: "Ancient Mediterranean",
+      unit3: "Early Europe and Colonial Americas",
+      unit4: "Later Europe and Americas",
+      unit5: "Indigenous Americas",
+      unit6: "Africa",
+      unit7: "West and Central Asia",
+      unit8: "South, East, and Southeast Asia",
+      unit9: "The Pacific",
+      unit10: "Global Contemporary"
+    };
+    
+    return contentAreas[unitKey] || unitKey.replace("unit", "Unit ");
+  };
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -114,7 +131,7 @@ function SearchComponent({
                       readOnly
                     />
                     <span>
-                      {unit.replace("unit", "Unit ")}
+                      {getContentAreaName(unit)}
                       {unitFilters[unit] ? " ✓" : ""}
                     </span>
                   </label>

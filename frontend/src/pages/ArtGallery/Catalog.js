@@ -127,8 +127,10 @@ function Catalog({
           case "Name Ascending":
             return a.name.localeCompare(b.name);
           case "Unit Descending":
+          case "Content Area Descending":
             return b.unit - a.unit;
           case "Unit Ascending":
+          case "Content Area Ascending":
             return a.unit - b.unit;
           case "ID Descending":
             return b.id - a.id;

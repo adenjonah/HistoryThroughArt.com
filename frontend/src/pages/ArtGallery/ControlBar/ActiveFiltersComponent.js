@@ -10,6 +10,23 @@ function ActiveFiltersComponent({
     (unit) => unitFilters[unit]
   );
 
+  const getContentAreaName = (unitKey) => {
+    const contentAreas = {
+      unit1: "Global Prehistory",
+      unit2: "Ancient Mediterranean",
+      unit3: "Early Europe and Colonial Americas",
+      unit4: "Later Europe and Americas",
+      unit5: "Indigenous Americas",
+      unit6: "Africa",
+      unit7: "West and Central Asia",
+      unit8: "South, East, and Southeast Asia",
+      unit9: "The Pacific",
+      unit10: "Global Contemporary"
+    };
+    
+    return contentAreas[unitKey] || unitKey.replace("unit", "Unit ");
+  };
+
   // Save unitFilters to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("unitFilters", JSON.stringify(unitFilters));
@@ -30,7 +47,7 @@ function ActiveFiltersComponent({
         <div className="current-filters">
           {activeFilters.map((filter) => (
             <span key={filter} className="filter-tag">
-              {filter.replace("unit", "Unit ")}
+              {getContentAreaName(filter)}
             </span>
           ))}
         </div>

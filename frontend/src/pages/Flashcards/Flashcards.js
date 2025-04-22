@@ -493,6 +493,23 @@ const Flashcards = () => {
     setShowSettings(!showSettings);
   };
 
+  const getContentAreaName = (unitNumber) => {
+    const contentAreas = {
+      1: "Global Prehistory",
+      2: "Ancient Mediterranean",
+      3: "Early Europe and Colonial Americas",
+      4: "Later Europe and Americas",
+      5: "Indigenous Americas",
+      6: "Africa",
+      7: "West and Central Asia",
+      8: "South, East, and Southeast Asia",
+      9: "The Pacific",
+      10: "Global Contemporary"
+    };
+    
+    return contentAreas[unitNumber] || `Unit ${unitNumber}`;
+  };
+
   const handleUnitSelection = (event) => {
     const unit = Number(event.target.value);
     if (event.target.checked) {
@@ -782,6 +799,7 @@ const Flashcards = () => {
                     </p>
                     <p>Date: {toBCE(cardToShow.date)}</p>
                     <p>Materials: {cardToShow.materials}</p>
+                    <p>Content Area: {getContentAreaName(cardToShow.unit)}</p>
                   </div>
                   <div className="details-link-container">
                     <Link
@@ -881,8 +899,8 @@ const Flashcards = () => {
         </div>
         
         <div className="unit-selection">
-          <h4>Units to Include</h4>
-          <p className="unit-hint">No selection means all units</p>
+          <h4>Content Areas to Include</h4>
+          <p className="unit-hint">No selection means all content areas</p>
           {[...new Set(artPiecesData.map((item) => item.unit))].map((unit) => (
             <label key={unit}>
               <input
@@ -891,7 +909,7 @@ const Flashcards = () => {
                 onChange={handleUnitSelection}
                 checked={selectedUnits.includes(unit)}
               />
-              Unit {unit}
+              {getContentAreaName(unit)}
             </label>
           ))}
         </div>
