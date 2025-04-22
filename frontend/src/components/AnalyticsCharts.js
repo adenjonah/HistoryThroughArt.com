@@ -10,6 +10,8 @@ import {
   ArcElement,
   PointElement,
   LineElement,
+  LineController,
+  BarController
 } from 'chart.js';
 import { Bar, Pie } from 'react-chartjs-2';
 
@@ -18,12 +20,14 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  BarController,
+  LineController,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend,
-  ArcElement,
-  PointElement,
-  LineElement
+  ArcElement
 );
 
 const AnalyticsCharts = ({ sessions }) => {
