@@ -6,8 +6,12 @@ import React from 'react';
  * @param {Array} props.userStats - Array of user statistics
  */
 const UserStats = ({ userStats }) => {
+  const stats = userStats || [];
+  
   // Format seconds to hours:minutes:seconds
   const formatTime = (seconds) => {
+    if (seconds === undefined || seconds === null) return '0h 0m 0s';
+    
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
@@ -44,26 +48,26 @@ const UserStats = ({ userStats }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {userStats.length === 0 ? (
+              {stats.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
                     No data available
                   </td>
                 </tr>
               ) : (
-                userStats.map((user) => (
+                stats.map((user) => (
                   <tr key={user.user_id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {user.user_id.substring(0, 8)}...
+                      {user.user_id ? user.user_id.substring(0, 8) + '...' : 'Unknown'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatTime(user.total_time_sec)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {user.session_count}
+                      {user.session_count || 0}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatTime(Math.round(user.total_time_sec / user.session_count))}
+                      {formatTime(user.session_count ? Math.round(user.total_time_sec / user.session_count) : 0)}
                     </td>
                   </tr>
                 ))
