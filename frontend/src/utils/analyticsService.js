@@ -11,10 +11,12 @@ export const AnalyticsService = {
   getTotalTime: async () => {
     try {
       // Instead of using an aggregate function, fetch all data and sum it client-side
+      // Add cache control to prevent stale data
       const { data, error } = await supabase
         .from('user_sessions')
         .select('session_time_sec')
-        .throwOnError();
+        .throwOnError()
+        .headers({ 'Cache-Control': 'no-cache' });
       
       if (error) throw error;
 
@@ -33,10 +35,12 @@ export const AnalyticsService = {
   getUserTimeAggregated: async () => {
     try {
       // Get all sessions and aggregate them client-side instead of using DB aggregation
+      // Add cache control to prevent stale data
       const { data, error } = await supabase
         .from('user_sessions')
         .select('*')
-        .throwOnError();
+        .throwOnError()
+        .headers({ 'Cache-Control': 'no-cache' });
 
       if (error) throw error;
 
@@ -75,7 +79,8 @@ export const AnalyticsService = {
       let query = supabase
         .from('user_sessions')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .headers({ 'Cache-Control': 'no-cache' });
 
       // Apply filters
       if (filters.startDate) {
@@ -111,10 +116,12 @@ export const AnalyticsService = {
   getUniquePaths: async () => {
     try {
       // Get all page paths and do the distinct operation client-side
+      // Add cache control to prevent stale data
       const { data, error } = await supabase
         .from('user_sessions')
         .select('page_path')
-        .throwOnError();
+        .throwOnError()
+        .headers({ 'Cache-Control': 'no-cache' });
       
       if (error) throw error;
 
