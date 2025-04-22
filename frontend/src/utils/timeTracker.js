@@ -5,6 +5,9 @@ import { supabase } from './supabaseClient';
 const USER_ID_KEY = 'history_art_user_id';
 const SESSION_START_KEY = 'history_art_session_start';
 const LAST_PING_KEY = 'history_art_last_ping';
+const ACTIVE_TAB_KEY = 'history_art_active_tab';
+const TAB_ID_KEY = 'history_art_tab_id';
+const TAB_HEARTBEAT_INTERVAL_MS = 5000; // 5 seconds
 // Track periodically (every 30 seconds)
 const PING_INTERVAL_MS = 30 * 1000;
 // Allowed domains for tracking
@@ -39,6 +42,9 @@ const isTrackingAllowed = () => {
 export const TimeTracker = {
   pingIntervalId: null,
   trackingEnabled: false,
+  tabHeartbeatIntervalId: null,
+  isActiveTab: false,
+  tabId: null,
   
   /**
    * Initialize the time tracker when the app starts
@@ -52,25 +58,53 @@ export const TimeTracker = {
       localStorage.setItem(USER_ID_KEY, uuidv4());
     }
     
+    // Generate a unique ID for this tab
+    TimeTracker.tabId = uuidv4();
+    localStorage.setItem(TAB_ID_KEY, TimeTracker.tabId);
+    
+    // Start the tab coordination mechanism
+    TimeTracker.startTabCoordination();
+    
     // Record session start time
     const now = Date.now();
     localStorage.setItem(SESSION_START_KEY, now.toString());
     localStorage.setItem(LAST_PING_KEY, now.toString());
     
     // Add event listeners to track session end
-    window.addEventListener('beforeunload', TimeTracker.recordSession);
-    window.addEventListener('pagehide', TimeTracker.recordSession); // Works better on iOS and some mobile browsers
+    window.addEventListener('beforeunload', () => {
+      // Only record if this is the active tab
+      if (TimeTracker.isActiveTab) {
+        TimeTracker.recordSession();
+        // Clear active tab record so other tabs can take over
+        localStorage.removeItem(ACTIVE_TAB_KEY);
+      }
+    });
+    window.addEventListener('pagehide', () => {
+      // Only record if this is the active tab
+      if (TimeTracker.isActiveTab) {
+        TimeTracker.recordSession();
+      }
+    });
     window.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') {
-        TimeTracker.recordSession();
+        // Only record if this is the active tab
+        if (TimeTracker.isActiveTab) {
+          TimeTracker.recordSession();
+        }
+      } else {
+        // When tab becomes visible, try to claim active status
+        TimeTracker.tryClaimActiveTab();
       }
     });
     
     // Track page navigation within the app
     window.addEventListener('popstate', () => {
-      TimeTracker.recordSession();
-      localStorage.setItem(SESSION_START_KEY, Date.now().toString());
-      localStorage.setItem(LAST_PING_KEY, Date.now().toString());
+      // Only record if this is the active tab
+      if (TimeTracker.isActiveTab) {
+        TimeTracker.recordSession();
+        localStorage.setItem(SESSION_START_KEY, Date.now().toString());
+        localStorage.setItem(LAST_PING_KEY, Date.now().toString());
+      }
     });
     
     // Log Supabase configuration for debugging
@@ -89,7 +123,83 @@ export const TimeTracker = {
     }
     
     // For debugging
-    console.log('TimeTracker initialized with user ID:', TimeTracker.getUserId());
+    console.log('TimeTracker initialized with user ID:', TimeTracker.getUserId(), 'tab ID:', TimeTracker.tabId);
+  },
+  
+  /**
+   * Start tab coordination to avoid duplicate tracking of the same user
+   */
+  startTabCoordination: () => {
+    // Try to claim this tab as the active one for tracking
+    TimeTracker.tryClaimActiveTab();
+    
+    // Set up interval to maintain active tab status and handle tab switching
+    TimeTracker.tabHeartbeatIntervalId = setInterval(() => {
+      TimeTracker.tryClaimActiveTab();
+    }, TAB_HEARTBEAT_INTERVAL_MS);
+  },
+  
+  /**
+   * Try to claim this tab as the active one for tracking
+   */
+  tryClaimActiveTab: () => {
+    // Only visible tabs should try to claim active status
+    if (document.visibilityState !== 'visible') {
+      TimeTracker.isActiveTab = false;
+      return;
+    }
+    
+    const now = Date.now();
+    const activeTabData = localStorage.getItem(ACTIVE_TAB_KEY);
+    
+    if (!activeTabData) {
+      // No active tab, claim it
+      const claim = {
+        tabId: TimeTracker.tabId,
+        timestamp: now
+      };
+      localStorage.setItem(ACTIVE_TAB_KEY, JSON.stringify(claim));
+      TimeTracker.isActiveTab = true;
+      console.log('TimeTracker: This tab claimed active status');
+      return;
+    }
+    
+    try {
+      const activeTab = JSON.parse(activeTabData);
+      const heartbeatAge = now - activeTab.timestamp;
+      
+      // If this is already the active tab, update the timestamp
+      if (activeTab.tabId === TimeTracker.tabId) {
+        activeTab.timestamp = now;
+        localStorage.setItem(ACTIVE_TAB_KEY, JSON.stringify(activeTab));
+        TimeTracker.isActiveTab = true;
+        return;
+      }
+      
+      // If the active tab's heartbeat is old (>10 seconds), assume it's inactive
+      if (heartbeatAge > 10000) {
+        const claim = {
+          tabId: TimeTracker.tabId,
+          timestamp: now
+        };
+        localStorage.setItem(ACTIVE_TAB_KEY, JSON.stringify(claim));
+        TimeTracker.isActiveTab = true;
+        console.log('TimeTracker: This tab took over active status (previous tab inactive)');
+        return;
+      }
+      
+      // There's an active tab and it's not this one
+      TimeTracker.isActiveTab = false;
+    } catch (e) {
+      // In case of any error, claim active status to recover
+      const claim = {
+        tabId: TimeTracker.tabId,
+        timestamp: now
+      };
+      localStorage.setItem(ACTIVE_TAB_KEY, JSON.stringify(claim));
+      TimeTracker.isActiveTab = true;
+      console.error('TimeTracker: Error in tab coordination, claiming active status', e);
+    }
   },
   
   /**
@@ -160,7 +270,13 @@ export const TimeTracker = {
     
     // Set up new interval
     TimeTracker.pingIntervalId = setInterval(() => {
-      console.log('Periodic session tracking ping');
+      // Only record if this is the active tab
+      if (!TimeTracker.isActiveTab) {
+        console.log('Periodic session tracking ping - skipped (not active tab)');
+        return;
+      }
+      
+      console.log('Periodic session tracking ping - active tab');
       const lastPing = parseInt(localStorage.getItem(LAST_PING_KEY) || '0');
       
       // Record since last ping
@@ -323,6 +439,16 @@ export const TimeTracker = {
     if (TimeTracker.pingIntervalId) {
       clearInterval(TimeTracker.pingIntervalId);
       TimeTracker.pingIntervalId = null;
+    }
+    
+    if (TimeTracker.tabHeartbeatIntervalId) {
+      clearInterval(TimeTracker.tabHeartbeatIntervalId);
+      TimeTracker.tabHeartbeatIntervalId = null;
+    }
+    
+    // If this was the active tab, clear that status
+    if (TimeTracker.isActiveTab) {
+      localStorage.removeItem(ACTIVE_TAB_KEY);
     }
   }
 }; 
