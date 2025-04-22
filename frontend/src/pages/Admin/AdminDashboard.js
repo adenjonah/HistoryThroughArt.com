@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthService } from '../../utils/authService';
 import { AnalyticsService } from '../../utils/analyticsService';
-import { testSupabaseConnection } from '../../utils/supabaseClient';
+import { testSupabaseConnection, supabase } from '../../utils/supabaseClient';
 import AdminLogin from '../../components/AdminLogin';
 import UserStats from '../../components/UserStats';
 import SessionsTable from '../../components/SessionsTable';
@@ -49,6 +49,9 @@ const AdminDashboard = () => {
         
         if (!result.success) {
           setError(`Supabase connection failed: ${result.error}`);
+        } else {
+          // Try direct DB access for debugging
+          debugCheckData();
         }
       } catch (err) {
         setConnectionStatus({
@@ -62,6 +65,37 @@ const AdminDashboard = () => {
     
     testConnection();
   }, []);
+
+  // Debug function to directly check data
+  const debugCheckData = async () => {
+    try {
+      console.log('🔍 DEBUG: Checking user_sessions table directly');
+      const { data, error } = await supabase
+        .from('user_sessions')
+        .select('*')
+        .limit(5);
+      
+      if (error) {
+        console.error('🔍 DEBUG: Error checking data:', error);
+      } else {
+        console.log('🔍 DEBUG: First 5 records in user_sessions:', data);
+        console.log('🔍 DEBUG: Total records found:', data.length);
+        
+        if (data.length === 0) {
+          console.log('🔍 DEBUG: No data found in user_sessions table. Checking RLS policies...');
+          
+          // Direct SQL query to check table existence (works only with service role, will fail for normal users)
+          const { error: tableError } = await supabase.rpc('check_table_exists', { table_name: 'user_sessions' });
+          if (tableError) {
+            console.log('🔍 DEBUG: Unable to check table existence:', tableError.message);
+            console.log('🔍 DEBUG: This is normal if you are using anonymous or authenticated role without admin privileges');
+          }
+        }
+      }
+    } catch (debugError) {
+      console.error('🔍 DEBUG: Exception in debug check:', debugError);
+    }
+  };
 
   // Check if user is authenticated on mount
   useEffect(() => {
@@ -84,7 +118,10 @@ const AdminDashboard = () => {
 
   // Load data when authenticated or filters change or force refresh
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      console.log("Not loading data because user is not authenticated");
+      return;
+    }
     
     const loadData = async () => {
       try {
@@ -93,23 +130,27 @@ const AdminDashboard = () => {
         console.log('Loading dashboard data...', new Date().toISOString());
         
         // Get user aggregated stats (doesn't depend on filters)
+        console.log('Fetching user stats...');
         const userStatsData = await AnalyticsService.getUserTimeAggregated();
-        console.log('User stats loaded:', userStatsData.length);
+        console.log('User stats loaded:', userStatsData.length, userStatsData);
         setUserStats(userStatsData);
         
         // Get total time (doesn't depend on filters)
+        console.log('Fetching total time...');
         const totalTimeData = await AnalyticsService.getTotalTime();
         console.log('Total time loaded:', totalTimeData);
         setTotalTime(totalTimeData);
         
         // Get unique page paths for filter dropdown
+        console.log('Fetching page paths...');
         const paths = await AnalyticsService.getUniquePaths();
-        console.log('Page paths loaded:', paths.length);
+        console.log('Page paths loaded:', paths.length, paths);
         setPagePaths(paths);
         
         // Get filtered sessions
+        console.log('Fetching sessions with filters:', filters);
         const sessionsData = await AnalyticsService.getSessions(filters);
-        console.log('Sessions loaded:', sessionsData.length);
+        console.log('Sessions loaded:', sessionsData.length, sessionsData);
         setSessions(sessionsData);
       } catch (error) {
         console.error('Error loading data:', error);
@@ -254,12 +295,46 @@ const AdminDashboard = () => {
     );
   };
 
+  // Handle manually retrying failed sessions
+  const handleRetryFailedSessions = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const result = await AnalyticsService.retryFailedSessions();
+      
+      if (result.success) {
+        alert(result.message);
+        // Refresh data
+        setLastRefresh(new Date());
+      } else {
+        setError(`Failed to retry sessions: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error retrying failed sessions:', error);
+      setError('Failed to retry sessions: ' + (error.message || 'Unknown error'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Show login page if not authenticated
   if (!isAuthenticated && !isLoading) {
     return (
       <div>
         {renderConnectionStatus()}
         <AdminLogin onLogin={handleLogin} />
+        <div className="text-center mt-4">
+          <button 
+            onClick={() => {
+              console.log("Bypassing authentication for testing");
+              setIsAuthenticated(true);
+            }}
+            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+          >
+            Bypass Authentication (Testing Only)
+          </button>
+        </div>
       </div>
     );
   }
@@ -302,6 +377,19 @@ const AdminDashboard = () => {
                 {isLoading ? 'Refreshing...' : 'Refresh Data'}
               </button>
               <button
+                onClick={handleRetryFailedSessions}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                disabled={isLoading}
+              >
+                Retry Failed Sessions
+              </button>
+              <button
+                onClick={debugCheckData}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              >
+                Debug
+              </button>
+              <button
                 onClick={handleSignOut}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
@@ -340,15 +428,15 @@ const AdminDashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 border rounded-lg bg-blue-50">
                   <h3 className="text-sm font-medium text-gray-500">Total Time Spent</h3>
-                  <p className="text-3xl font-bold text-blue-600">{formatTime(totalTime)}</p>
+                  <p className="text-3xl font-bold text-blue-600">{formatTime(totalTime || 0)}</p>
                 </div>
                 <div className="p-4 border rounded-lg bg-green-50">
                   <h3 className="text-sm font-medium text-gray-500">Total Users</h3>
-                  <p className="text-3xl font-bold text-green-600">{userStats.length}</p>
+                  <p className="text-3xl font-bold text-green-600">{userStats ? userStats.length : 0}</p>
                 </div>
                 <div className="p-4 border rounded-lg bg-purple-50">
                   <h3 className="text-sm font-medium text-gray-500">Total Sessions</h3>
-                  <p className="text-3xl font-bold text-purple-600">{sessions.length}</p>
+                  <p className="text-3xl font-bold text-purple-600">{sessions ? sessions.length : 0}</p>
                 </div>
               </div>
             </div>
@@ -367,6 +455,29 @@ const AdminDashboard = () => {
 
             {/* Sessions Table */}
             <SessionsTable sessions={sessions} />
+
+            {/* Hidden debug data */}
+            <div style={{ display: 'none' }}>
+              <h4>Debug Data (Check console)</h4>
+              <div>
+                <strong>Total Time:</strong> {totalTime || 0}
+              </div>
+              <div>
+                <strong>Users Count:</strong> {userStats ? userStats.length : 0}
+              </div>
+              <div>
+                <strong>Sessions Count:</strong> {sessions ? sessions.length : 0}
+              </div>
+              <div>
+                <strong>Page Paths:</strong> {pagePaths ? pagePaths.join(', ') : 'None'}
+              </div>
+              <div>
+                <strong>Raw User Stats:</strong> <pre>{JSON.stringify(userStats, null, 2)}</pre>
+              </div>
+              <div>
+                <strong>Raw Sessions:</strong> <pre>{JSON.stringify(sessions?.slice(0, 2), null, 2)}</pre>
+              </div>
+            </div>
           </>
         )}
       </div>

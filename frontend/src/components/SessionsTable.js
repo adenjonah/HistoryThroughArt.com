@@ -6,14 +6,24 @@ import React from 'react';
  * @param {Array} props.sessions - Array of session data
  */
 const SessionsTable = ({ sessions }) => {
+  const sessionData = sessions || [];
+  
   // Format timestamp to readable date
   const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
+    if (!timestamp) return 'Unknown';
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleString();
+    } catch (e) {
+      console.error("Error formatting date:", e);
+      return timestamp;
+    }
   };
 
   // Format seconds to hours:minutes:seconds
   const formatTime = (seconds) => {
+    if (seconds === undefined || seconds === null) return '0h 0m 0s';
+    
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
@@ -50,20 +60,20 @@ const SessionsTable = ({ sessions }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {sessions.length === 0 ? (
+              {sessionData.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
                     No session data available
                   </td>
                 </tr>
               ) : (
-                sessions.map((session) => (
-                  <tr key={session.id}>
+                sessionData.map((session) => (
+                  <tr key={session.id || Math.random().toString()}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {session.user_id.substring(0, 8)}...
+                      {session.user_id ? session.user_id.substring(0, 8) + '...' : 'Unknown'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {session.page_path}
+                      {session.page_path || '/'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatTime(session.session_time_sec)}

@@ -7,17 +7,46 @@ const SESSION_START_KEY = 'history_art_session_start';
 const LAST_PING_KEY = 'history_art_last_ping';
 // Track periodically (every 30 seconds)
 const PING_INTERVAL_MS = 30 * 1000;
+// Allowed domains for tracking
+const ALLOWED_DOMAINS = ['historythroughart.com', 'www.historythroughart.com'];
+
+/**
+ * Check if the current domain is allowed for tracking
+ * @returns {boolean} Whether tracking is allowed
+ */
+const isTrackingAllowed = () => {
+  const hostname = window.location.hostname;
+  // Allow tracking only on production domains
+  const isDevelopment = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('.local');
+  const isAllowedDomain = ALLOWED_DOMAINS.includes(hostname);
+  
+  if (isDevelopment) {
+    console.log('TimeTracker: Tracking disabled on local development environment');
+    return false;
+  }
+  
+  if (!isAllowedDomain) {
+    console.log(`TimeTracker: Tracking disabled on non-production domain: ${hostname}`);
+    return false;
+  }
+  
+  return true;
+};
 
 /**
  * TimeTracker service to handle anonymous user tracking
  */
 export const TimeTracker = {
   pingIntervalId: null,
+  trackingEnabled: false,
   
   /**
    * Initialize the time tracker when the app starts
    */
   initialize: () => {
+    // Check if tracking is allowed on this domain
+    TimeTracker.trackingEnabled = isTrackingAllowed();
+    
     // Generate and store user ID if not already present
     if (!localStorage.getItem(USER_ID_KEY)) {
       localStorage.setItem(USER_ID_KEY, uuidv4());
@@ -47,12 +76,17 @@ export const TimeTracker = {
     // Log Supabase configuration for debugging
     console.log('TimeTracker: Supabase URL present:', !!supabase.supabaseUrl);
     console.log('TimeTracker: Supabase Key length:', supabase.supabaseKey ? supabase.supabaseKey.length : 0);
+    console.log('TimeTracker: Tracking enabled:', TimeTracker.trackingEnabled);
     
     // Test Supabase connection
-    TimeTracker.testSupabaseConnection();
-    
-    // Set up periodic tracking
-    TimeTracker.startPeriodicTracking();
+    if (TimeTracker.trackingEnabled) {
+      TimeTracker.testSupabaseConnection();
+      
+      // Set up periodic tracking
+      TimeTracker.startPeriodicTracking();
+    } else {
+      console.log('TimeTracker: Skipping Supabase connection test and periodic tracking on non-production domain');
+    }
     
     // For debugging
     console.log('TimeTracker initialized with user ID:', TimeTracker.getUserId());
@@ -155,6 +189,12 @@ export const TimeTracker = {
    * Record the current session to Supabase
    */
   recordSession: async () => {
+    // Skip tracking if not on production domain
+    if (!TimeTracker.trackingEnabled) {
+      console.log('TimeTracker: Skipping session recording on non-production domain');
+      return;
+    }
+    
     const sessionStart = parseInt(localStorage.getItem(SESSION_START_KEY) || '0');
     if (!sessionStart) return;
     
@@ -218,6 +258,12 @@ export const TimeTracker = {
    * @param {number} timestamp - Timestamp when the session started
    */
   recordSessionWithDuration: async (durationSec, timestamp) => {
+    // Skip tracking if not on production domain
+    if (!TimeTracker.trackingEnabled) {
+      console.log('TimeTracker: Skipping periodic session recording on non-production domain');
+      return;
+    }
+    
     const userId = TimeTracker.getUserId();
     if (!userId) return;
     

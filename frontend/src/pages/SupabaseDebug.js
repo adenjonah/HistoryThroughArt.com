@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../utils/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
 import '../App.css';
 
 const SupabaseDebug = () => {
@@ -14,6 +15,7 @@ const SupabaseDebug = () => {
   const [manualInsertResult, setManualInsertResult] = useState(null);
   const [failedSessions, setFailedSessions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [rlsPolicies, setRlsPolicies] = useState(null);
 
   const testConnection = async () => {
     try {
@@ -181,6 +183,25 @@ const SupabaseDebug = () => {
     }
   };
 
+  const checkRlsPolicies = async () => {
+    try {
+      // This requires admin privileges, so it may not work in all environments
+      const { data, error } = await supabase.rpc('get_policies', {
+        table_name: 'user_sessions'
+      });
+
+      if (error) throw error;
+      
+      setRlsPolicies(data || []);
+    } catch (error) {
+      console.error('Error retrieving RLS policies:', error);
+      setRlsPolicies([{
+        error: error.message,
+        note: 'Getting RLS policies requires admin privileges. Check your Supabase dashboard instead.'
+      }]);
+    }
+  };
+
   useEffect(() => {
     // You can optionally auto-run tests on page load
     // testConnection();
@@ -302,6 +323,38 @@ const SupabaseDebug = () => {
       
       <div className="card mb-4">
         <div className="card-header">
+          <h2>RLS Policies</h2>
+        </div>
+        <div className="card-body">
+          <button 
+            className="btn btn-primary mb-3" 
+            onClick={checkRlsPolicies}
+          >
+            Check RLS Policies
+          </button>
+          
+          {rlsPolicies && (
+            <div className="mt-3">
+              <h4>Policies for user_sessions:</h4>
+              <pre className="bg-light p-3 mt-2">
+                {JSON.stringify(rlsPolicies, null, 2)}
+              </pre>
+              <div className="alert alert-info">
+                <p>
+                  <strong>Note:</strong> If you're seeing errors, you need to check policies from the Supabase dashboard.
+                  The most common RLS issue is a restrictive WITH CHECK clause in your INSERT policy.
+                </p>
+                <p>
+                  Try updating your policy to: <code>WITH CHECK (auth.uid() IS NOT NULL)</code>
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div className="card mb-4">
+        <div className="card-header">
           <h2>Failed Sessions</h2>
         </div>
         <div className="card-body">
@@ -362,6 +415,78 @@ const SupabaseDebug = () => {
               {isLoading ? 'Loading sessions...' : 'No failed sessions found.'}
             </div>
           )}
+        </div>
+      </div>
+      
+      <div className="card mb-4">
+        <div className="card-header">
+          <h2>Bypass RLS with Service Role</h2>
+        </div>
+        <div className="card-body">
+          <div className="alert alert-warning">
+            <strong>Warning:</strong> The service role key should never be exposed in client-side code. This is for testing purposes only on a development environment.
+          </div>
+          
+          <div className="mb-3">
+            <label htmlFor="serviceRoleKey" className="form-label">Service Role Key (Optional)</label>
+            <input 
+              type="password" 
+              className="form-control mb-2" 
+              id="serviceRoleKey" 
+              placeholder="Enter your service role key for testing" 
+            />
+            <button 
+              className="btn btn-danger" 
+              onClick={() => {
+                const key = document.getElementById('serviceRoleKey').value;
+                if (!key) return;
+                
+                // Create a new Supabase client with the service role key
+                const serviceClient = createClient(
+                  process.env.REACT_APP_SUPABASE_URL,
+                  key
+                );
+                
+                // Test insert with service role
+                serviceClient
+                  .from('user_sessions')
+                  .insert([{
+                    user_id: 'service-role-test',
+                    session_time_sec: 1,
+                    page_path: '/test-service-role'
+                  }])
+                  .then(({ data, error }) => {
+                    if (error) {
+                      alert(`Service role insert failed: ${error.message}`);
+                    } else {
+                      alert('Service role insert successful! This confirms the issue is with RLS policies.');
+                    }
+                  });
+              }}
+            >
+              Test Insert with Service Role
+            </button>
+          </div>
+          
+          <div className="alert alert-info">
+            <p>If the insert succeeds with a service role key but fails with the anonymous key, this confirms the issue is with your Row Level Security (RLS) policies.</p>
+            <p>To fix this, go to your Supabase dashboard, find the user_sessions table, and modify the INSERT policy with:</p>
+            <pre className="bg-light p-2">
+              UPDATE POLICY "Allow authenticated users to insert their own session data" 
+              ON "public"."user_sessions"
+              FOR INSERT 
+              TO authenticated
+              WITH CHECK (true);
+            </pre>
+            <p>Or create a new policy if you have permission to do so:</p>
+            <pre className="bg-light p-2">
+              CREATE POLICY "Allow all authenticated inserts" 
+              ON "public"."user_sessions"
+              FOR INSERT 
+              TO authenticated
+              WITH CHECK (true);
+            </pre>
+          </div>
         </div>
       </div>
       
