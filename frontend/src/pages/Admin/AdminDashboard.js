@@ -16,6 +16,7 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState({ tested: false, success: false, message: '' });
+  const [lastRefresh, setLastRefresh] = useState(new Date());
   
   // Data state
   const [userStats, setUserStats] = useState([]);
@@ -81,14 +82,15 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
-  // Load data when authenticated or filters change
+  // Load data when authenticated or filters change or force refresh
   useEffect(() => {
     if (!isAuthenticated) return;
     
     const loadData = async () => {
       try {
         setIsLoading(true);
-        console.log('Loading dashboard data...');
+        setError(null);
+        console.log('Loading dashboard data...', new Date().toISOString());
         
         // Get user aggregated stats (doesn't depend on filters)
         const userStatsData = await AnalyticsService.getUserTimeAggregated();
@@ -118,7 +120,12 @@ const AdminDashboard = () => {
     };
     
     loadData();
-  }, [isAuthenticated, filters]);
+  }, [isAuthenticated, filters, lastRefresh]);
+
+  // Handle manual refresh
+  const handleRefresh = () => {
+    setLastRefresh(new Date());
+  };
 
   // Handle sign out
   const handleSignOut = async () => {
@@ -142,6 +149,11 @@ const AdminDashboard = () => {
     const secs = seconds % 60;
     
     return `${hours}h ${minutes}m ${secs}s`;
+  };
+
+  // Format the last refresh time
+  const formatLastRefresh = () => {
+    return lastRefresh.toLocaleTimeString();
   };
 
   // Show database connection status for debugging
@@ -189,7 +201,17 @@ const AdminDashboard = () => {
               <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
               <p className="text-sm text-gray-500">View and analyze user session data</p>
             </div>
-            <div>
+            <div className="flex items-center space-x-4">
+              <div className="text-sm text-gray-500">
+                Last refreshed: {formatLastRefresh()}
+              </div>
+              <button
+                onClick={handleRefresh}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Refreshing...' : 'Refresh Data'}
+              </button>
               <button
                 onClick={handleSignOut}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
