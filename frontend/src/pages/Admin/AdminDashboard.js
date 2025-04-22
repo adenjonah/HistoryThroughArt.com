@@ -127,6 +127,79 @@ const AdminDashboard = () => {
     setLastRefresh(new Date());
   };
 
+  // Handle data export
+  const handleExportData = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Get all session data
+      const allSessions = await AnalyticsService.getSessions({});
+      
+      // Convert to JSON and create a downloadable file
+      const dataStr = JSON.stringify(allSessions, null, 2);
+      const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`;
+      
+      // Create download link and trigger click
+      const exportName = `analytics_export_${new Date().toISOString().split('T')[0]}.json`;
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportName);
+      linkElement.click();
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      setError('Failed to export data: ' + (error.message || 'Unknown error'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle data import
+  const handleImportData = () => {
+    // Create file input element
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'application/json';
+    
+    // Handle file selection
+    fileInput.onchange = async (e) => {
+      if (!e.target.files || !e.target.files[0]) return;
+      
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = async (event) => {
+        try {
+          setIsLoading(true);
+          setError(null);
+          
+          // Parse the JSON data
+          const jsonData = JSON.parse(event.target.result);
+          
+          // Import the data
+          const result = await AnalyticsService.importSessionData(jsonData);
+          
+          if (result.success) {
+            alert(`Successfully imported data: ${result.message}`);
+            // Refresh the dashboard to show imported data
+            setLastRefresh(new Date());
+          } else {
+            setError(`Import failed: ${result.message}`);
+          }
+        } catch (error) {
+          console.error('Error importing data:', error);
+          setError('Failed to import data: ' + (error.message || 'Unknown error'));
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
+      reader.readAsText(file);
+    };
+    
+    // Trigger file selection
+    fileInput.click();
+  };
+
   // Handle sign out
   const handleSignOut = async () => {
     try {
@@ -204,6 +277,22 @@ const AdminDashboard = () => {
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">
                 Last refreshed: {formatLastRefresh()}
+              </div>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={handleExportData}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  disabled={isLoading}
+                >
+                  Export Data
+                </button>
+                <button
+                  onClick={handleImportData}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                  disabled={isLoading}
+                >
+                  Import Data
+                </button>
               </div>
               <button
                 onClick={handleRefresh}

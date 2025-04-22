@@ -132,5 +132,63 @@ export const AnalyticsService = {
       console.error('Error getting unique paths:', error);
       return [];
     }
+  },
+
+  /**
+   * Import session data from a JSON file export
+   * @param {Array} sessions - Array of session data objects
+   * @returns {Promise<{success: boolean, imported: number, errors: number}>} - Import result
+   */
+  importSessionData: async (sessions) => {
+    if (!Array.isArray(sessions) || sessions.length === 0) {
+      return { success: false, imported: 0, errors: 0, message: 'No valid data to import' };
+    }
+
+    let importedCount = 0;
+    let errorCount = 0;
+
+    try {
+      // Process in batches of 50 to avoid overwhelming the API
+      const batchSize = 50;
+      for (let i = 0; i < sessions.length; i += batchSize) {
+        const batch = sessions.slice(i, i + batchSize);
+        
+        // Clean the data to ensure it matches the expected format
+        const cleanedBatch = batch.map(session => ({
+          user_id: session.user_id,
+          session_time_sec: session.session_time_sec,
+          page_path: session.page_path,
+          created_at: session.created_at
+        }));
+
+        // Insert batch
+        const { data, error } = await supabase
+          .from('user_sessions')
+          .insert(cleanedBatch)
+          .select();
+
+        if (error) {
+          console.error('Error importing batch:', error);
+          errorCount += batch.length;
+        } else {
+          importedCount += data.length;
+        }
+      }
+
+      return { 
+        success: importedCount > 0, 
+        imported: importedCount, 
+        errors: errorCount,
+        message: `Imported ${importedCount} sessions (${errorCount} errors)`
+      };
+    } catch (error) {
+      console.error('Error importing session data:', error);
+      return { 
+        success: false, 
+        imported: importedCount, 
+        errors: sessions.length - importedCount,
+        message: `Error: ${error.message}`
+      };
+    }
   }
 }; 
