@@ -17,6 +17,7 @@ function Museum() {
     return savedFilters
       ? JSON.parse(savedFilters)
       : {
+          // All content areas disabled by default
           unit1: false,
           unit2: false,
           unit3: false,
@@ -25,6 +26,8 @@ function Museum() {
           unit6: false,
           unit7: false,
           unit8: false,
+          unit9: false,
+          unit10: false,
         };
   });
 

@@ -34,8 +34,8 @@ function SortComponent({ sort, setSort, setClearFilters }) {
         <option value="ID Descending">Sort By: ID Descending</option>
         <option value="Name Ascending">Sort By: Name: A-Z</option>
         <option value="Name Descending">Sort By: Name: Z-A</option>
-        <option value="Unit Ascending">Sort By: Unit Ascending</option>
-        <option value="Unit Descending">Sort By: Unit Descending</option>
+        <option value="Unit Ascending">Sort By: Content Area Ascending</option>
+        <option value="Unit Descending">Sort By: Content Area Descending</option>
         <option value="Date Ascending">Sort By: Date Ascending</option>
         <option value="Date Descending">Sort By: Date Descending</option>
         <option value="Korus Sort">Sort By: Korus Sort</option>
