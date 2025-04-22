@@ -44,11 +44,75 @@ export const TimeTracker = {
       localStorage.setItem(LAST_PING_KEY, Date.now().toString());
     });
     
+    // Log Supabase configuration for debugging
+    console.log('TimeTracker: Supabase URL present:', !!supabase.supabaseUrl);
+    console.log('TimeTracker: Supabase Key length:', supabase.supabaseKey ? supabase.supabaseKey.length : 0);
+    
+    // Test Supabase connection
+    TimeTracker.testSupabaseConnection();
+    
     // Set up periodic tracking
     TimeTracker.startPeriodicTracking();
     
     // For debugging
     console.log('TimeTracker initialized with user ID:', TimeTracker.getUserId());
+  },
+  
+  /**
+   * Test Supabase connection to diagnose issues
+   */
+  testSupabaseConnection: async () => {
+    try {
+      console.log('Testing Supabase connection...');
+      
+      // First test health/ping endpoint
+      const { data: pingData, error: pingError } = await supabase.from('user_sessions').select('id').limit(1);
+      
+      if (pingError) {
+        console.error('Supabase connection test failed:', pingError);
+        console.error('Error details:', {
+          code: pingError.code,
+          message: pingError.message,
+          hint: pingError.hint,
+          details: pingError.details
+        });
+      } else {
+        console.log('Supabase connection test successful', pingData);
+      }
+      
+      // Try inserting test record
+      const testSession = {
+        user_id: 'test-connection-' + Date.now(),
+        session_time_sec: 1,
+        page_path: '/test-connection'
+      };
+      
+      console.log('Attempting test insert with data:', testSession);
+      
+      const { data: insertData, error: insertError } = await supabase
+        .from('user_sessions')
+        .insert(testSession)
+        .select();
+      
+      if (insertError) {
+        console.error('Supabase test insert failed:', insertError);
+        console.error('Insert error details:', {
+          code: insertError.code,
+          message: insertError.message,
+          hint: insertError.hint,
+          details: insertError.details
+        });
+        
+        // Log headers for debugging
+        console.log('Supabase client settings:', {
+          headers: supabase.restClient.headers
+        });
+      } else {
+        console.log('Supabase test insert successful', insertData);
+      }
+    } catch (error) {
+      console.error('Unexpected error testing Supabase connection:', error);
+    }
   },
   
   /**
@@ -106,17 +170,45 @@ export const TimeTracker = {
     console.log(`Recording session: ${sessionTimeSec} seconds on ${window.location.pathname}`);
     
     try {
-      await supabase.from('user_sessions').insert({
+      const sessionData = {
         user_id: userId,
         session_time_sec: sessionTimeSec,
         page_path: window.location.pathname
-      });
+      };
+      
+      console.log('Sending session data:', sessionData);
+      
+      const { data, error } = await supabase
+        .from('user_sessions')
+        .insert(sessionData)
+        .select();
+      
+      if (error) {
+        console.error('Error recording session:', error);
+        console.error('Error details:', {
+          code: error.code,
+          message: error.message,
+          hint: error.hint,
+          details: error.details
+        });
+        
+        // Store failed records in localStorage for later retry
+        const failedRecords = JSON.parse(localStorage.getItem('failed_sessions') || '[]');
+        failedRecords.push({
+          ...sessionData,
+          timestamp: new Date().toISOString(),
+          error: error.message
+        });
+        localStorage.setItem('failed_sessions', JSON.stringify(failedRecords));
+      } else {
+        console.log('Session recorded successfully:', data);
+      }
       
       // Reset session start time
       localStorage.setItem(SESSION_START_KEY, Date.now().toString());
       localStorage.setItem(LAST_PING_KEY, Date.now().toString());
     } catch (error) {
-      console.error('Error recording session:', error);
+      console.error('Unexpected error recording session:', error);
     }
   },
   
@@ -135,14 +227,42 @@ export const TimeTracker = {
     console.log(`Recording periodic session: ${durationSec} seconds on ${window.location.pathname}`);
     
     try {
-      await supabase.from('user_sessions').insert({
+      const sessionData = {
         user_id: userId,
         session_time_sec: durationSec,
         page_path: window.location.pathname,
         created_at: new Date(timestamp).toISOString()
-      });
+      };
+      
+      console.log('Sending periodic session data:', sessionData);
+      
+      const { data, error } = await supabase
+        .from('user_sessions')
+        .insert(sessionData)
+        .select();
+      
+      if (error) {
+        console.error('Error recording periodic session:', error);
+        console.error('Error details:', {
+          code: error.code,
+          message: error.message,
+          hint: error.hint,
+          details: error.details
+        });
+        
+        // Store failed records in localStorage for later retry
+        const failedRecords = JSON.parse(localStorage.getItem('failed_sessions') || '[]');
+        failedRecords.push({
+          ...sessionData,
+          timestamp: new Date().toISOString(),
+          error: error.message
+        });
+        localStorage.setItem('failed_sessions', JSON.stringify(failedRecords));
+      } else {
+        console.log('Periodic session recorded successfully:', data);
+      }
     } catch (error) {
-      console.error('Error recording periodic session:', error);
+      console.error('Unexpected error recording periodic session:', error);
     }
   },
   

@@ -16,6 +16,7 @@ import Tutorial from "./pages/Tutorial/Tutorial";
 import Flashcards from "./pages/Flashcards/Flashcards";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import DebugPage from "./pages/Admin/DebugPage";
+import SupabaseDebug from "./pages/SupabaseDebug";
 
 const NewFeatureModal = ({ onClose }) => {
   // Define styles to ensure visibility
@@ -127,6 +128,7 @@ function App() {
           <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/debug" element={<DebugPage />} />
+          <Route path="/admin/supabase-debug" element={<SupabaseDebug />} />
         </Routes>
       </div>
       <button
