@@ -12,6 +12,51 @@ const TAB_HEARTBEAT_INTERVAL_MS = 5000; // 5 seconds
 const PING_INTERVAL_MS = 30 * 1000;
 // Allowed domains for tracking
 const ALLOWED_DOMAINS = ['historythroughart.com', 'www.historythroughart.com'];
+// Excluded paths - won't be tracked
+const EXCLUDED_PATHS = [
+  '/admin',
+  '/admin/',
+  '/admin/dashboard',
+  '/admin/supabase-debug',
+  '/admin/settings',
+  '/admin/users',
+  '/test',
+  '/test/',
+  '/test-',
+  '/debug',
+  '/debug/',
+  '/debug-',
+  '/supabase-debug'
+];
+
+/**
+ * Check if the current path should be excluded from tracking
+ * @returns {boolean} Whether the current path should be excluded
+ */
+const shouldExcludePath = () => {
+  const path = window.location.pathname.toLowerCase();
+  
+  // Check for exact matches first
+  if (EXCLUDED_PATHS.includes(path)) {
+    console.log(`TimeTracker: Tracking disabled for excluded path: ${path}`);
+    return true;
+  }
+  
+  // Check if path starts with any excluded prefix
+  if (EXCLUDED_PATHS.some(prefix => path.startsWith(prefix))) {
+    console.log(`TimeTracker: Tracking disabled for excluded path: ${path}`);
+    return true;
+  }
+  
+  // Check for keywords in path that indicate non-public pages
+  const nonPublicKeywords = ['admin', 'test', 'debug', 'develop', 'dev-'];
+  if (nonPublicKeywords.some(keyword => path.includes(keyword))) {
+    console.log(`TimeTracker: Tracking disabled for path with excluded keyword: ${path}`);
+    return true;
+  }
+  
+  return false;
+};
 
 /**
  * Check if the current domain is allowed for tracking
@@ -30,6 +75,11 @@ const isTrackingAllowed = () => {
   
   if (!isAllowedDomain) {
     console.log(`TimeTracker: Tracking disabled on non-production domain: ${hostname}`);
+    return false;
+  }
+  
+  // Check if path should be excluded from tracking
+  if (shouldExcludePath()) {
     return false;
   }
   
@@ -72,23 +122,23 @@ export const TimeTracker = {
     
     // Add event listeners to track session end
     window.addEventListener('beforeunload', () => {
-      // Only record if this is the active tab
-      if (TimeTracker.isActiveTab) {
+      // Only record if this is the active tab and not on an excluded path
+      if (TimeTracker.isActiveTab && !shouldExcludePath()) {
         TimeTracker.recordSession();
         // Clear active tab record so other tabs can take over
         localStorage.removeItem(ACTIVE_TAB_KEY);
       }
     });
     window.addEventListener('pagehide', () => {
-      // Only record if this is the active tab
-      if (TimeTracker.isActiveTab) {
+      // Only record if this is the active tab and not on an excluded path
+      if (TimeTracker.isActiveTab && !shouldExcludePath()) {
         TimeTracker.recordSession();
       }
     });
     window.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') {
-        // Only record if this is the active tab
-        if (TimeTracker.isActiveTab) {
+        // Only record if this is the active tab and not on an excluded path
+        if (TimeTracker.isActiveTab && !shouldExcludePath()) {
           TimeTracker.recordSession();
         }
       } else {
@@ -99,13 +149,16 @@ export const TimeTracker = {
     
     // Track page navigation within the app
     window.addEventListener('popstate', () => {
-      // Only record if this is the active tab
-      if (TimeTracker.isActiveTab) {
+      // For SPAs, check the new path before recording
+      if (TimeTracker.isActiveTab && !shouldExcludePath()) {
         TimeTracker.recordSession();
         localStorage.setItem(SESSION_START_KEY, Date.now().toString());
         localStorage.setItem(LAST_PING_KEY, Date.now().toString());
       }
     });
+
+    // Also check for route changes (using MutationObserver)
+    TimeTracker.setupRouteChangeListener();
     
     // Log Supabase configuration for debugging
     console.log('TimeTracker: Supabase URL present:', !!supabase.supabaseUrl);
@@ -124,6 +177,9 @@ export const TimeTracker = {
     
     // For debugging
     console.log('TimeTracker initialized with user ID:', TimeTracker.getUserId(), 'tab ID:', TimeTracker.tabId);
+    console.log('TimeTracker path tracking status:', !shouldExcludePath() ? 
+      `Tracking enabled for public path: ${window.location.pathname}` : 
+      `Tracking disabled for non-public path: ${window.location.pathname}`);
   },
   
   /**
@@ -270,9 +326,15 @@ export const TimeTracker = {
     
     // Set up new interval
     TimeTracker.pingIntervalId = setInterval(() => {
-      // Only record if this is the active tab
+      // Only record if this is the active tab and not on an excluded path
       if (!TimeTracker.isActiveTab) {
         console.log('Periodic session tracking ping - skipped (not active tab)');
+        return;
+      }
+      
+      // Check if current path should be excluded
+      if (shouldExcludePath()) {
+        console.log(`Periodic session tracking ping - skipped (excluded path: ${window.location.pathname})`);
         return;
       }
       
@@ -311,6 +373,12 @@ export const TimeTracker = {
       return;
     }
     
+    // Check if current path should be excluded (for path changes during the session)
+    if (shouldExcludePath()) {
+      console.log(`TimeTracker: Skipping session recording for excluded path: ${window.location.pathname}`);
+      return;
+    }
+    
     const sessionStart = parseInt(localStorage.getItem(SESSION_START_KEY) || '0');
     if (!sessionStart) return;
     
@@ -323,7 +391,7 @@ export const TimeTracker = {
     // Only record sessions longer than 1 second
     if (sessionTimeSec < 1) return;
     
-    console.log(`Recording session: ${sessionTimeSec} seconds on ${window.location.pathname}`);
+    console.log(`Recording session: ${sessionTimeSec} seconds on ${window.location.pathname} (public path)`);
     
     try {
       const sessionData = {
@@ -377,6 +445,12 @@ export const TimeTracker = {
     // Skip tracking if not on production domain
     if (!TimeTracker.trackingEnabled) {
       console.log('TimeTracker: Skipping periodic session recording on non-production domain');
+      return;
+    }
+    
+    // Check if current path should be excluded (for path changes during the session)
+    if (shouldExcludePath()) {
+      console.log('TimeTracker: Skipping periodic session recording for excluded path');
       return;
     }
     
@@ -450,5 +524,73 @@ export const TimeTracker = {
     if (TimeTracker.isActiveTab) {
       localStorage.removeItem(ACTIVE_TAB_KEY);
     }
+  },
+
+  /**
+   * Set up a listener for route changes in a SPA
+   */
+  setupRouteChangeListener: () => {
+    // Create a MutationObserver to watch for DOM changes that might indicate route changes
+    const observer = new MutationObserver((mutations) => {
+      // If URL has changed, record the previous session and start a new one
+      const currentPath = window.location.pathname;
+      if (TimeTracker.lastRecordedPath !== currentPath) {
+        console.log(`TimeTracker: Detected route change from ${TimeTracker.lastRecordedPath} to ${currentPath}`);
+        
+        // Record the previous path if it wasn't excluded and this is the active tab
+        if (TimeTracker.isActiveTab && TimeTracker.lastRecordedPath && !TimeTracker.isExcludedPath(TimeTracker.lastRecordedPath)) {
+          TimeTracker.recordSession();
+        }
+        
+        // Update tracking status based on new path
+        TimeTracker.trackingEnabled = isTrackingAllowed();
+        
+        // Reset session start time for new path
+        if (TimeTracker.isActiveTab) {
+          localStorage.setItem(SESSION_START_KEY, Date.now().toString());
+          localStorage.setItem(LAST_PING_KEY, Date.now().toString());
+        }
+        
+        // Store current path for comparison on next change
+        TimeTracker.lastRecordedPath = currentPath;
+      }
+    });
+    
+    // Start observing the document with the configured parameters
+    observer.observe(document, { 
+      subtree: true, 
+      childList: true,
+      attributeFilter: ['href']
+    });
+    
+    // Store initial path
+    TimeTracker.lastRecordedPath = window.location.pathname;
+  },
+
+  /**
+   * Check if a specific path should be excluded
+   * @param {string} path - The path to check
+   * @returns {boolean} Whether the path should be excluded
+   */
+  isExcludedPath: (path) => {
+    const lowerPath = path.toLowerCase();
+    
+    // Check for exact matches
+    if (EXCLUDED_PATHS.includes(lowerPath)) {
+      return true;
+    }
+    
+    // Check for path prefixes
+    if (EXCLUDED_PATHS.some(prefix => lowerPath.startsWith(prefix))) {
+      return true;
+    }
+    
+    // Check for keywords
+    const nonPublicKeywords = ['admin', 'test', 'debug', 'develop', 'dev-'];
+    if (nonPublicKeywords.some(keyword => lowerPath.includes(keyword))) {
+      return true;
+    }
+    
+    return false;
   }
 }; 

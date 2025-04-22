@@ -6,6 +6,7 @@ import AdminLogin from '../../components/AdminLogin';
 import UserStats from '../../components/UserStats';
 import SessionsTable from '../../components/SessionsTable';
 import FilterControls from '../../components/FilterControls';
+import AnalyticsCharts from '../../components/AnalyticsCharts';
 
 /**
  * Admin Dashboard for analytics
@@ -31,6 +32,9 @@ const AdminDashboard = () => {
     pagePath: '',
     minSessionLength: ''
   });
+
+  // Toggle state
+  const [showTables, setShowTables] = useState(false);
 
   // Debug environment variables
   useEffect(() => {
@@ -318,6 +322,11 @@ const AdminDashboard = () => {
     }
   };
 
+  // Toggle tables
+  const toggleTables = () => {
+    setShowTables(!showTables);
+  };
+
   // Show login page if not authenticated
   if (!isAuthenticated && !isLoading) {
     return (
@@ -348,6 +357,7 @@ const AdminDashboard = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
               <p className="text-sm text-gray-500">View and analyze user session data</p>
+              <p className="text-xs text-blue-500 mt-1">Note: Only public pages are tracked. Admin, debug, and test pages are excluded.</p>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">
@@ -441,6 +451,21 @@ const AdminDashboard = () => {
               </div>
             </div>
 
+            {/* Analytics Charts */}
+            <div className="mb-6">
+              <AnalyticsCharts sessions={sessions} />
+            </div>
+
+            {/* Toggle Tables Button */}
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={toggleTables}
+                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              >
+                {showTables ? 'Hide Detailed Tables' : 'Show Detailed Tables'}
+              </button>
+            </div>
+
             {/* Filters */}
             <FilterControls
               filters={filters}
@@ -448,13 +473,16 @@ const AdminDashboard = () => {
               pagePaths={pagePaths}
             />
 
-            {/* User Stats */}
-            <div className="mb-6">
-              <UserStats userStats={userStats} />
-            </div>
+            {/* Tables - shown/hidden based on toggle */}
+            <div className={showTables ? "" : "hidden"}>
+              {/* User Stats */}
+              <div className="mb-6">
+                <UserStats userStats={userStats} />
+              </div>
 
-            {/* Sessions Table */}
-            <SessionsTable sessions={sessions} />
+              {/* Sessions Table */}
+              <SessionsTable sessions={sessions} />
+            </div>
 
             {/* Hidden debug data */}
             <div style={{ display: 'none' }}>
