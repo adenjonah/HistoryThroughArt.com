@@ -31,7 +31,11 @@ export const supabase = createClient(
 // Export a function to test Supabase connection
 export const testSupabaseConnection = async () => {
   try {
-    const { data, error } = await supabase.from('user_sessions').select('count()', { count: 'exact' }).limit(1);
+    // Use a simpler query without aggregation
+    const { data, error } = await supabase
+      .from('user_sessions')
+      .select('id')
+      .limit(1);
     
     if (error) {
       console.error('Supabase connection test failed:', error);

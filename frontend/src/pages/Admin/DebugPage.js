@@ -3,10 +3,10 @@ import { supabase, testSupabaseConnection } from '../../utils/supabaseClient';
 
 const DebugPage = () => {
   const [connectionTest, setConnectionTest] = useState({ status: 'pending', message: 'Not tested yet', data: null });
-  const [envVars, setEnvVars] = useState({
+  const envVars = {
     supabaseUrl: process.env.REACT_APP_SUPABASE_URL ? 'Defined' : 'Undefined',
     supabaseKey: process.env.REACT_APP_SUPABASE_ANON_KEY ? 'Defined' : 'Undefined'
-  });
+  };
   const [corsTest, setCorsTest] = useState({ status: 'pending', message: 'Not tested yet' });
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const DebugPage = () => {
       setCorsTest({ status: 'loading', message: 'Testing CORS...' });
       
       // Simple query to test CORS
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('user_sessions')
         .select('id')
         .limit(1);

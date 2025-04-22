@@ -10,6 +10,7 @@ export const AnalyticsService = {
    */
   getTotalTime: async () => {
     try {
+      // Instead of using an aggregate function, fetch all data and sum it client-side
       const { data, error } = await supabase
         .from('user_sessions')
         .select('session_time_sec')
@@ -31,9 +32,10 @@ export const AnalyticsService = {
    */
   getUserTimeAggregated: async () => {
     try {
+      // Get all sessions and aggregate them client-side instead of using DB aggregation
       const { data, error } = await supabase
         .from('user_sessions')
-        .select('user_id, session_time_sec')
+        .select('*')
         .throwOnError();
 
       if (error) throw error;
@@ -108,6 +110,7 @@ export const AnalyticsService = {
    */
   getUniquePaths: async () => {
     try {
+      // Get all page paths and do the distinct operation client-side
       const { data, error } = await supabase
         .from('user_sessions')
         .select('page_path')
