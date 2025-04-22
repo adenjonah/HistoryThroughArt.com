@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthService } from '../../utils/authService';
 import { AnalyticsService } from '../../utils/analyticsService';
+import { testSupabaseConnection } from '../../utils/supabaseClient';
 import AdminLogin from '../../components/AdminLogin';
 import UserStats from '../../components/UserStats';
 import SessionsTable from '../../components/SessionsTable';
@@ -13,6 +14,8 @@ const AdminDashboard = () => {
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState({ tested: false, success: false, message: '' });
   
   // Data state
   const [userStats, setUserStats] = useState([]);
@@ -28,14 +31,48 @@ const AdminDashboard = () => {
     minSessionLength: ''
   });
 
+  // Debug environment variables
+  useEffect(() => {
+    console.log('Supabase URL:', process.env.REACT_APP_SUPABASE_URL ? 'Defined' : 'Undefined');
+    console.log('Supabase Key:', process.env.REACT_APP_SUPABASE_ANON_KEY ? 'Defined' : 'Undefined');
+    
+    // Test Supabase connection
+    const testConnection = async () => {
+      try {
+        const result = await testSupabaseConnection();
+        setConnectionStatus({
+          tested: true,
+          success: result.success,
+          message: result.success ? 'Connected to Supabase' : `Connection failed: ${result.error}`
+        });
+        
+        if (!result.success) {
+          setError(`Supabase connection failed: ${result.error}`);
+        }
+      } catch (err) {
+        setConnectionStatus({
+          tested: true,
+          success: false,
+          message: `Connection test error: ${err.message}`
+        });
+        setError(`Supabase connection test error: ${err.message}`);
+      }
+    };
+    
+    testConnection();
+  }, []);
+
   // Check if user is authenticated on mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log('Checking authentication...');
         const authenticated = await AuthService.isAuthenticated();
+        console.log('Authentication result:', authenticated);
         setIsAuthenticated(authenticated);
       } catch (error) {
         console.error('Auth check error:', error);
+        setError('Authentication check failed: ' + (error.message || 'Unknown error'));
       } finally {
         setIsLoading(false);
       }
@@ -51,24 +88,30 @@ const AdminDashboard = () => {
     const loadData = async () => {
       try {
         setIsLoading(true);
+        console.log('Loading dashboard data...');
         
         // Get user aggregated stats (doesn't depend on filters)
         const userStatsData = await AnalyticsService.getUserTimeAggregated();
+        console.log('User stats loaded:', userStatsData.length);
         setUserStats(userStatsData);
         
         // Get total time (doesn't depend on filters)
         const totalTimeData = await AnalyticsService.getTotalTime();
+        console.log('Total time loaded:', totalTimeData);
         setTotalTime(totalTimeData);
         
         // Get unique page paths for filter dropdown
         const paths = await AnalyticsService.getUniquePaths();
+        console.log('Page paths loaded:', paths.length);
         setPagePaths(paths);
         
         // Get filtered sessions
         const sessionsData = await AnalyticsService.getSessions(filters);
+        console.log('Sessions loaded:', sessionsData.length);
         setSessions(sessionsData);
       } catch (error) {
         console.error('Error loading data:', error);
+        setError('Data loading failed: ' + (error.message || 'Unknown error'));
       } finally {
         setIsLoading(false);
       }
@@ -101,9 +144,39 @@ const AdminDashboard = () => {
     return `${hours}h ${minutes}m ${secs}s`;
   };
 
+  // Show database connection status for debugging
+  const renderConnectionStatus = () => {
+    if (!connectionStatus.tested) {
+      return (
+        <div className="bg-gray-50 border-l-4 border-gray-300 p-4 mb-6">
+          <p className="text-sm text-gray-700">Testing database connection...</p>
+        </div>
+      );
+    }
+    
+    if (connectionStatus.success) {
+      return (
+        <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+          <p className="text-sm text-green-700">{connectionStatus.message}</p>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+        <p className="text-sm text-red-700">{connectionStatus.message}</p>
+      </div>
+    );
+  };
+
   // Show login page if not authenticated
   if (!isAuthenticated && !isLoading) {
-    return <AdminLogin onLogin={handleLogin} />;
+    return (
+      <div>
+        {renderConnectionStatus()}
+        <AdminLogin onLogin={handleLogin} />
+      </div>
+    );
   }
 
   return (
@@ -126,6 +199,23 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
+
+        {renderConnectionStatus()}
+
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
