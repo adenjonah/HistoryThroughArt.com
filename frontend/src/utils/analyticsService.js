@@ -135,12 +135,14 @@ export const AnalyticsService = {
   },
 
   /**
-   * Get all sessions with filtering options
+   * Get all sessions with filtering options, using pagination for efficient loading
    * @param {Object} filters - Filter options
    * @param {string} filters.startDate - Start date (ISO string)
    * @param {string} filters.endDate - End date (ISO string)
    * @param {string} filters.pagePath - Filter by page path
    * @param {number} filters.minSessionLength - Minimum session length in seconds
+   * @param {number} filters.pageSize - Number of records per page (default: 1000)
+   * @param {number} filters.maxRecords - Maximum total records to fetch (default: all)
    * @returns {Promise<Array>} - Filtered session data
    */
   getSessions: async (filters = {}) => {
@@ -154,57 +156,112 @@ export const AnalyticsService = {
       
       if (countError) {
         console.error("Error counting session records:", countError);
+        return [];
       } else {
         console.log(`Found ${count} total records in user_sessions table before filtering`);
       }
       
-      let query = supabase
-        .from('user_sessions')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      // Apply filters
-      if (filters.startDate) {
-        query = query.gte('created_at', filters.startDate);
-      }
-
-      if (filters.endDate) {
-        query = query.lte('created_at', filters.endDate);
-      }
-
-      if (filters.pagePath) {
-        query = query.eq('page_path', filters.pagePath);
-      }
-
-      if (filters.minSessionLength) {
-        query = query.gte('session_time_sec', filters.minSessionLength);
-      }
-
-      const { data, error } = await query;
-      
-      if (error) {
-        console.error("Error fetching sessions:", error);
-        throw error;
+      if (count === 0) {
+        return [];
       }
       
-      if (!data || data.length === 0) {
-        console.log("No session data found after applying filters");
+      // Set pagination parameters
+      const pageSize = filters.pageSize || 1000;
+      const maxRecords = filters.maxRecords || count;
+      const totalPages = Math.ceil(Math.min(maxRecords, count) / pageSize);
+      
+      console.log(`Pagination setup: pageSize=${pageSize}, maxRecords=${maxRecords}, totalPages=${totalPages}`);
+      
+      // Build the base query with filters
+      const buildQuery = () => {
+        let query = supabase
+          .from('user_sessions')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        // Apply filters
+        if (filters.startDate) {
+          query = query.gte('created_at', filters.startDate);
+        }
+
+        if (filters.endDate) {
+          query = query.lte('created_at', filters.endDate);
+        }
+
+        if (filters.pagePath) {
+          query = query.eq('page_path', filters.pagePath);
+        }
+
+        if (filters.minSessionLength) {
+          query = query.gte('session_time_sec', filters.minSessionLength);
+        }
         
-        // Make a simple debug check if we filtered out everything
-        if (count > 0) {
-          console.log("Data exists but was filtered out - sample of unfiltered data:");
-          const { data: sampleData } = await supabase
-            .from('user_sessions')
-            .select('*')
-            .limit(3);
-          
-          console.log("Sample data:", sampleData);
+        return query;
+      };
+      
+      // Fetch all pages and combine results
+      let allResults = [];
+      let lastError = null;
+      
+      console.log(`Fetching data with pagination: ${totalPages} pages of ${pageSize} records each`);
+      
+      // For the first page, get up to pageSize records
+      console.log(`Fetching page 1/${totalPages}, records 0-${pageSize-1}`);
+      const firstPageQuery = buildQuery().range(0, pageSize-1);
+      const { data: firstPageData, error: firstPageError } = await firstPageQuery;
+      
+      if (firstPageError) {
+        console.error(`Error fetching first page:`, firstPageError);
+        lastError = firstPageError;
+      } else if (firstPageData && firstPageData.length > 0) {
+        allResults = [...firstPageData];
+        console.log(`Added ${firstPageData.length} records from page 1, total: ${allResults.length}`);
+        
+        // If we need more than one page and got a full first page, fetch additional pages
+        if (totalPages > 1 && firstPageData.length === pageSize) {
+          for (let page = 1; page < totalPages; page++) {
+            const from = page * pageSize;
+            const to = Math.min(from + pageSize - 1, maxRecords - 1);
+            
+            if (from >= maxRecords) break;
+            
+            console.log(`Fetching page ${page + 1}/${totalPages}, records ${from}-${to}`);
+            
+            const query = buildQuery().range(from, to);
+            const { data, error } = await query;
+            
+            if (error) {
+              console.error(`Error fetching page ${page + 1}:`, error);
+              lastError = error;
+              continue; // Try to get other pages even if one fails
+            }
+            
+            if (data && data.length > 0) {
+              allResults = [...allResults, ...data];
+              console.log(`Added ${data.length} records from page ${page + 1}, total: ${allResults.length}`);
+            } else {
+              console.log(`No data returned for page ${page + 1}, stopping pagination`);
+              break; // No more data, stop fetching
+            }
+            
+            // If we've reached the maximum records, stop
+            if (allResults.length >= maxRecords) {
+              allResults = allResults.slice(0, maxRecords);
+              break;
+            }
+          }
         }
       } else {
-        console.log(`Found ${data.length} sessions after filtering`);
+        console.log(`No data returned for first page`);
       }
       
-      return data || [];
+      if (allResults.length === 0 && lastError) {
+        throw lastError; // Re-throw the last error if we got no results
+      }
+      
+      console.log(`Found ${allResults.length} total sessions after filtering and pagination`);
+      
+      return allResults;
     } catch (error) {
       console.error('Error getting sessions:', error);
       return [];
@@ -417,5 +474,62 @@ export const AnalyticsService = {
         message: `Error: ${error.message}`
       };
     }
+  },
+
+  /**
+   * Diagnostic function to check database connection and configuration
+   * @returns {Promise<Object>} - Diagnostic results
+   */
+  checkDatabaseStatus: async () => {
+    const results = {
+      connection: 'unknown',
+      connectionError: null,
+      tableAccess: 'unknown',
+      tableAccessError: null,
+      recordCount: 0,
+      dataExample: null,
+      supabaseUrl: supabase.supabaseUrl ? 'configured' : 'missing',
+      supabaseKey: supabase.supabaseKey ? 'configured' : 'missing',
+    };
+
+    try {
+      // Test basic connection
+      console.log("Testing database connection...");
+      const { data, error } = await supabase.from('user_sessions').select('*', { count: 'exact', head: true });
+      
+      if (error) {
+        results.connection = 'failed';
+        results.connectionError = error.message;
+        console.error("Connection error:", error);
+      } else {
+        results.connection = 'success';
+        results.recordCount = data?.count || 0;
+        console.log(`Connection successful, found ${results.recordCount} records`);
+      }
+      
+      // Test read access if connection is working
+      if (results.connection === 'success') {
+        const { data: sampleData, error: sampleError } = await supabase
+          .from('user_sessions')
+          .select('*')
+          .limit(1);
+        
+        if (sampleError) {
+          results.tableAccess = 'failed';
+          results.tableAccessError = sampleError.message;
+          console.error("Table access error:", sampleError);
+        } else {
+          results.tableAccess = 'success';
+          results.dataExample = sampleData;
+          console.log("Table access successful, sample data:", sampleData);
+        }
+      }
+    } catch (error) {
+      console.error("Diagnostic error:", error);
+      results.connection = 'error';
+      results.connectionError = error.message;
+    }
+    
+    return results;
   }
 }; 
