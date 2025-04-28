@@ -176,9 +176,22 @@ const AdminDashboard = () => {
   const handleExportData = async () => {
     try {
       setIsLoading(true);
+      setError(null);
       
-      // Get all session data
-      const allSessions = await AnalyticsService.getSessions({});
+      // Get all session data with pagination but no limits
+      // We'll export everything, but we need to set a reasonable page size
+      const allSessions = await AnalyticsService.getSessions({
+        pageSize: 1000,  // Reasonable chunk size for processing
+        maxRecords: 50000 // Safety limit to prevent browser crashes
+      });
+      
+      if (allSessions.length === 0) {
+        setError('No data to export');
+        setIsLoading(false);
+        return;
+      }
+      
+      console.log(`Exporting ${allSessions.length} sessions`);
       
       // Convert to JSON and create a downloadable file
       const dataStr = JSON.stringify(allSessions, null, 2);
@@ -327,6 +340,38 @@ const AdminDashboard = () => {
     setShowTables(!showTables);
   };
 
+  // Debug function with more detailed diagnostics
+  const handleDebug = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      console.log("Running diagnostics...");
+      const diagnosticResults = await AnalyticsService.checkDatabaseStatus();
+      
+      // Display results in a formatted alert
+      const resultsText = `
+Database Diagnostics:
+- Supabase URL: ${diagnosticResults.supabaseUrl}
+- Supabase Key: ${diagnosticResults.supabaseKey}
+- Connection: ${diagnosticResults.connection}
+${diagnosticResults.connectionError ? `- Connection Error: ${diagnosticResults.connectionError}` : ''}
+- Table Access: ${diagnosticResults.tableAccess}
+${diagnosticResults.tableAccessError ? `- Table Error: ${diagnosticResults.tableAccessError}` : ''}
+- Record Count: ${diagnosticResults.recordCount}
+`;
+      
+      alert(resultsText);
+      console.log("Diagnostic results:", diagnosticResults);
+      
+    } catch (error) {
+      console.error('Debug error:', error);
+      setError('Debug failed: ' + (error.message || 'Unknown error'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Show login page if not authenticated
   if (!isAuthenticated && !isLoading) {
     return (
@@ -394,8 +439,8 @@ const AdminDashboard = () => {
                 Retry Failed Sessions
               </button>
               <button
-                onClick={debugCheckData}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
+                onClick={handleDebug}
               >
                 Debug
               </button>
