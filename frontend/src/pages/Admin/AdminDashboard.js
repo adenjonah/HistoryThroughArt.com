@@ -503,6 +503,9 @@ ${diagnosticResults.tableAccessError ? `- Table Error: ${diagnosticResults.table
             {/* Analytics Charts */}
             <div className="mb-6">
               <AnalyticsCharts sessions={sessions} />
+              <div className="text-xs text-gray-500 text-right mt-1">
+                Showing charts based on {sessions.length} sessions
+              </div>
             </div>
 
             {/* Toggle Tables Button */}

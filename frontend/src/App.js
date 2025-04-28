@@ -17,6 +17,7 @@ import Flashcards from "./pages/Flashcards/Flashcards";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import DebugPage from "./pages/Admin/DebugPage";
 import SupabaseDebug from "./pages/SupabaseDebug";
+import ChartTester from "./components/ChartTester";
 
 const NewFeatureModal = ({ onClose }) => {
   // Define styles to ensure visibility
@@ -129,6 +130,7 @@ function App() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/debug" element={<DebugPage />} />
           <Route path="/admin/supabase-debug" element={<SupabaseDebug />} />
+          <Route path="/admin/chart-test" element={<ChartTester />} />
         </Routes>
       </div>
       <button

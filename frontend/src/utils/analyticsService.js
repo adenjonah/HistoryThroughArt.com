@@ -19,31 +19,55 @@ export const AnalyticsService = {
       
       if (countError) {
         console.error("Error counting records:", countError);
+        return 0;
       } else {
         console.log(`Found ${count} total records in user_sessions table`);
       }
       
-      const { data, error } = await supabase
-        .from('user_sessions')
-        .select('session_time_sec');
-      
-      if (error) {
-        console.error("Error fetching total time:", error);
-        throw error;
-      }
-
-      console.log("Total time data:", data);
-      
-      // Sum all session times, handle NaN values
-      if (!data || data.length === 0) {
-        console.log("No session data found for calculating total time");
+      if (count === 0) {
         return 0;
       }
       
-      return data.reduce((total, session) => {
-        const time = parseInt(session.session_time_sec) || 0;
-        return total + time;
-      }, 0);
+      // Use pagination to get all session times
+      const pageSize = 1000;
+      const totalPages = Math.ceil(count / pageSize);
+      let totalTime = 0;
+      
+      console.log(`Calculating total time using ${totalPages} pages of ${pageSize} records each`);
+      
+      for (let page = 0; page < totalPages; page++) {
+        const from = page * pageSize;
+        const to = Math.min(from + pageSize - 1, count - 1);
+        
+        console.log(`Fetching time data page ${page + 1}/${totalPages}, records ${from}-${to}`);
+        
+        const { data, error } = await supabase
+          .from('user_sessions')
+          .select('session_time_sec')
+          .range(from, to);
+        
+        if (error) {
+          console.error(`Error fetching time data page ${page + 1}:`, error);
+          continue; // Try to get other pages even if one fails
+        }
+        
+        if (!data || data.length === 0) {
+          console.log(`No time data returned for page ${page + 1}`);
+          continue;
+        }
+        
+        // Sum times for this page
+        const pageTotal = data.reduce((total, session) => {
+          const time = parseInt(session.session_time_sec) || 0;
+          return total + time;
+        }, 0);
+        
+        totalTime += pageTotal;
+        console.log(`Page ${page + 1} time: ${pageTotal} seconds, running total: ${totalTime} seconds`);
+      }
+      
+      console.log(`Final total time: ${totalTime} seconds`);
+      return totalTime;
     } catch (error) {
       console.error('Error getting total time:', error);
       return 0;
@@ -65,6 +89,7 @@ export const AnalyticsService = {
       
       if (countError) {
         console.error("Error counting records:", countError);
+        return [];
       } else {
         console.log(`Found ${count} total records in user_sessions table`);
         
@@ -77,56 +102,62 @@ export const AnalyticsService = {
             .limit(5);
           
           console.log("Debug data result:", debugData);
+          return [];
         }
       }
       
-      const { data, error } = await supabase
-        .from('user_sessions')
-        .select('*');
-
-      if (error) {
-        console.error("Error fetching user time:", error);
-        throw error;
-      }
-
-      console.log("User time data:", data);
+      // Use pagination to get all session data
+      const pageSize = 1000;
+      const totalPages = Math.ceil(count / pageSize);
+      const userMap = {};
       
-      // If no data, try a manual query to double-check
-      if (!data || data.length === 0) {
-        console.log("No user data found, checking directly...");
+      console.log(`Fetching user data using ${totalPages} pages of ${pageSize} records each`);
+      
+      for (let page = 0; page < totalPages; page++) {
+        const from = page * pageSize;
+        const to = Math.min(from + pageSize - 1, count - 1);
         
-        // Make a simple debug check
-        const { data: debugData } = await supabase
+        console.log(`Fetching user data page ${page + 1}/${totalPages}, records ${from}-${to}`);
+        
+        const { data, error } = await supabase
           .from('user_sessions')
           .select('*')
-          .limit(5);
+          .range(from, to);
         
-        console.log("Second debug check:", debugData || "No data found");
-        return [];
-      }
-      
-      // Aggregate by user
-      const userMap = {};
-      data.forEach(session => {
-        // Skip invalid data
-        if (!session.user_id) return;
-        
-        if (!userMap[session.user_id]) {
-          userMap[session.user_id] = {
-            user_id: session.user_id,
-            total_time_sec: 0,
-            session_count: 0
-          };
+        if (error) {
+          console.error(`Error fetching user data page ${page + 1}:`, error);
+          continue; // Try to get other pages even if one fails
         }
         
-        // Handle NaN values
-        const time = parseInt(session.session_time_sec) || 0;
-        userMap[session.user_id].total_time_sec += time;
-        userMap[session.user_id].session_count += 1;
-      });
+        if (!data || data.length === 0) {
+          console.log(`No user data returned for page ${page + 1}`);
+          continue;
+        }
+        
+        console.log(`Processing ${data.length} sessions from page ${page + 1}`);
+        
+        // Aggregate by user
+        data.forEach(session => {
+          // Skip invalid data
+          if (!session.user_id) return;
+          
+          if (!userMap[session.user_id]) {
+            userMap[session.user_id] = {
+              user_id: session.user_id,
+              total_time_sec: 0,
+              session_count: 0
+            };
+          }
+          
+          // Handle NaN values
+          const time = parseInt(session.session_time_sec) || 0;
+          userMap[session.user_id].total_time_sec += time;
+          userMap[session.user_id].session_count += 1;
+        });
+      }
 
       const result = Object.values(userMap);
-      console.log("Aggregated user stats:", result);
+      console.log(`Aggregated ${result.length} unique users from ${count} sessions`);
       return result;
     } catch (error) {
       console.error('Error getting user time aggregated:', error);
@@ -283,28 +314,57 @@ export const AnalyticsService = {
       
       if (countError) {
         console.error("Error counting records for paths:", countError);
+        return [];
       } else {
         console.log(`Found ${count} total records in user_sessions table for paths`);
       }
       
-      const { data, error } = await supabase
-        .from('user_sessions')
-        .select('page_path');
-      
-      if (error) {
-        console.error("Error fetching paths:", error);
-        throw error;
-      }
-
-      if (!data || data.length === 0) {
+      if (count === 0) {
         console.log("No path data found");
         return [];
       }
       
-      // Extract unique page paths
-      const paths = new Set(data.map(session => session.page_path).filter(Boolean));
-      const result = Array.from(paths);
-      console.log(`Found ${result.length} unique paths:`, result);
+      // Use pagination to get all page paths
+      const pageSize = 1000;
+      const totalPages = Math.ceil(count / pageSize);
+      const pathsSet = new Set();
+      
+      console.log(`Fetching paths using ${totalPages} pages of ${pageSize} records each`);
+      
+      for (let page = 0; page < totalPages; page++) {
+        const from = page * pageSize;
+        const to = Math.min(from + pageSize - 1, count - 1);
+        
+        console.log(`Fetching paths page ${page + 1}/${totalPages}, records ${from}-${to}`);
+        
+        const { data, error } = await supabase
+          .from('user_sessions')
+          .select('page_path')
+          .range(from, to);
+        
+        if (error) {
+          console.error(`Error fetching paths page ${page + 1}:`, error);
+          continue; // Try to get other pages even if one fails
+        }
+        
+        if (!data || data.length === 0) {
+          console.log(`No path data returned for page ${page + 1}`);
+          continue;
+        }
+        
+        // Add unique paths to the set
+        data.forEach(session => {
+          if (session.page_path) {
+            pathsSet.add(session.page_path);
+          }
+        });
+        
+        console.log(`Found ${pathsSet.size} unique paths so far after page ${page + 1}`);
+      }
+      
+      // Convert set to array
+      const result = Array.from(pathsSet);
+      console.log(`Found ${result.length} total unique paths`);
       return result;
     } catch (error) {
       console.error('Error getting unique paths:', error);

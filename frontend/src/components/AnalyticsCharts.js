@@ -38,6 +38,8 @@ const AnalyticsCharts = ({ sessions }) => {
   useEffect(() => {
     if (!sessions || sessions.length === 0) return;
     
+    console.log(`Processing ${sessions.length} sessions for charts`);
+    
     // Helper function for chart colors
     const getColorForIndex = (index) => {
       const colors = [
@@ -61,14 +63,26 @@ const AnalyticsCharts = ({ sessions }) => {
     const yesterday = new Date(now);
     yesterday.setHours(now.getHours() - 24);
     
+    console.log(`Filtering for sessions since ${yesterday.toISOString()}`);
+    
     const recentSessions = sessions.filter(session => {
-      const sessionDate = new Date(session.created_at);
-      return sessionDate >= yesterday && sessionDate <= now;
+      if (!session.created_at) return false;
+      try {
+        const sessionDate = new Date(session.created_at);
+        return !isNaN(sessionDate) && sessionDate >= yesterday && sessionDate <= now;
+      } catch (e) {
+        console.error("Error filtering session for page distribution:", e, session);
+        return false;
+      }
     });
+    
+    console.log(`Found ${recentSessions.length} sessions in the last 24 hours`);
     
     // Calculate total time
     const totalTime = recentSessions.reduce((sum, session) => 
-      sum + (session.session_time_sec || 0), 0);
+      sum + (parseInt(session.session_time_sec) || 0), 0);
+    
+    console.log(`Total time in last 24 hours: ${totalTime} seconds`);
     
     // Group by page path
     const pageTimeMap = {};
@@ -77,20 +91,39 @@ const AnalyticsCharts = ({ sessions }) => {
       if (!pageTimeMap[pagePath]) {
         pageTimeMap[pagePath] = 0;
       }
-      pageTimeMap[pagePath] += session.session_time_sec || 0;
+      pageTimeMap[pagePath] += parseInt(session.session_time_sec) || 0;
     });
     
-    // Convert to percentages
-    const pageLabels = [];
-    const pageData = [];
-    const pageColors = [];
+    console.log("Page time distribution:", pageTimeMap);
     
-    Object.entries(pageTimeMap).forEach(([path, time], index) => {
-      const percentage = totalTime > 0 ? (time / totalTime) * 100 : 0;
-      pageLabels.push(path);
-      pageData.push(percentage.toFixed(1));
-      pageColors.push(getColorForIndex(index));
-    });
+    // Convert to percentages and sort by time spent (descending)
+    let pageEntries = Object.entries(pageTimeMap)
+      .map(([path, time]) => ({
+        path,
+        time,
+        percentage: totalTime > 0 ? (time / totalTime) * 100 : 0
+      }))
+      .sort((a, b) => b.time - a.time);
+    
+    // Limit to top 10 pages for readability, combine the rest as "Other"
+    if (pageEntries.length > 10) {
+      const topPages = pageEntries.slice(0, 9);
+      const otherPages = pageEntries.slice(9);
+      
+      const otherTime = otherPages.reduce((sum, page) => sum + page.time, 0);
+      const otherPercentage = totalTime > 0 ? (otherTime / totalTime) * 100 : 0;
+      
+      pageEntries = [
+        ...topPages,
+        { path: 'Other', time: otherTime, percentage: otherPercentage }
+      ];
+    }
+    
+    const pageLabels = pageEntries.map(page => page.path);
+    const pageData = pageEntries.map(page => page.percentage.toFixed(1));
+    const pageColors = pageEntries.map((_, index) => getColorForIndex(index));
+    
+    console.log(`Chart data prepared with ${pageLabels.length} page categories`);
     
     setPageDistributionData({
       labels: pageLabels,
@@ -117,11 +150,39 @@ const AnalyticsCharts = ({ sessions }) => {
       6: [], // Saturday
     };
     
+    console.log(`Processing ${sessions.length} sessions for weekday analysis`);
+    
+    // Use all sessions for weekday analysis
+    let validSessionCount = 0;
+    let invalidSessionCount = 0;
+    
     sessions.forEach(session => {
-      const sessionDate = new Date(session.created_at);
-      const dayOfWeek = sessionDate.getDay();
-      weekdaySessions[dayOfWeek].push(session);
+      if (!session.created_at) {
+        invalidSessionCount++;
+        return;
+      }
+      
+      try {
+        const sessionDate = new Date(session.created_at);
+        if (isNaN(sessionDate.getTime())) {
+          console.warn("Invalid date format:", session.created_at);
+          invalidSessionCount++;
+          return;
+        }
+        
+        const dayOfWeek = sessionDate.getDay();
+        weekdaySessions[dayOfWeek].push(session);
+        validSessionCount++;
+      } catch (e) {
+        console.error("Error processing session date:", e, session);
+        invalidSessionCount++;
+      }
     });
+    
+    console.log(`Weekday processing results: ${validSessionCount} valid, ${invalidSessionCount} invalid`);
+    console.log("Sessions per day:", Object.keys(weekdaySessions).map(day => 
+      `${day}: ${weekdaySessions[day].length}`
+    ));
     
     // Calculate average time per day
     const weekdayLabels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -136,8 +197,13 @@ const AnalyticsCharts = ({ sessions }) => {
       // To get an average, count the number of unique days for this weekday
       const uniqueDates = new Set();
       daySessions.forEach(session => {
-        const date = new Date(session.created_at);
-        uniqueDates.add(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`);
+        if (!session.created_at) return;
+        try {
+          const date = new Date(session.created_at);
+          uniqueDates.add(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`);
+        } catch (e) {
+          console.error("Error processing date for unique days:", e, session);
+        }
       });
       
       const daysCount = uniqueDates.size || 1; // Avoid division by zero
@@ -145,6 +211,8 @@ const AnalyticsCharts = ({ sessions }) => {
       averageTimes.push(averageTime.toFixed(1));
       sessionCounts.push(daySessions.length);
     });
+    
+    console.log("Weekday data processed:", { averageTimes, sessionCounts });
     
     setWeekdayUsageData({
       labels: weekdayLabels,
@@ -187,10 +255,20 @@ const AnalyticsCharts = ({ sessions }) => {
     const lastWeek = new Date(now);
     lastWeek.setDate(now.getDate() - 7);
     
+    console.log(`Filtering for session durations since ${lastWeek.toISOString()}`);
+    
     const weekSessions = sessions.filter(session => {
-      const sessionDate = new Date(session.created_at);
-      return sessionDate >= lastWeek && sessionDate <= now;
+      if (!session.created_at) return false;
+      try {
+        const sessionDate = new Date(session.created_at);
+        return sessionDate >= lastWeek && sessionDate <= now;
+      } catch (e) {
+        console.error("Error filtering session for duration chart:", e, session);
+        return false;
+      }
     });
+    
+    console.log(`Found ${weekSessions.length} sessions in the last week for duration analysis`);
     
     // Count sessions in each bucket
     const bucketCounts = buckets.map(bucket => ({
@@ -207,6 +285,8 @@ const AnalyticsCharts = ({ sessions }) => {
         }
       }
     });
+    
+    console.log("Session duration data processed:", bucketCounts);
     
     setSessionDurationData({
       labels: bucketCounts.map(bucket => bucket.label),
