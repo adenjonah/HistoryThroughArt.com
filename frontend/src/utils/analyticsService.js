@@ -170,6 +170,8 @@ export const AnalyticsService = {
       const maxRecords = filters.maxRecords || count;
       const totalPages = Math.ceil(Math.min(maxRecords, count) / pageSize);
       
+      console.log(`Pagination setup: pageSize=${pageSize}, maxRecords=${maxRecords}, totalPages=${totalPages}`);
+      
       // Build the base query with filters
       const buildQuery = () => {
         let query = supabase
@@ -203,36 +205,54 @@ export const AnalyticsService = {
       
       console.log(`Fetching data with pagination: ${totalPages} pages of ${pageSize} records each`);
       
-      for (let page = 0; page < totalPages; page++) {
-        const from = page * pageSize;
-        const to = Math.min(from + pageSize - 1, maxRecords - 1);
+      // For the first page, get up to pageSize records
+      console.log(`Fetching page 1/${totalPages}, records 0-${pageSize-1}`);
+      const firstPageQuery = buildQuery().range(0, pageSize-1);
+      const { data: firstPageData, error: firstPageError } = await firstPageQuery;
+      
+      if (firstPageError) {
+        console.error(`Error fetching first page:`, firstPageError);
+        lastError = firstPageError;
+      } else if (firstPageData && firstPageData.length > 0) {
+        allResults = [...firstPageData];
+        console.log(`Added ${firstPageData.length} records from page 1, total: ${allResults.length}`);
         
-        if (from >= maxRecords) break;
-        
-        console.log(`Fetching page ${page + 1}/${totalPages}, records ${from}-${to}`);
-        
-        const query = buildQuery().range(from, to);
-        const { data, error } = await query;
-        
-        if (error) {
-          console.error(`Error fetching page ${page + 1}:`, error);
-          lastError = error;
-          continue; // Try to get other pages even if one fails
+        // If we need more than one page and got a full first page, fetch additional pages
+        if (totalPages > 1 && firstPageData.length === pageSize) {
+          for (let page = 1; page < totalPages; page++) {
+            const from = page * pageSize;
+            const to = Math.min(from + pageSize - 1, maxRecords - 1);
+            
+            if (from >= maxRecords) break;
+            
+            console.log(`Fetching page ${page + 1}/${totalPages}, records ${from}-${to}`);
+            
+            const query = buildQuery().range(from, to);
+            const { data, error } = await query;
+            
+            if (error) {
+              console.error(`Error fetching page ${page + 1}:`, error);
+              lastError = error;
+              continue; // Try to get other pages even if one fails
+            }
+            
+            if (data && data.length > 0) {
+              allResults = [...allResults, ...data];
+              console.log(`Added ${data.length} records from page ${page + 1}, total: ${allResults.length}`);
+            } else {
+              console.log(`No data returned for page ${page + 1}, stopping pagination`);
+              break; // No more data, stop fetching
+            }
+            
+            // If we've reached the maximum records, stop
+            if (allResults.length >= maxRecords) {
+              allResults = allResults.slice(0, maxRecords);
+              break;
+            }
+          }
         }
-        
-        if (data && data.length > 0) {
-          allResults = [...allResults, ...data];
-          console.log(`Added ${data.length} records from page ${page + 1}, total: ${allResults.length}`);
-        } else {
-          console.log(`No data returned for page ${page + 1}, stopping pagination`);
-          break; // No more data, stop fetching
-        }
-        
-        // If we've reached the maximum records, stop
-        if (allResults.length >= maxRecords) {
-          allResults = allResults.slice(0, maxRecords);
-          break;
-        }
+      } else {
+        console.log(`No data returned for first page`);
       }
       
       if (allResults.length === 0 && lastError) {

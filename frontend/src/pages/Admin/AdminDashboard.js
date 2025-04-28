@@ -153,7 +153,11 @@ const AdminDashboard = () => {
         
         // Get filtered sessions
         console.log('Fetching sessions with filters:', filters);
-        const sessionsData = await AnalyticsService.getSessions(filters);
+        const sessionsData = await AnalyticsService.getSessions({
+          ...filters,
+          pageSize: 1000,  // Process in chunks of 1000
+          maxRecords: 10000 // Show up to 10,000 sessions by default
+        });
         console.log('Sessions loaded:', sessionsData.length, sessionsData);
         setSessions(sessionsData);
       } catch (error) {
