@@ -20,11 +20,25 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 // Custom fetch handler to log detailed request/response info
 const customFetch = async (url, options = {}) => {
+  // Log full headers for debugging
+  const headersObj = Object.fromEntries(
+    options.headers ? [...options.headers.entries()] : []
+  );
+  
+  // Check for proper authorization header format
+  const authHeader = headersObj['Authorization'];
+  const hasProperAuthFormat = authHeader && authHeader.startsWith('Bearer ');
+  
   console.log('Supabase API request:', {
     url: url.toString(),
     method: options.method,
-    headers: options.headers
+    headers: headersObj,
+    authHeaderValid: hasProperAuthFormat
   });
+  
+  if (!hasProperAuthFormat) {
+    console.warn('Supabase API request has invalid Authorization header format. Should be: "Bearer [token]"');
+  }
   
   try {
     const response = await fetch(url, options);

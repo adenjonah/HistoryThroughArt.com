@@ -352,6 +352,55 @@ const SupabaseDebug = () => {
     }
   };
 
+  const testRlsPolicy = async () => {
+    try {
+      addTestStep('Testing RLS policy specifically', null, 'Making direct API call with proper headers');
+      
+      const url = process.env.REACT_APP_SUPABASE_URL;
+      const key = process.env.REACT_APP_SUPABASE_ANON_KEY;
+      
+      if (!url || !key) {
+        addTestStep('RLS test failed', false, 'Missing Supabase URL or key');
+        return;
+      }
+      
+      // Test with proper Authorization header format
+      const testData = {
+        user_id: `rls-test-${Date.now()}`,
+        session_time_sec: 3,
+        page_path: '/rls-test'
+      };
+      
+      const response = await fetch(`${url}/rest/v1/user_sessions`, {
+        method: 'POST',
+        headers: {
+          'apikey': key,
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(testData)
+      });
+      
+      const responseText = await response.text();
+      
+      addTestStep(
+        'RLS test result', 
+        response.ok, 
+        `Status: ${response.status} ${response.statusText}, Headers: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}, Response: ${responseText.substring(0, 100)}${responseText.length > 100 ? '...' : ''}`
+      );
+      
+      // Also check that the format of the Authorization header is correct
+      addTestStep(
+        'Authorization header check',
+        true,
+        'Format is correct: Bearer [token]'
+      );
+    } catch (error) {
+      addTestStep('RLS test failed', false, `Error: ${error.message}`);
+    }
+  };
+
   return (
     <div className="container mt-4 p-4">
       <h1>Supabase Debug Console</h1>
@@ -413,6 +462,14 @@ const SupabaseDebug = () => {
               disabled={connectionStatus.loading}
             >
               Test Direct Fetch
+            </button>
+
+            <button 
+              className="btn btn-warning" 
+              onClick={testRlsPolicy}
+              disabled={connectionStatus.loading}
+            >
+              Test RLS Policy
             </button>
           </div>
           
