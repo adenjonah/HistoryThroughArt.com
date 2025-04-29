@@ -1,13 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { supabase, testSupabaseConnection } from '../../utils/supabaseClient';
+import { TimeTracker } from '../../utils/timeTracker';
 
 const DebugPage = () => {
   const [connectionTest, setConnectionTest] = useState({ status: 'pending', message: 'Not tested yet', data: null });
-  const envVars = {
+  const [envVars, setEnvVars] = useState({
     supabaseUrl: process.env.REACT_APP_SUPABASE_URL ? 'Defined' : 'Undefined',
     supabaseKey: process.env.REACT_APP_SUPABASE_ANON_KEY ? 'Defined' : 'Undefined'
-  };
+  });
   const [corsTest, setCorsTest] = useState({ status: 'pending', message: 'Not tested yet' });
+  const [trackingStats, setTrackingStats] = useState({
+    enabled: false,
+    failedSessions: 0,
+    isActiveTab: false,
+    devModeEnabled: localStorage.getItem('hta_dev_tracking_enabled') === 'true'
+  });
+  
+  // Update tracking stats periodically
+  useEffect(() => {
+    const updateTrackingStats = () => {
+      setTrackingStats({
+        enabled: TimeTracker.trackingEnabled,
+        failedSessions: TimeTracker.getFailedSessionsCount(),
+        isActiveTab: TimeTracker.isActiveTab,
+        devModeEnabled: localStorage.getItem('hta_dev_tracking_enabled') === 'true'
+      });
+    };
+    
+    updateTrackingStats();
+    
+    const interval = setInterval(updateTrackingStats, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     // Test Supabase connection
@@ -63,6 +88,50 @@ const DebugPage = () => {
     }
   };
 
+  // Toggle development tracking
+  const toggleDevTracking = () => {
+    const newState = !trackingStats.devModeEnabled;
+    const enabled = TimeTracker.toggleDevTracking(newState);
+    
+    setTrackingStats({
+      ...trackingStats,
+      devModeEnabled: newState,
+      enabled: enabled
+    });
+  };
+
+  // Retry failed sessions
+  const retryFailedSessions = async () => {
+    try {
+      await TimeTracker.retryFailedSessions();
+      // Update stats after a short delay
+      setTimeout(() => {
+        setTrackingStats({
+          ...trackingStats,
+          failedSessions: TimeTracker.getFailedSessionsCount()
+        });
+      }, 1000);
+    } catch (error) {
+      console.error('Error retrying failed sessions:', error);
+    }
+  };
+  
+  // Force record session now (for testing)
+  const recordTestSession = async () => {
+    try {
+      await TimeTracker.recordSessionWithDuration(5, Date.now() - 5000);
+      // Update stats after a short delay
+      setTimeout(() => {
+        setTrackingStats({
+          ...trackingStats,
+          failedSessions: TimeTracker.getFailedSessionsCount()
+        });
+      }, 1000);
+    } catch (error) {
+      console.error('Error recording test session:', error);
+    }
+  };
+
   // Get status badge color
   const getStatusColor = (status) => {
     switch (status) {
@@ -105,55 +174,135 @@ const DebugPage = () => {
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Connection Test</h2>
             <div className="bg-gray-50 p-4 rounded-md">
-              <div className="flex items-center mb-4">
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(connectionTest.status)}`}>
-                  {connectionTest.status.toUpperCase()}
-                </span>
-                <p className="ml-2 text-sm text-gray-600">{connectionTest.message}</p>
+              <div className="flex space-x-2 mb-4">
+                <button 
+                  onClick={() => testSupabaseConnection().then(result => {
+                    setConnectionTest({
+                      status: result.success ? 'success' : 'error',
+                      message: result.success ? 'Connection successful' : `Connection failed: ${result.error}`,
+                      data: result.data
+                    });
+                  })}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={connectionTest.status === 'loading'}
+                >
+                  {connectionTest.status === 'loading' ? 'Testing...' : 'Test Connection'}
+                </button>
+                
+                <button 
+                  onClick={runCorsTest}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  disabled={corsTest.status === 'loading'}
+                >
+                  {corsTest.status === 'loading' ? 'Testing CORS...' : 'Test CORS'}
+                </button>
               </div>
               
-              <button
-                onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
-              >
-                Run Test Again
-              </button>
+              <div className="space-y-4">
+                <div>
+                  <span className="block text-sm font-medium text-gray-700 mb-1">Connection Status:</span>
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(connectionTest.status)}`}>
+                    {connectionTest.message}
+                  </span>
+                </div>
+                
+                <div>
+                  <span className="block text-sm font-medium text-gray-700 mb-1">CORS Status:</span>
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(corsTest.status)}`}>
+                    {corsTest.message}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           
-          {/* CORS Test */}
+          {/* Tracking Debug */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">CORS Test</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Tracking Debug</h2>
             <div className="bg-gray-50 p-4 rounded-md">
-              <div className="flex items-center mb-4">
-                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(corsTest.status)}`}>
-                  {corsTest.status.toUpperCase()}
-                </span>
-                <p className="ml-2 text-sm text-gray-600">{corsTest.message}</p>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Tracking Enabled</p>
+                  <p className={`mt-1 text-sm ${trackingStats.enabled ? 'text-green-600' : 'text-red-600'}`}>
+                    {trackingStats.enabled ? 'Yes' : 'No'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Active Tab</p>
+                  <p className={`mt-1 text-sm ${trackingStats.isActiveTab ? 'text-green-600' : 'text-yellow-600'}`}>
+                    {trackingStats.isActiveTab ? 'Yes (recording data)' : 'No (passive)'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Failed Sessions</p>
+                  <p className={`mt-1 text-sm ${trackingStats.failedSessions === 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {trackingStats.failedSessions}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Dev Mode Tracking</p>
+                  <p className={`mt-1 text-sm ${trackingStats.devModeEnabled ? 'text-green-600' : 'text-red-600'}`}>
+                    {trackingStats.devModeEnabled ? 'Enabled' : 'Disabled'}
+                  </p>
+                </div>
               </div>
               
-              <button
-                onClick={runCorsTest}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
-                disabled={corsTest.status === 'loading'}
-              >
-                {corsTest.status === 'loading' ? 'Testing...' : 'Test CORS'}
-              </button>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={toggleDevTracking}
+                  className={`px-4 py-2 ${trackingStats.devModeEnabled ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2`}
+                >
+                  {trackingStats.devModeEnabled ? 'Disable Dev Tracking' : 'Enable Dev Tracking'}
+                </button>
+                
+                <button 
+                  onClick={retryFailedSessions}
+                  disabled={trackingStats.failedSessions === 0}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Retry Failed ({trackingStats.failedSessions})
+                </button>
+                
+                <button 
+                  onClick={recordTestSession}
+                  className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                >
+                  Record Test Session
+                </button>
+              </div>
             </div>
           </div>
           
-          {/* Troubleshooting Guide */}
-          <div>
+          {/* Troubleshooting Steps */}
+          <div className="mb-4">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Troubleshooting Steps</h2>
             <div className="bg-gray-50 p-4 rounded-md">
-              <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600">
-                <li>Verify environment variables are properly set in Vercel</li>
-                <li>Ensure CORS is configured in Supabase Project Settings → API → CORS</li>
-                <li>Add your Vercel domain (https://your-app.vercel.app) to allowed origins</li>
-                <li>Check Supabase database is up and running</li>
-                <li>Confirm your IP address isn't blocked by Supabase</li>
-                <li>Test if the admin dashboard works on localhost but not on Vercel</li>
+              <ol className="list-decimal pl-4 space-y-2">
+                <li>
+                  <strong>Check Environment Variables:</strong> Ensure REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY are set correctly.
+                </li>
+                <li>
+                  <strong>Verify CORS Settings:</strong> In your Supabase dashboard, go to Settings → API and ensure your domain is in the allowed origins.
+                </li>
+                <li>
+                  <strong>Check Internet Connection:</strong> Make sure your device is online and can reach the Supabase API.
+                </li>
+                <li>
+                  <strong>Check RLS Policies:</strong> Ensure your Row Level Security policies allow anonymous inserts to the user_sessions table.
+                </li>
+                <li>
+                  <strong>Try in Incognito Mode:</strong> This can help identify if browser extensions are interfering with requests.
+                </li>
               </ol>
+              
+              <div className="mt-4">
+                <a 
+                  href="/admin/supabase-debug" 
+                  className="text-blue-600 hover:text-blue-800 underline"
+                >
+                  Go to Advanced Supabase Debug Console →
+                </a>
+              </div>
             </div>
           </div>
         </div>
