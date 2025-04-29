@@ -82,6 +82,21 @@ export const AnalyticsService = {
     try {
       console.log("Getting user time aggregated...");
       
+      // Use the analytics_users view if it exists
+      // First try to query the view
+      const { data: viewData, error: viewError } = await supabase
+        .from('analytics_users')
+        .select('*');
+      
+      // If the view exists and query succeeds, use that data
+      if (!viewError && viewData) {
+        console.log(`Found ${viewData.length} users from analytics_users view`);
+        return viewData;
+      }
+      
+      // Fall back to manual aggregation if the view doesn't exist
+      console.log("analytics_users view not available, falling back to manual aggregation");
+      
       // First do a direct query to check if data exists
       const { count, error: countError } = await supabase
         .from('user_sessions')
@@ -141,11 +156,27 @@ export const AnalyticsService = {
           // Skip invalid data
           if (!session.user_id) return;
           
+          // Skip test and permission test entries
+          const userId = session.user_id.toLowerCase();
+          if (userId.includes('test-') || userId.includes('permissi')) {
+            return;
+          }
+          
+          // Skip non-public pages
+          const pagePath = session.page_path || '';
+          const nonPublicKeywords = ['admin', 'test', 'debug', 'develop', 'permission'];
+          if (nonPublicKeywords.some(keyword => pagePath.includes(keyword))) {
+            return;
+          }
+          
           if (!userMap[session.user_id]) {
             userMap[session.user_id] = {
               user_id: session.user_id,
+              display_id: `User ${session.user_id.substring(0, 8)}...`,
               total_time_sec: 0,
-              session_count: 0
+              session_count: 0,
+              first_seen: session.created_at,
+              last_seen: session.created_at
             };
           }
           
@@ -153,10 +184,20 @@ export const AnalyticsService = {
           const time = parseInt(session.session_time_sec) || 0;
           userMap[session.user_id].total_time_sec += time;
           userMap[session.user_id].session_count += 1;
+          
+          // Update first/last seen
+          if (session.created_at < userMap[session.user_id].first_seen) {
+            userMap[session.user_id].first_seen = session.created_at;
+          }
+          if (session.created_at > userMap[session.user_id].last_seen) {
+            userMap[session.user_id].last_seen = session.created_at;
+          }
         });
       }
-
-      const result = Object.values(userMap);
+      
+      // Filter out users with only one session
+      const result = Object.values(userMap).filter(user => user.session_count > 1);
+      
       console.log(`Aggregated ${result.length} unique users from ${count} sessions`);
       return result;
     } catch (error) {

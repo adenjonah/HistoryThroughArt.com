@@ -1,15 +1,26 @@
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from './supabaseClient';
+import Cookies from 'js-cookie';
+import { UAParser } from 'ua-parser-js';
 
 // Constants
-const USER_ID_KEY = 'history_art_user_id';
-const SESSION_START_KEY = 'history_art_session_start';
-const LAST_PING_KEY = 'history_art_last_ping';
-const ACTIVE_TAB_KEY = 'history_art_active_tab';
-const TAB_ID_KEY = 'history_art_tab_id';
+const CLIENT_ID_KEY = 'hta_client_id';
+const SESSION_ID_KEY = 'hta_session_id';
+const SESSION_START_KEY = 'hta_session_start';
+const LAST_PING_KEY = 'hta_last_ping';
+const ACTIVE_TAB_KEY = 'hta_active_tab';
+const TAB_ID_KEY = 'hta_tab_id';
+const FAILED_SESSIONS_KEY = 'failed_sessions';
+const COOKIE_EXPIRY_DAYS = 365; // 1 year
 const TAB_HEARTBEAT_INTERVAL_MS = 5000; // 5 seconds
 // Track periodically (every 30 seconds)
 const PING_INTERVAL_MS = 30 * 1000;
+// Retry failed sessions every 2 minutes
+const RETRY_INTERVAL_MS = 2 * 60 * 1000;
+// Max retries for failed sessions
+const MAX_RETRIES = 5;
+// Max failed sessions to store (prevent localStorage overflow)
+const MAX_FAILED_SESSIONS = 100;
 // Allowed domains for tracking
 const ALLOWED_DOMAINS = ['historythroughart.com', 'www.historythroughart.com'];
 // Excluded paths - won't be tracked
@@ -20,14 +31,20 @@ const EXCLUDED_PATHS = [
   '/admin/supabase-debug',
   '/admin/settings',
   '/admin/users',
+  '/admin/chart-test',
   '/test',
   '/test/',
   '/test-',
   '/debug',
   '/debug/',
   '/debug-',
-  '/supabase-debug'
+  '/supabase-debug',
+  '/permission-test'
 ];
+
+// User agent parser for device information
+const uaParser = new UAParser();
+const userAgentInfo = uaParser.getResult();
 
 /**
  * Check if the current path should be excluded from tracking
@@ -49,7 +66,7 @@ const shouldExcludePath = () => {
   }
   
   // Check for keywords in path that indicate non-public pages
-  const nonPublicKeywords = ['admin', 'test', 'debug', 'develop', 'dev-'];
+  const nonPublicKeywords = ['admin', 'test', 'debug', 'develop', 'dev-', 'permission'];
   if (nonPublicKeywords.some(keyword => path.includes(keyword))) {
     console.log(`TimeTracker: Tracking disabled for path with excluded keyword: ${path}`);
     return true;
@@ -64,26 +81,63 @@ const shouldExcludePath = () => {
  */
 const isTrackingAllowed = () => {
   const hostname = window.location.hostname;
-  // Allow tracking only on production domains
+  // Allow local development for testing
   const isDevelopment = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('.local');
   const isAllowedDomain = ALLOWED_DOMAINS.includes(hostname);
   
+  // Always allow tracking in production domains
+  if (isAllowedDomain) {
+    // Check if path should be excluded from tracking
+    if (shouldExcludePath()) {
+      return false;
+    }
+    return true;
+  }
+  
+  // For development environments, only track if explicitly enabled via localStorage
   if (isDevelopment) {
-    console.log('TimeTracker: Tracking disabled on local development environment');
-    return false;
+    const devTrackingEnabled = localStorage.getItem('hta_dev_tracking_enabled') === 'true';
+    if (devTrackingEnabled) {
+      console.log('TimeTracker: Development tracking enabled via localStorage flag');
+      return !shouldExcludePath();
+    } else {
+      console.log('TimeTracker: Tracking disabled on local development environment');
+      return false;
+    }
   }
   
-  if (!isAllowedDomain) {
-    console.log(`TimeTracker: Tracking disabled on non-production domain: ${hostname}`);
-    return false;
+  console.log(`TimeTracker: Tracking disabled on non-production domain: ${hostname}`);
+  return false;
+};
+
+/**
+ * Add a failed session to localStorage for later retry
+ * @param {Object} sessionData - The session data that failed to send
+ * @param {string} errorMessage - The error message
+ */
+const addFailedSession = (sessionData, errorMessage) => {
+  try {
+    // Get existing failed sessions
+    const failedRecords = JSON.parse(localStorage.getItem(FAILED_SESSIONS_KEY) || '[]');
+    
+    // Add new failed session with timestamp and retry count
+    failedRecords.push({
+      ...sessionData,
+      timestamp: new Date().toISOString(),
+      error: errorMessage,
+      retryCount: 0
+    });
+    
+    // Limit the number of stored failed sessions to prevent localStorage overflow
+    const limitedRecords = failedRecords.slice(-MAX_FAILED_SESSIONS);
+    
+    // Store updated list
+    localStorage.setItem(FAILED_SESSIONS_KEY, JSON.stringify(limitedRecords));
+    
+    console.log(`TimeTracker: Added failed session to retry queue (${limitedRecords.length} queued)`);
+  } catch (error) {
+    console.error('TimeTracker: Error storing failed session:', error);
   }
-  
-  // Check if path should be excluded from tracking
-  if (shouldExcludePath()) {
-    return false;
-  }
-  
-  return true;
 };
 
 /**
@@ -91,10 +145,13 @@ const isTrackingAllowed = () => {
  */
 export const TimeTracker = {
   pingIntervalId: null,
+  retryIntervalId: null,
   trackingEnabled: false,
   tabHeartbeatIntervalId: null,
   isActiveTab: false,
   tabId: null,
+  lastRecordedPath: null,
+  isOnline: navigator.onLine,
   
   /**
    * Initialize the time tracker when the app starts
@@ -103,10 +160,11 @@ export const TimeTracker = {
     // Check if tracking is allowed on this domain
     TimeTracker.trackingEnabled = isTrackingAllowed();
     
-    // Generate and store user ID if not already present
-    if (!localStorage.getItem(USER_ID_KEY)) {
-      localStorage.setItem(USER_ID_KEY, uuidv4());
-    }
+    // Generate and store client ID if not already present
+    TimeTracker.ensureClientId();
+    
+    // Generate a session ID for this browser session
+    TimeTracker.ensureSessionId();
     
     // Generate a unique ID for this tab
     TimeTracker.tabId = uuidv4();
@@ -120,6 +178,21 @@ export const TimeTracker = {
     localStorage.setItem(SESSION_START_KEY, now.toString());
     localStorage.setItem(LAST_PING_KEY, now.toString());
     
+    // Set up online/offline detection
+    window.addEventListener('online', () => {
+      console.log('TimeTracker: Device is now online. Will retry sending failed sessions.');
+      TimeTracker.isOnline = true;
+      // Try to send any failed sessions immediately when coming online
+      if (TimeTracker.isActiveTab) {
+        TimeTracker.retryFailedSessions();
+      }
+    });
+    
+    window.addEventListener('offline', () => {
+      console.log('TimeTracker: Device is now offline. Sessions will be queued for later.');
+      TimeTracker.isOnline = false;
+    });
+    
     // Add event listeners to track session end
     window.addEventListener('beforeunload', () => {
       // Only record if this is the active tab and not on an excluded path
@@ -129,12 +202,14 @@ export const TimeTracker = {
         localStorage.removeItem(ACTIVE_TAB_KEY);
       }
     });
+    
     window.addEventListener('pagehide', () => {
       // Only record if this is the active tab and not on an excluded path
       if (TimeTracker.isActiveTab && !shouldExcludePath()) {
         TimeTracker.recordSession();
       }
     });
+    
     window.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') {
         // Only record if this is the active tab and not on an excluded path
@@ -167,19 +242,85 @@ export const TimeTracker = {
     
     // Test Supabase connection
     if (TimeTracker.trackingEnabled) {
-      TimeTracker.testSupabaseConnection();
-      
       // Set up periodic tracking
       TimeTracker.startPeriodicTracking();
+      
+      // Set up retry mechanism for failed sessions
+      TimeTracker.startRetryMechanism();
     } else {
       console.log('TimeTracker: Skipping Supabase connection test and periodic tracking on non-production domain');
     }
     
     // For debugging
-    console.log('TimeTracker initialized with user ID:', TimeTracker.getUserId(), 'tab ID:', TimeTracker.tabId);
+    console.log('TimeTracker initialized with client ID:', TimeTracker.getClientId(), 'tab ID:', TimeTracker.tabId);
     console.log('TimeTracker path tracking status:', !shouldExcludePath() ? 
       `Tracking enabled for public path: ${window.location.pathname}` : 
       `Tracking disabled for non-public path: ${window.location.pathname}`);
+    
+    // Store initial path
+    TimeTracker.lastRecordedPath = window.location.pathname;
+  },
+  
+  /**
+   * Ensure a client ID exists (creates one if needed)
+   */
+  ensureClientId: () => {
+    // Check for a client ID in cookie first (more persistent)
+    let clientId = Cookies.get(CLIENT_ID_KEY);
+    
+    // Fall back to localStorage
+    if (!clientId) {
+      clientId = localStorage.getItem(CLIENT_ID_KEY);
+    }
+    
+    // Create a new client ID if none exists
+    if (!clientId) {
+      clientId = `hta_${uuidv4()}`;
+      // Store in both cookies and localStorage for redundancy
+      Cookies.set(CLIENT_ID_KEY, clientId, { expires: COOKIE_EXPIRY_DAYS, sameSite: 'strict' });
+      localStorage.setItem(CLIENT_ID_KEY, clientId);
+    }
+    
+    // Ensure both storage mechanisms have the same ID
+    Cookies.set(CLIENT_ID_KEY, clientId, { expires: COOKIE_EXPIRY_DAYS, sameSite: 'strict' });
+    localStorage.setItem(CLIENT_ID_KEY, clientId);
+    
+    return clientId;
+  },
+  
+  /**
+   * Ensure a session ID exists for this browser session
+   */
+  ensureSessionId: () => {
+    let sessionId = sessionStorage.getItem(SESSION_ID_KEY);
+    
+    if (!sessionId) {
+      sessionId = `sess_${uuidv4()}`;
+      sessionStorage.setItem(SESSION_ID_KEY, sessionId);
+    }
+    
+    return sessionId;
+  },
+  
+  /**
+   * Get the current client ID (persistent user identifier)
+   * @returns {string} Client ID
+   */
+  getClientId: () => {
+    // Try cookie first
+    const cookieId = Cookies.get(CLIENT_ID_KEY);
+    if (cookieId) return cookieId;
+    
+    // Fall back to localStorage
+    return localStorage.getItem(CLIENT_ID_KEY) || '';
+  },
+  
+  /**
+   * Get the current session ID (browser session identifier)
+   * @returns {string} Session ID
+   */
+  getSessionId: () => {
+    return sessionStorage.getItem(SESSION_ID_KEY) || '';
   },
   
   /**
@@ -221,10 +362,23 @@ export const TimeTracker = {
     }
     
     try {
+      // Check if the active tab claim is still valid
       const activeTab = JSON.parse(activeTabData);
-      const heartbeatAge = now - activeTab.timestamp;
       
-      // If this is already the active tab, update the timestamp
+      // If the last heartbeat was too long ago, the tab is probably closed
+      if (now - activeTab.timestamp > TAB_HEARTBEAT_INTERVAL_MS * 2) {
+        // Claim for this tab
+        const claim = {
+          tabId: TimeTracker.tabId,
+          timestamp: now
+        };
+        localStorage.setItem(ACTIVE_TAB_KEY, JSON.stringify(claim));
+        TimeTracker.isActiveTab = true;
+        console.log('TimeTracker: This tab claimed active status (previous tab expired)');
+        return;
+      }
+      
+      // If this is already the active tab, just update the timestamp
       if (activeTab.tabId === TimeTracker.tabId) {
         activeTab.timestamp = now;
         localStorage.setItem(ACTIVE_TAB_KEY, JSON.stringify(activeTab));
@@ -232,91 +386,22 @@ export const TimeTracker = {
         return;
       }
       
-      // If the active tab's heartbeat is old (>10 seconds), assume it's inactive
-      if (heartbeatAge > 10000) {
-        const claim = {
-          tabId: TimeTracker.tabId,
-          timestamp: now
-        };
-        localStorage.setItem(ACTIVE_TAB_KEY, JSON.stringify(claim));
-        TimeTracker.isActiveTab = true;
-        console.log('TimeTracker: This tab took over active status (previous tab inactive)');
-        return;
-      }
-      
-      // There's an active tab and it's not this one
+      // Another tab is active, update our status
       TimeTracker.isActiveTab = false;
-    } catch (e) {
-      // In case of any error, claim active status to recover
+    } catch (error) {
+      // If there's an error, assume no active tab and claim it
+      console.error('TimeTracker: Error parsing active tab data:', error);
       const claim = {
         tabId: TimeTracker.tabId,
         timestamp: now
       };
       localStorage.setItem(ACTIVE_TAB_KEY, JSON.stringify(claim));
       TimeTracker.isActiveTab = true;
-      console.error('TimeTracker: Error in tab coordination, claiming active status', e);
     }
   },
   
   /**
-   * Test Supabase connection to diagnose issues
-   */
-  testSupabaseConnection: async () => {
-    try {
-      console.log('Testing Supabase connection...');
-      
-      // First test health/ping endpoint
-      const { data: pingData, error: pingError } = await supabase.from('user_sessions').select('id').limit(1);
-      
-      if (pingError) {
-        console.error('Supabase connection test failed:', pingError);
-        console.error('Error details:', {
-          code: pingError.code,
-          message: pingError.message,
-          hint: pingError.hint,
-          details: pingError.details
-        });
-      } else {
-        console.log('Supabase connection test successful', pingData);
-      }
-      
-      // Try inserting test record
-      const testSession = {
-        user_id: 'test-connection-' + Date.now(),
-        session_time_sec: 1,
-        page_path: '/test-connection'
-      };
-      
-      console.log('Attempting test insert with data:', testSession);
-      
-      const { data: insertData, error: insertError } = await supabase
-        .from('user_sessions')
-        .insert(testSession)
-        .select();
-      
-      if (insertError) {
-        console.error('Supabase test insert failed:', insertError);
-        console.error('Insert error details:', {
-          code: insertError.code,
-          message: insertError.message,
-          hint: insertError.hint,
-          details: insertError.details
-        });
-        
-        // Log headers for debugging
-        console.log('Supabase client settings:', {
-          headers: supabase.restClient.headers
-        });
-      } else {
-        console.log('Supabase test insert successful', insertData);
-      }
-    } catch (error) {
-      console.error('Unexpected error testing Supabase connection:', error);
-    }
-  },
-  
-  /**
-   * Start periodic tracking to save session data regularly
+   * Start periodic tracking
    */
   startPeriodicTracking: () => {
     // Clear any existing interval
@@ -324,153 +409,188 @@ export const TimeTracker = {
       clearInterval(TimeTracker.pingIntervalId);
     }
     
-    // Set up new interval
+    // Set up interval to track periodically
     TimeTracker.pingIntervalId = setInterval(() => {
-      // Only record if this is the active tab and not on an excluded path
-      if (!TimeTracker.isActiveTab) {
-        console.log('Periodic session tracking ping - skipped (not active tab)');
-        return;
-      }
-      
-      // Check if current path should be excluded
-      if (shouldExcludePath()) {
-        console.log(`Periodic session tracking ping - skipped (excluded path: ${window.location.pathname})`);
-        return;
-      }
-      
-      console.log('Periodic session tracking ping - active tab');
-      const lastPing = parseInt(localStorage.getItem(LAST_PING_KEY) || '0');
-      
-      // Record since last ping
-      if (lastPing > 0) {
-        const now = Date.now();
-        const pingDurationSec = Math.floor((now - lastPing) / 1000);
-        
-        // Only record if it's been more than 5 seconds since last ping
-        if (pingDurationSec > 5) {
-          TimeTracker.recordSessionWithDuration(pingDurationSec, lastPing);
-          localStorage.setItem(LAST_PING_KEY, now.toString());
-        }
+      // Only record if this is the active tab, tracking is enabled, and not on excluded path
+      if (TimeTracker.isActiveTab && TimeTracker.trackingEnabled && !shouldExcludePath()) {
+        TimeTracker.recordPing();
       }
     }, PING_INTERVAL_MS);
+    
+    console.log('TimeTracker: Started periodic tracking with interval', PING_INTERVAL_MS, 'ms');
   },
   
   /**
-   * Get the current user ID
-   * @returns {string} User ID
+   * Start retry mechanism for failed sessions
    */
-  getUserId: () => {
-    return localStorage.getItem(USER_ID_KEY) || '';
+  startRetryMechanism: () => {
+    // Clear any existing interval
+    if (TimeTracker.retryIntervalId) {
+      clearInterval(TimeTracker.retryIntervalId);
+    }
+    
+    // Set up interval to retry failed sessions
+    TimeTracker.retryIntervalId = setInterval(() => {
+      // Only retry if this is the active tab and we're online
+      if (TimeTracker.isActiveTab && TimeTracker.isOnline) {
+        TimeTracker.retryFailedSessions();
+      }
+    }, RETRY_INTERVAL_MS);
+    
+    console.log('TimeTracker: Started retry mechanism with interval', RETRY_INTERVAL_MS, 'ms');
   },
   
   /**
-   * Record the current session to Supabase
+   * Record a periodic ping
    */
-  recordSession: async () => {
-    // Skip tracking if not on production domain
-    if (!TimeTracker.trackingEnabled) {
-      console.log('TimeTracker: Skipping session recording on non-production domain');
+  recordPing: async () => {
+    if (!TimeTracker.trackingEnabled || shouldExcludePath()) {
       return;
     }
-    
-    // Check if current path should be excluded (for path changes during the session)
-    if (shouldExcludePath()) {
-      console.log(`TimeTracker: Skipping session recording for excluded path: ${window.location.pathname}`);
-      return;
-    }
-    
-    const sessionStart = parseInt(localStorage.getItem(SESSION_START_KEY) || '0');
-    if (!sessionStart) return;
-    
-    const userId = TimeTracker.getUserId();
-    if (!userId) return;
-    
-    const sessionTimeMs = Date.now() - sessionStart;
-    const sessionTimeSec = Math.floor(sessionTimeMs / 1000);
-    
-    // Only record sessions longer than 1 second
-    if (sessionTimeSec < 1) return;
-    
-    console.log(`Recording session: ${sessionTimeSec} seconds on ${window.location.pathname} (public path)`);
     
     try {
-      const sessionData = {
-        user_id: userId,
-        session_time_sec: sessionTimeSec,
-        page_path: window.location.pathname
-      };
+      const now = Date.now();
+      const lastPing = parseInt(localStorage.getItem(LAST_PING_KEY) || '0', 10);
       
-      console.log('Sending session data:', sessionData);
+      // Calculate time since last ping
+      const timeSincePing = now - lastPing;
       
-      const { data, error } = await supabase
-        .from('user_sessions')
-        .insert(sessionData)
-        .select();
-      
-      if (error) {
-        console.error('Error recording session:', error);
-        console.error('Error details:', {
-          code: error.code,
-          message: error.message,
-          hint: error.hint,
-          details: error.details
-        });
-        
-        // Store failed records in localStorage for later retry
-        const failedRecords = JSON.parse(localStorage.getItem('failed_sessions') || '[]');
-        failedRecords.push({
-          ...sessionData,
-          timestamp: new Date().toISOString(),
-          error: error.message
-        });
-        localStorage.setItem('failed_sessions', JSON.stringify(failedRecords));
-      } else {
-        console.log('Session recorded successfully:', data);
+      // Only record if enough time has passed (at least 5 seconds)
+      if (timeSincePing < 5000) {
+        return;
       }
       
-      // Reset session start time
-      localStorage.setItem(SESSION_START_KEY, Date.now().toString());
-      localStorage.setItem(LAST_PING_KEY, Date.now().toString());
+      // Record a ping with the time elapsed
+      const durationSec = Math.floor(timeSincePing / 1000);
+      
+      // Update last ping time
+      localStorage.setItem(LAST_PING_KEY, now.toString());
+      
+      // Record the ping
+      await TimeTracker.recordSessionWithDuration(durationSec, lastPing);
     } catch (error) {
-      console.error('Unexpected error recording session:', error);
+      console.error('TimeTracker: Error recording ping:', error);
     }
   },
   
   /**
-   * Record a session with specific duration and timestamp
-   * @param {number} durationSec - Duration in seconds 
-   * @param {number} timestamp - Timestamp when the session started
+   * Check if a path should be excluded from tracking
+   * @param {string} path - The path to check
+   * @returns {boolean} Whether the path should be excluded
    */
-  recordSessionWithDuration: async (durationSec, timestamp) => {
-    // Skip tracking if not on production domain
-    if (!TimeTracker.trackingEnabled) {
-      console.log('TimeTracker: Skipping periodic session recording on non-production domain');
+  isExcludedPath: (path) => {
+    if (!path) return true;
+    
+    // Convert to lowercase for case-insensitive comparison
+    const lowerPath = path.toLowerCase();
+    
+    // Check for exact matches
+    if (EXCLUDED_PATHS.includes(lowerPath)) {
+      return true;
+    }
+    
+    // Check if path starts with any excluded prefix
+    if (EXCLUDED_PATHS.some(prefix => lowerPath.startsWith(prefix))) {
+      return true;
+    }
+    
+    // Check for keywords in path
+    const nonPublicKeywords = ['admin', 'test', 'debug', 'develop', 'dev-', 'permission'];
+    if (nonPublicKeywords.some(keyword => lowerPath.includes(keyword))) {
+      return true;
+    }
+    
+    return false;
+  },
+  
+  /**
+   * Record a session
+   */
+  recordSession: async () => {
+    // Skip tracking if disabled or on excluded path
+    if (!TimeTracker.trackingEnabled || shouldExcludePath()) {
       return;
     }
     
-    // Check if current path should be excluded (for path changes during the session)
-    if (shouldExcludePath()) {
-      console.log('TimeTracker: Skipping periodic session recording for excluded path');
+    // Get session data
+    const sessionStart = parseInt(localStorage.getItem(SESSION_START_KEY) || '0', 10);
+    const now = Date.now();
+    
+    // Calculate session duration in seconds
+    const sessionDuration = Math.floor((now - sessionStart) / 1000);
+    
+    // Only record if the session is long enough (at least 1 second)
+    if (sessionDuration < 1) {
+      console.log('TimeTracker: Session too short, not recording');
       return;
     }
-    
-    const userId = TimeTracker.getUserId();
-    if (!userId) return;
-    
-    // Only record sessions longer than 1 second
-    if (durationSec < 1) return;
-    
-    console.log(`Recording periodic session: ${durationSec} seconds on ${window.location.pathname}`);
     
     try {
+      await TimeTracker.recordSessionWithDuration(sessionDuration, sessionStart);
+    } catch (error) {
+      console.error('TimeTracker: Error recording session:', error);
+    }
+  },
+  
+  /**
+   * Record a session with specific duration
+   * @param {number} durationSec - The session duration in seconds
+   * @param {number} timestamp - The timestamp of the session start
+   */
+  recordSessionWithDuration: async (durationSec, timestamp) => {
+    // Skip tracking if disabled or on excluded path
+    if (!TimeTracker.trackingEnabled || shouldExcludePath()) {
+      return;
+    }
+    
+    // Check required data
+    const clientId = TimeTracker.getClientId();
+    const sessionId = TimeTracker.getSessionId();
+    
+    if (!clientId || !sessionId) {
+      console.error('TimeTracker: Missing client ID or session ID, cannot record session');
+      return;
+    }
+    
+    // Skip recording zero-duration sessions
+    if (durationSec <= 0) {
+      console.log('TimeTracker: Zero duration session, not recording');
+      return;
+    }
+    
+    // Don't record if offline
+    if (!TimeTracker.isOnline) {
+      console.log('TimeTracker: Device is offline, queueing session for later');
       const sessionData = {
-        user_id: userId,
+        user_id: clientId,
+        session_id: sessionId,
         session_time_sec: durationSec,
         page_path: window.location.pathname,
+        device_type: userAgentInfo.device.type || 'desktop',
+        browser: userAgentInfo.browser.name || 'unknown',
+        os: userAgentInfo.os.name || 'unknown',
+        referrer: document.referrer || null,
         created_at: new Date(timestamp).toISOString()
       };
       
-      console.log('Sending periodic session data:', sessionData);
+      addFailedSession(sessionData, 'Device offline');
+      return;
+    }
+    
+    try {
+      const sessionData = {
+        user_id: clientId,
+        session_id: sessionId,
+        session_time_sec: durationSec,
+        page_path: window.location.pathname,
+        device_type: userAgentInfo.device.type || 'desktop',
+        browser: userAgentInfo.browser.name || 'unknown',
+        os: userAgentInfo.os.name || 'unknown',
+        referrer: document.referrer || null,
+        created_at: new Date(timestamp).toISOString()
+      };
+      
+      console.log('TimeTracker: Sending session data:', sessionData);
       
       const { data, error } = await supabase
         .from('user_sessions')
@@ -478,7 +598,7 @@ export const TimeTracker = {
         .select();
       
       if (error) {
-        console.error('Error recording periodic session:', error);
+        console.error('TimeTracker: Error recording session:', error);
         console.error('Error details:', {
           code: error.code,
           message: error.message,
@@ -486,48 +606,125 @@ export const TimeTracker = {
           details: error.details
         });
         
-        // Store failed records in localStorage for later retry
-        const failedRecords = JSON.parse(localStorage.getItem('failed_sessions') || '[]');
-        failedRecords.push({
-          ...sessionData,
-          timestamp: new Date().toISOString(),
-          error: error.message
-        });
-        localStorage.setItem('failed_sessions', JSON.stringify(failedRecords));
+        // Store failed record for later retry
+        addFailedSession(sessionData, error.message);
       } else {
-        console.log('Periodic session recorded successfully:', data);
+        console.log('TimeTracker: Session recorded successfully:', data);
       }
     } catch (error) {
-      console.error('Unexpected error recording periodic session:', error);
+      console.error('TimeTracker: Unexpected error recording session:', error);
+      
+      // Store failed record for later retry
+      const sessionData = {
+        user_id: clientId,
+        session_id: sessionId,
+        session_time_sec: durationSec,
+        page_path: window.location.pathname,
+        device_type: userAgentInfo.device.type || 'desktop',
+        browser: userAgentInfo.browser.name || 'unknown',
+        os: userAgentInfo.os.name || 'unknown',
+        referrer: document.referrer || null,
+        created_at: new Date(timestamp).toISOString()
+      };
+      
+      addFailedSession(sessionData, error.message);
     }
   },
   
   /**
-   * Clean up event listeners and intervals
+   * Retry sending failed sessions
    */
-  cleanup: () => {
-    window.removeEventListener('beforeunload', TimeTracker.recordSession);
-    window.removeEventListener('pagehide', TimeTracker.recordSession);
-    window.removeEventListener('visibilitychange', TimeTracker.recordSession);
-    
-    if (TimeTracker.pingIntervalId) {
-      clearInterval(TimeTracker.pingIntervalId);
-      TimeTracker.pingIntervalId = null;
+  retryFailedSessions: async () => {
+    // Only proceed if online
+    if (!TimeTracker.isOnline) {
+      console.log('TimeTracker: Device is offline, cannot retry failed sessions now');
+      return;
     }
     
-    if (TimeTracker.tabHeartbeatIntervalId) {
-      clearInterval(TimeTracker.tabHeartbeatIntervalId);
-      TimeTracker.tabHeartbeatIntervalId = null;
-    }
-    
-    // If this was the active tab, clear that status
-    if (TimeTracker.isActiveTab) {
-      localStorage.removeItem(ACTIVE_TAB_KEY);
+    try {
+      // Get failed sessions from localStorage
+      const failedSessions = JSON.parse(localStorage.getItem(FAILED_SESSIONS_KEY) || '[]');
+      
+      if (failedSessions.length === 0) {
+        return; // No failed sessions to retry
+      }
+      
+      console.log(`TimeTracker: Retrying ${failedSessions.length} failed sessions`);
+      
+      // Track which sessions were successfully sent
+      const successfulIds = [];
+      const updatedFailedSessions = [];
+      
+      // Process each failed session
+      for (const session of failedSessions) {
+        // Skip sessions that have been retried too many times
+        if (session.retryCount >= MAX_RETRIES) {
+          console.log(`TimeTracker: Session exceeded max retries, dropping:`, session);
+          continue;
+        }
+        
+        try {
+          // Increment retry count
+          session.retryCount = (session.retryCount || 0) + 1;
+          
+          // Try to insert the session
+          const { error } = await supabase
+            .from('user_sessions')
+            .insert({
+              user_id: session.user_id,
+              session_id: session.session_id,
+              session_time_sec: session.session_time_sec,
+              page_path: session.page_path,
+              device_type: session.device_type,
+              browser: session.browser,
+              os: session.os,
+              referrer: session.referrer,
+              created_at: session.created_at
+            });
+          
+          if (error) {
+            console.error(`TimeTracker: Failed to retry session (attempt ${session.retryCount}/${MAX_RETRIES}):`, error);
+            // Keep in the failed sessions list with updated retry count
+            updatedFailedSessions.push(session);
+          } else {
+            console.log('TimeTracker: Successfully retried session');
+            // Mark as successful to remove from the list
+            successfulIds.push(session.timestamp);
+          }
+        } catch (error) {
+          console.error('TimeTracker: Error retrying session:', error);
+          // Keep in the failed sessions list with updated retry count
+          updatedFailedSessions.push(session);
+        }
+      }
+      
+      // Update the localStorage with remaining failed sessions
+      localStorage.setItem(FAILED_SESSIONS_KEY, JSON.stringify(updatedFailedSessions));
+      
+      // Log results
+      const successCount = failedSessions.length - updatedFailedSessions.length;
+      console.log(`TimeTracker: Retry complete. ${successCount} sessions recovered, ${updatedFailedSessions.length} still pending.`);
+    } catch (error) {
+      console.error('TimeTracker: Error in retry process:', error);
     }
   },
-
+  
   /**
-   * Set up a listener for route changes in a SPA
+   * Get count of failed sessions
+   * @returns {number} Count of failed sessions
+   */
+  getFailedSessionsCount: () => {
+    try {
+      const failedSessions = JSON.parse(localStorage.getItem(FAILED_SESSIONS_KEY) || '[]');
+      return failedSessions.length;
+    } catch (error) {
+      console.error('TimeTracker: Error getting failed sessions count:', error);
+      return 0;
+    }
+  },
+  
+  /**
+   * Setup listener for route changes in SPA
    */
   setupRouteChangeListener: () => {
     // Create a MutationObserver to watch for DOM changes that might indicate route changes
@@ -566,31 +763,43 @@ export const TimeTracker = {
     // Store initial path
     TimeTracker.lastRecordedPath = window.location.pathname;
   },
-
+  
   /**
-   * Check if a specific path should be excluded
-   * @param {string} path - The path to check
-   * @returns {boolean} Whether the path should be excluded
+   * Clean up and stop tracking
    */
-  isExcludedPath: (path) => {
-    const lowerPath = path.toLowerCase();
-    
-    // Check for exact matches
-    if (EXCLUDED_PATHS.includes(lowerPath)) {
-      return true;
+  cleanup: () => {
+    // Clear intervals
+    if (TimeTracker.pingIntervalId) {
+      clearInterval(TimeTracker.pingIntervalId);
+      TimeTracker.pingIntervalId = null;
     }
     
-    // Check for path prefixes
-    if (EXCLUDED_PATHS.some(prefix => lowerPath.startsWith(prefix))) {
-      return true;
+    if (TimeTracker.tabHeartbeatIntervalId) {
+      clearInterval(TimeTracker.tabHeartbeatIntervalId);
+      TimeTracker.tabHeartbeatIntervalId = null;
     }
     
-    // Check for keywords
-    const nonPublicKeywords = ['admin', 'test', 'debug', 'develop', 'dev-'];
-    if (nonPublicKeywords.some(keyword => lowerPath.includes(keyword))) {
-      return true;
+    if (TimeTracker.retryIntervalId) {
+      clearInterval(TimeTracker.retryIntervalId);
+      TimeTracker.retryIntervalId = null;
     }
     
-    return false;
+    // Record final session if active
+    if (TimeTracker.isActiveTab && !shouldExcludePath()) {
+      TimeTracker.recordSession();
+    }
+    
+    console.log('TimeTracker: Cleaned up and stopped');
+  },
+  
+  /**
+   * Toggle tracking in development mode
+   * @param {boolean} enabled - Whether to enable tracking
+   */
+  toggleDevTracking: (enabled) => {
+    localStorage.setItem('hta_dev_tracking_enabled', enabled ? 'true' : 'false');
+    console.log(`TimeTracker: Development tracking ${enabled ? 'enabled' : 'disabled'}`);
+    TimeTracker.trackingEnabled = enabled && !shouldExcludePath();
+    return TimeTracker.trackingEnabled;
   }
 }; 
