@@ -21,6 +21,8 @@ const RETRY_INTERVAL_MS = 2 * 60 * 1000;
 const MAX_RETRIES = 5;
 // Max failed sessions to store (prevent localStorage overflow)
 const MAX_FAILED_SESSIONS = 100;
+// Maximum session duration in seconds (3 hours)
+const MAX_SESSION_DURATION = 10800;
 // Allowed domains for tracking
 const ALLOWED_DOMAINS = ['historythroughart.com', 'www.historythroughart.com'];
 // Excluded paths - won't be tracked
@@ -324,6 +326,43 @@ export const TimeTracker = {
   },
   
   /**
+   * Get or create a current active session ID for the current page
+   * @returns {string} The current active session record ID
+   */
+  getCurrentPageSessionId: () => {
+    // Check if we have a current session ID for this page
+    const currentPath = window.location.pathname;
+    const storageKey = `hta_current_session_${currentPath}`;
+    let sessionRecordId = localStorage.getItem(storageKey);
+    
+    // If no current session ID for this page, create one
+    if (!sessionRecordId) {
+      sessionRecordId = `sess_${Date.now()}`;
+      localStorage.setItem(storageKey, sessionRecordId);
+    }
+    
+    return sessionRecordId;
+  },
+  
+  /**
+   * Reset the current page session tracking
+   * This should be called when navigating to a new page
+   */
+  resetCurrentPageSession: () => {
+    const currentPath = window.location.pathname;
+    const previousPath = TimeTracker.lastRecordedPath;
+    
+    // Clear the session record ID for the previous path
+    if (previousPath && previousPath !== currentPath) {
+      const storageKey = `hta_current_session_${previousPath}`;
+      localStorage.removeItem(storageKey);
+    }
+    
+    // Update last recorded path
+    TimeTracker.lastRecordedPath = currentPath;
+  },
+  
+  /**
    * Start tab coordination to avoid duplicate tracking of the same user
    */
   startTabCoordination: () => {
@@ -466,8 +505,8 @@ export const TimeTracker = {
       // Update last ping time
       localStorage.setItem(LAST_PING_KEY, now.toString());
       
-      // Record the ping
-      await TimeTracker.recordSessionWithDuration(durationSec, lastPing);
+      // Try to update existing session first, fall back to creating a new one
+      await TimeTracker.updateOrCreateSession(durationSec, lastPing);
     } catch (error) {
       console.error('TimeTracker: Error recording ping:', error);
     }
@@ -525,8 +564,14 @@ export const TimeTracker = {
       return;
     }
     
+    // Enforce maximum session duration
+    const cappedDuration = Math.min(sessionDuration, MAX_SESSION_DURATION);
+    if (sessionDuration > MAX_SESSION_DURATION) {
+      console.log(`TimeTracker: Session duration (${sessionDuration}s) exceeds maximum allowed (${MAX_SESSION_DURATION}s), capping at maximum`);
+    }
+    
     try {
-      await TimeTracker.recordSessionWithDuration(sessionDuration, sessionStart);
+      await TimeTracker.recordSessionWithDuration(cappedDuration, sessionStart);
     } catch (error) {
       console.error('TimeTracker: Error recording session:', error);
     }
@@ -546,6 +591,7 @@ export const TimeTracker = {
     // Check required data
     const clientId = TimeTracker.getClientId();
     const sessionId = TimeTracker.getSessionId();
+    const currentPath = window.location.pathname;
     
     if (!clientId || !sessionId) {
       console.error('TimeTracker: Missing client ID or session ID, cannot record session');
@@ -558,6 +604,25 @@ export const TimeTracker = {
       return;
     }
     
+    // Skip test sessions - check both path and user ID
+    if (
+      clientId.toLowerCase().includes('test') || 
+      clientId.toLowerCase().includes('rls-test') || 
+      clientId.toLowerCase().includes('permission') ||
+      currentPath.toLowerCase().includes('test') ||
+      currentPath.toLowerCase().includes('rls-test') ||
+      currentPath.toLowerCase().includes('permission')
+    ) {
+      console.log('TimeTracker: Skipping test session recording for:', { clientId, path: currentPath });
+      return;
+    }
+    
+    // Enforce maximum session duration
+    if (durationSec > MAX_SESSION_DURATION) {
+      console.log(`TimeTracker: Session duration (${durationSec}s) exceeds maximum allowed (${MAX_SESSION_DURATION}s), capping at maximum`);
+      durationSec = MAX_SESSION_DURATION;
+    }
+    
     // Don't record if offline
     if (!TimeTracker.isOnline) {
       console.log('TimeTracker: Device is offline, queueing session for later');
@@ -565,12 +630,13 @@ export const TimeTracker = {
         user_id: clientId,
         session_id: sessionId,
         session_time_sec: durationSec,
-        page_path: window.location.pathname,
+        page_path: currentPath,
         device_type: userAgentInfo.device.type || 'desktop',
         browser: userAgentInfo.browser.name || 'unknown',
         os: userAgentInfo.os.name || 'unknown',
         referrer: document.referrer || null,
-        created_at: new Date(timestamp).toISOString()
+        created_at: new Date(timestamp).toISOString(),
+        last_activity: new Date().toISOString()
       };
       
       addFailedSession(sessionData, 'Device offline');
@@ -582,12 +648,13 @@ export const TimeTracker = {
         user_id: clientId,
         session_id: sessionId,
         session_time_sec: durationSec,
-        page_path: window.location.pathname,
+        page_path: currentPath,
         device_type: userAgentInfo.device.type || 'desktop',
         browser: userAgentInfo.browser.name || 'unknown',
         os: userAgentInfo.os.name || 'unknown',
         referrer: document.referrer || null,
-        created_at: new Date(timestamp).toISOString()
+        created_at: new Date(timestamp).toISOString(),
+        last_activity: new Date().toISOString()
       };
       
       console.log('TimeTracker: Sending session data:', sessionData);
@@ -610,6 +677,12 @@ export const TimeTracker = {
         addFailedSession(sessionData, error.message);
       } else {
         console.log('TimeTracker: Session recorded successfully:', data);
+        
+        // Store the session ID for future updates
+        const storageKey = `hta_current_session_${currentPath}`;
+        if (data && data.length > 0) {
+          localStorage.setItem(storageKey, data[0].id);
+        }
       }
     } catch (error) {
       console.error('TimeTracker: Unexpected error recording session:', error);
@@ -619,12 +692,13 @@ export const TimeTracker = {
         user_id: clientId,
         session_id: sessionId,
         session_time_sec: durationSec,
-        page_path: window.location.pathname,
+        page_path: currentPath,
         device_type: userAgentInfo.device.type || 'desktop',
         browser: userAgentInfo.browser.name || 'unknown',
         os: userAgentInfo.os.name || 'unknown',
         referrer: document.referrer || null,
-        created_at: new Date(timestamp).toISOString()
+        created_at: new Date(timestamp).toISOString(),
+        last_activity: new Date().toISOString()
       };
       
       addFailedSession(sessionData, error.message);
@@ -746,6 +820,9 @@ export const TimeTracker = {
         if (TimeTracker.isActiveTab) {
           localStorage.setItem(SESSION_START_KEY, Date.now().toString());
           localStorage.setItem(LAST_PING_KEY, Date.now().toString());
+          
+          // Reset the current page session tracking
+          TimeTracker.resetCurrentPageSession();
         }
         
         // Store current path for comparison on next change
@@ -801,5 +878,107 @@ export const TimeTracker = {
     console.log(`TimeTracker: Development tracking ${enabled ? 'enabled' : 'disabled'}`);
     TimeTracker.trackingEnabled = enabled && !shouldExcludePath();
     return TimeTracker.trackingEnabled;
+  },
+  
+  /**
+   * Update an existing session or create a new one if no active session exists
+   * @param {number} durationSec - The duration to add to the session
+   * @param {number} timestamp - The timestamp of this update
+   */
+  updateOrCreateSession: async (durationSec, timestamp) => {
+    // Skip tracking if disabled or on excluded path
+    if (!TimeTracker.trackingEnabled || shouldExcludePath()) {
+      return;
+    }
+    
+    // Skip recording zero-duration sessions
+    if (durationSec <= 0) {
+      console.log('TimeTracker: Zero duration session, not recording');
+      return;
+    }
+    
+    // Get the current page session ID
+    const currentPageSessionId = TimeTracker.getCurrentPageSessionId();
+    const clientId = TimeTracker.getClientId();
+    const sessionId = TimeTracker.getSessionId();
+    
+    if (!clientId || !sessionId) {
+      console.error('TimeTracker: Missing client ID or session ID, cannot record session');
+      return;
+    }
+    
+    // Don't record if offline
+    if (!TimeTracker.isOnline) {
+      console.log('TimeTracker: Device is offline, queueing session update for later');
+      const sessionData = {
+        user_id: clientId,
+        session_id: sessionId,
+        current_page_session_id: currentPageSessionId,
+        session_time_sec: durationSec,
+        page_path: window.location.pathname,
+        device_type: userAgentInfo.device.type || 'desktop',
+        browser: userAgentInfo.browser.name || 'unknown',
+        os: userAgentInfo.os.name || 'unknown',
+        referrer: document.referrer || null,
+        created_at: new Date(timestamp).toISOString(),
+        is_update: true
+      };
+      
+      addFailedSession(sessionData, 'Device offline');
+      return;
+    }
+    
+    try {
+      // First try to find an existing session to update
+      const { data: existingSessions, error: findError } = await supabase
+        .from('user_sessions')
+        .select('id, session_time_sec')
+        .eq('user_id', clientId)
+        .eq('page_path', window.location.pathname)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (findError) {
+        console.error('TimeTracker: Error finding existing session:', findError);
+        // Fall back to creating a new session
+        await TimeTracker.recordSessionWithDuration(durationSec, timestamp);
+        return;
+      }
+      
+      if (existingSessions && existingSessions.length > 0) {
+        // Found an existing session, update it
+        const existingSession = existingSessions[0];
+        const newDuration = existingSession.session_time_sec + durationSec;
+        
+        // Enforce maximum session duration
+        const cappedDuration = Math.min(newDuration, MAX_SESSION_DURATION);
+        
+        console.log(`TimeTracker: Updating existing session (ID: ${existingSession.id}) from ${existingSession.session_time_sec}s to ${cappedDuration}s`);
+        
+        const { data: updateData, error: updateError } = await supabase
+          .from('user_sessions')
+          .update({ 
+            session_time_sec: cappedDuration,
+            last_activity: new Date().toISOString()
+          })
+          .eq('id', existingSession.id);
+        
+        if (updateError) {
+          console.error('TimeTracker: Error updating session:', updateError);
+          // If update fails, try creating a new record
+          await TimeTracker.recordSessionWithDuration(durationSec, timestamp);
+        } else {
+          console.log('TimeTracker: Session updated successfully:', updateData);
+        }
+      } else {
+        // No existing session found, create a new one
+        console.log('TimeTracker: No existing session found, creating new one');
+        await TimeTracker.recordSessionWithDuration(durationSec, timestamp);
+      }
+    } catch (error) {
+      console.error('TimeTracker: Unexpected error updating session:', error);
+      // Fall back to creating a new session
+      await TimeTracker.recordSessionWithDuration(durationSec, timestamp);
+    }
   }
 }; 
