@@ -1,7 +1,7 @@
 // A simple script to test Supabase connection
 // Run with: node test-supabase.js
 
-const fetch = require('node-fetch');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 require('dotenv').config();
 
 // Get Supabase credentials from environment variables
@@ -24,7 +24,8 @@ const testData = {
   browser: 'node-test',
   os: 'test',
   referrer: null,
-  created_at: new Date().toISOString()
+  created_at: new Date().toISOString(),
+  last_activity: new Date().toISOString()
 };
 
 // Test direct fetch request

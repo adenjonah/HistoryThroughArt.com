@@ -21,12 +21,16 @@ if (!supabaseUrl || !supabaseAnonKey) {
 // Custom fetch handler to log detailed request/response info
 const customFetch = async (url, options = {}) => {
   // Log full headers for debugging
-  const headersObj = Object.fromEntries(
-    options.headers ? [...options.headers.entries()] : []
-  );
+  const headersObj = options.headers ? 
+    (typeof options.headers.entries === 'function' 
+      ? Object.fromEntries([...options.headers.entries()]) 
+      : (options.headers instanceof Headers 
+          ? Object.fromEntries(Array.from(options.headers)) 
+          : options.headers)) 
+    : {};
   
   // Check for proper authorization header format
-  const authHeader = headersObj['Authorization'];
+  const authHeader = headersObj['Authorization'] || headersObj['authorization'];
   const hasProperAuthFormat = authHeader && authHeader.startsWith('Bearer ');
   
   console.log('Supabase API request:', {
@@ -49,10 +53,18 @@ const customFetch = async (url, options = {}) => {
     // Try to parse and log the response for debugging
     try {
       const responseText = await clonedResponse.text();
+      // Safely extract headers
+      const responseHeaders = {};
+      if (response.headers && typeof response.headers.forEach === 'function') {
+        response.headers.forEach((value, key) => {
+          responseHeaders[key] = value;
+        });
+      }
+      
       console.log('Supabase API response:', {
         status: response.status,
         statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries()),
+        headers: responseHeaders,
         body: responseText.substring(0, 500) + (responseText.length > 500 ? '...' : '')
       });
     } catch (error) {
@@ -180,10 +192,18 @@ export const testSupabaseConnection = async () => {
           }
         });
         
+        // Safely extract response headers
+        const responseHeaders = {};
+        if (response.headers && typeof response.headers.forEach === 'function') {
+          response.headers.forEach((value, key) => {
+            responseHeaders[key] = value;
+          });
+        }
+        
         console.log('Direct fetch response:', {
           status: response.status,
           statusText: response.statusText,
-          headers: Object.fromEntries(response.headers.entries())
+          headers: responseHeaders
         });
       } catch (corsError) {
         console.error('CORS test failed:', corsError);

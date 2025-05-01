@@ -741,29 +741,92 @@ export const TimeTracker = {
           // Increment retry count
           session.retryCount = (session.retryCount || 0) + 1;
           
-          // Try to insert the session
-          const { error } = await supabase
-            .from('user_sessions')
-            .insert({
-              user_id: session.user_id,
-              session_id: session.session_id,
-              session_time_sec: session.session_time_sec,
-              page_path: session.page_path,
-              device_type: session.device_type,
-              browser: session.browser,
-              os: session.os,
-              referrer: session.referrer,
-              created_at: session.created_at
-            });
-          
-          if (error) {
-            console.error(`TimeTracker: Failed to retry session (attempt ${session.retryCount}/${MAX_RETRIES}):`, error);
-            // Keep in the failed sessions list with updated retry count
-            updatedFailedSessions.push(session);
+          // Check if this is an update to an existing session
+          if (session.is_update && session.current_page_session_id) {
+            // Try to update an existing session by finding it first
+            const { data: existingSessions, error: findError } = await supabase
+              .from('user_sessions')
+              .select('id, session_time_sec')
+              .eq('user_id', session.user_id)
+              .eq('page_path', session.page_path)
+              .order('created_at', { ascending: false })
+              .limit(1);
+            
+            if (!findError && existingSessions && existingSessions.length > 0) {
+              // Found an existing session, update it
+              const existingSession = existingSessions[0];
+              const newDuration = existingSession.session_time_sec + session.session_time_sec;
+              
+              // Enforce maximum session duration
+              const cappedDuration = Math.min(newDuration, MAX_SESSION_DURATION);
+              
+              // Update the session
+              const { error: updateError } = await supabase
+                .from('user_sessions')
+                .update({ 
+                  session_time_sec: cappedDuration,
+                  last_activity: new Date().toISOString()
+                })
+                .eq('id', existingSession.id);
+              
+              if (updateError) {
+                console.error(`TimeTracker: Failed to update session (attempt ${session.retryCount}/${MAX_RETRIES}):`, updateError);
+                updatedFailedSessions.push(session);
+              } else {
+                console.log('TimeTracker: Successfully updated session');
+                successfulIds.push(session.timestamp);
+              }
+            } else {
+              // No existing session found, create a new one
+              const { error: insertError } = await supabase
+                .from('user_sessions')
+                .insert({
+                  user_id: session.user_id,
+                  session_id: session.session_id,
+                  session_time_sec: session.session_time_sec,
+                  page_path: session.page_path,
+                  device_type: session.device_type,
+                  browser: session.browser,
+                  os: session.os,
+                  referrer: session.referrer,
+                  created_at: session.created_at,
+                  last_activity: new Date().toISOString()
+                });
+              
+              if (insertError) {
+                console.error(`TimeTracker: Failed to retry session (attempt ${session.retryCount}/${MAX_RETRIES}):`, insertError);
+                updatedFailedSessions.push(session);
+              } else {
+                console.log('TimeTracker: Successfully created session');
+                successfulIds.push(session.timestamp);
+              }
+            }
           } else {
-            console.log('TimeTracker: Successfully retried session');
-            // Mark as successful to remove from the list
-            successfulIds.push(session.timestamp);
+            // Normal insert - not an update
+            const { error } = await supabase
+              .from('user_sessions')
+              .insert({
+                user_id: session.user_id,
+                session_id: session.session_id,
+                session_time_sec: session.session_time_sec,
+                page_path: session.page_path,
+                device_type: session.device_type,
+                browser: session.browser,
+                os: session.os,
+                referrer: session.referrer,
+                created_at: session.created_at,
+                last_activity: session.last_activity || session.created_at
+              });
+            
+            if (error) {
+              console.error(`TimeTracker: Failed to retry session (attempt ${session.retryCount}/${MAX_RETRIES}):`, error);
+              // Keep in the failed sessions list with updated retry count
+              updatedFailedSessions.push(session);
+            } else {
+              console.log('TimeTracker: Successfully retried session');
+              // Mark as successful to remove from the list
+              successfulIds.push(session.timestamp);
+            }
           }
         } catch (error) {
           console.error('TimeTracker: Error retrying session:', error);
