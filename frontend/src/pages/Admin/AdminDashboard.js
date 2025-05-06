@@ -7,6 +7,7 @@ import UserStats from '../../components/UserStats';
 import SessionsTable from '../../components/SessionsTable';
 import FilterControls from '../../components/FilterControls';
 import AnalyticsCharts from '../../components/AnalyticsCharts';
+import SessionSummary from '../../components/SessionSummary';
 
 /**
  * Admin Dashboard for analytics
@@ -156,7 +157,7 @@ const AdminDashboard = () => {
         const sessionsData = await AnalyticsService.getSessions({
           ...filters,
           pageSize: 1000,  // Process in chunks of 1000
-          maxRecords: 10000 // Show up to 10,000 sessions by default
+          maxRecords: 100000 // Increase limit to allow more data to be retrieved
         });
         console.log('Sessions loaded:', sessionsData.length, sessionsData);
         setSessions(sessionsData);
@@ -529,8 +530,16 @@ ${diagnosticResults.tableAccessError ? `- Table Error: ${diagnosticResults.table
             <div className={showTables ? "" : "hidden"}>
               {/* User Stats */}
               <div className="mb-6">
-                <UserStats userStats={userStats} />
+                <UserStats 
+                  userStats={userStats}
+                  totalUsers={userStats.length}
+                  totalSessions={sessions.length}
+                  totalTime={totalTime}
+                />
               </div>
+
+              {/* Enhanced Session Summary */}
+              <SessionSummary sessions={sessions} />
 
               {/* Sessions Table */}
               <SessionsTable sessions={sessions} />

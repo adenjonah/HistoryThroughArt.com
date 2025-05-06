@@ -4,8 +4,11 @@ import React, { useState } from 'react';
  * Component to display user statistics
  * @param {Object} props
  * @param {Array} props.userStats - Array of user statistics
+ * @param {number} props.totalUsers - Total number of unique users
+ * @param {number} props.totalSessions - Total number of sessions
+ * @param {number} props.totalTime - Total time in seconds
  */
-const UserStats = ({ userStats }) => {
+const UserStats = ({ userStats = [], totalUsers, totalSessions, totalTime }) => {
   const [sortConfig, setSortConfig] = useState({
     key: 'total_time_sec',
     direction: 'desc'
@@ -20,7 +23,7 @@ const UserStats = ({ userStats }) => {
     return stats
       .filter(user => {
         // Filter out test and permission test entries
-        const userId = user.user_id.toLowerCase();
+        const userId = (user.user_id || '').toLowerCase();
         const isTestEntry = 
           userId.includes('test-') || 
           userId.includes('permissi') ||
@@ -32,7 +35,7 @@ const UserStats = ({ userStats }) => {
       .map(user => {
         // Generate a consistent but anonymous user identifier
         // Take first 8 chars of the ID as a stable reference
-        const shortId = user.user_id.substring(0, 8);
+        const shortId = user.user_id ? user.user_id.substring(0, 8) : 'unknown';
         
         return {
           ...user,
@@ -98,6 +101,24 @@ const UserStats = ({ userStats }) => {
       <div className="p-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">User Statistics</h3>
         <p className="text-sm text-gray-500 mb-4">Total time spent per user</p>
+        
+        {/* Summary stats */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="text-sm text-blue-800 font-medium">Unique Users</div>
+            <div className="text-2xl font-bold text-blue-900">{totalUsers || normalizedUserStats.length}</div>
+          </div>
+          
+          <div className="bg-green-50 p-4 rounded-lg">
+            <div className="text-sm text-green-800 font-medium">Total Sessions</div>
+            <div className="text-2xl font-bold text-green-900">{totalSessions || '0'}</div>
+          </div>
+          
+          <div className="bg-purple-50 p-4 rounded-lg">
+            <div className="text-sm text-purple-800 font-medium">Total Time</div>
+            <div className="text-2xl font-bold text-purple-900">{formatTime(totalTime || 0)}</div>
+          </div>
+        </div>
         
         <div className="flex justify-between items-center mb-4">
           <div className="w-64">
