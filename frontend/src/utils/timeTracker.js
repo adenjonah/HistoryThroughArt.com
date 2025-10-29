@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { supabase } from './supabaseClient';
+import { supabase, checkSupabaseAvailability, isSupabaseAvailable } from './supabaseClient';
 import Cookies from 'js-cookie';
 import { UAParser } from 'ua-parser-js';
 
@@ -158,7 +158,17 @@ export const TimeTracker = {
   /**
    * Initialize the time tracker when the app starts
    */
-  initialize: () => {
+  initialize: async () => {
+    // Check Supabase availability first
+    const supabaseAvailable = await checkSupabaseAvailability();
+    console.log('TimeTracker: Supabase availability check result:', supabaseAvailable);
+
+    if (!supabaseAvailable) {
+      console.warn('TimeTracker: Supabase is not available, disabling analytics tracking');
+      TimeTracker.trackingEnabled = false;
+      return;
+    }
+
     // Check if tracking is allowed on this domain
     TimeTracker.trackingEnabled = isTrackingAllowed();
     
@@ -623,6 +633,12 @@ export const TimeTracker = {
       durationSec = MAX_SESSION_DURATION;
     }
     
+    // Don't record if Supabase is not available
+    if (!isSupabaseAvailable()) {
+      console.log('TimeTracker: Supabase is not available, skipping session recording');
+      return;
+    }
+
     // Don't record if offline
     if (!TimeTracker.isOnline) {
       console.log('TimeTracker: Device is offline, queueing session for later');
@@ -638,7 +654,7 @@ export const TimeTracker = {
         created_at: new Date(timestamp).toISOString(),
         last_activity: new Date().toISOString()
       };
-      
+
       addFailedSession(sessionData, 'Device offline');
       return;
     }

@@ -18,6 +18,37 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error(`Key: ${supabaseAnonKey ? 'Defined' : 'Undefined'}`);
 }
 
+// Add Supabase availability status
+let supabaseAvailable = true;
+
+// Function to check if Supabase is available
+export const checkSupabaseAvailability = async () => {
+  if (!supabaseUrl) {
+    supabaseAvailable = false;
+    return false;
+  }
+
+  try {
+    // Try to make a simple request to check if the domain resolves
+    const response = await fetch(supabaseUrl + '/rest/v1/', {
+      method: 'HEAD',
+      headers: {
+        'apikey': supabaseAnonKey || ''
+      },
+      signal: AbortSignal.timeout(5000) // 5 second timeout
+    });
+    supabaseAvailable = response.status !== 0; // status 0 usually means network error
+    return supabaseAvailable;
+  } catch (error) {
+    console.warn('Supabase availability check failed:', error.message);
+    supabaseAvailable = false;
+    return false;
+  }
+};
+
+// Export availability status
+export const isSupabaseAvailable = () => supabaseAvailable;
+
 // Custom fetch handler to log detailed request/response info
 const customFetch = async (url, options = {}) => {
   // Log full headers for debugging
