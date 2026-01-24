@@ -14,10 +14,6 @@ import ArtGallery from "./pages/ArtGallery/ArtGallery";
 import Calendar from "./pages/Calendar/Calendar";
 import Tutorial from "./pages/Tutorial/Tutorial";
 import Flashcards from "./pages/Flashcards/Flashcards";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import DebugPage from "./pages/Admin/DebugPage";
-import SupabaseDebug from "./pages/SupabaseDebug";
-import ChartTester from "./components/ChartTester";
 
 const NewFeatureModal = ({ onClose }) => {
   // Define styles to ensure visibility
@@ -91,27 +87,15 @@ const NewFeatureModal = ({ onClose }) => {
 };
 
 function App() {
-  // Use a simpler approach: check localStorage at startup only
   const hasSeenModal = localStorage.getItem("newFeaturesModalSeen2") === "true";
-  
-  // Debug what's happening with localStorage
-  console.log("Initial state check:", { hasSeenModal });
-  
-  // Initialize state - show by default unless already seen
   const [menuOpened, setMenuOpened] = useState(false);
   const [showModal, setShowModal] = useState(!hasSeenModal);
-  
-  // IMPORTANT: Remove any useEffect that might be toggling the modal visibility
-  // No useEffect that modifies showModal state should run on mount
-  
-  // Handle modal close - only way to dismiss
+
   const handleCloseModal = () => {
-    console.log("Modal closed by user - setting localStorage");
     setShowModal(false);
     localStorage.setItem("newFeaturesModalSeen2", "true");
   };
 
-  // Update our render
   return (
     <>
       <NavBar menuOpened={menuOpened} setMenuOpened={setMenuOpened} />
@@ -127,10 +111,6 @@ function App() {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/tutorial" element={<Tutorial />} />
           <Route path="/flashcards" element={<Flashcards />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/debug" element={<DebugPage />} />
-          <Route path="/admin/supabase-debug" element={<SupabaseDebug />} />
-          <Route path="/admin/chart-test" element={<ChartTester />} />
         </Routes>
       </div>
       <button

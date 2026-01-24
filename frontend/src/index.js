@@ -4,12 +4,6 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { TimeTracker } from "./utils/timeTracker";
-
-// Initialize time tracking
-TimeTracker.initialize().catch(error => {
-  console.error('Failed to initialize TimeTracker:', error);
-});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
