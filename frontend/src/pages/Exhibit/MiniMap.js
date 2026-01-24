@@ -1,10 +1,13 @@
 import MapBox from "../Map/MapBox";
 import React, { useState } from "react";
 
-function MiniMap({ artPiece, mapType: initialMapType, setMapType: parentSetMapType }) {
+function MiniMap({
+  artPiece,
+  mapType: initialMapType,
+  setMapType: parentSetMapType,
+}) {
   const [mapType, setMapType] = useState(initialMapType || "originated");
 
-  // Get the appropriate coordinates based on map type
   const getMapCoordinates = () => {
     if (mapType === "originated") {
       return artPiece.originatedLongitude && artPiece.originatedLatitude
@@ -26,7 +29,6 @@ function MiniMap({ artPiece, mapType: initialMapType, setMapType: parentSetMapTy
     }
   };
 
-  // Determine the display message
   const getDisplayMessage = () => {
     if (mapType === "currentlyDisplayed") {
       return artPiece.displayedLongitude === null
@@ -39,28 +41,83 @@ function MiniMap({ artPiece, mapType: initialMapType, setMapType: parentSetMapTy
     }
   };
 
+  const hasOrigin =
+    artPiece.originatedLongitude !== null &&
+    artPiece.originatedLatitude !== null;
+  const hasDisplayed =
+    artPiece.displayedLongitude !== null &&
+    artPiece.displayedLatitude !== null;
+
   return (
-    <div className="w3-col s12 m6 l6 grid-item">
-      <div className="w3-display-container">
+    <div className="w-full">
+      {/* Map Type Toggle */}
+      <div className="flex justify-center gap-3 mb-4">
+        <button
+          className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+            mapType === "originated"
+              ? "bg-[var(--button-color)] text-[var(--button-text-color)]"
+              : "bg-[var(--accent-color)]/30 text-[var(--text-color)] hover:bg-[var(--accent-color)]/50"
+          }`}
+          onClick={() => handleMapTypeChange("originated")}
+        >
+          Origin Location
+        </button>
+        <button
+          className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+            mapType === "currentlyDisplayed"
+              ? "bg-[var(--button-color)] text-[var(--button-text-color)]"
+              : "bg-[var(--accent-color)]/30 text-[var(--text-color)] hover:bg-[var(--accent-color)]/50"
+          }`}
+          onClick={() => handleMapTypeChange("currentlyDisplayed")}
+        >
+          Currently Displayed
+        </button>
+      </div>
+
+      {/* Map Container */}
+      <div className="relative rounded-lg overflow-hidden">
         <MapBox
           center={artPieceMapLocation}
           zoom={artPieceMapLocation ? 5 : 1}
-          size={{ width: "100%", height: "500px" }}
+          size={{ width: "100%", height: "400px" }}
           onMapTypeChange={handleMapTypeChange}
           mapType={mapType}
         />
-        <div 
-          className="w3-display-topleft w3-padding w3-large"
-          style={{ 
-            marginLeft: "10px", 
-            backgroundColor: "rgba(0,0,0,0.6)", 
-            color: "white", 
-            padding: "8px 12px",
-            borderRadius: "0 0 4px 0"
-          }}
+
+        {/* Location Badge */}
+        <div
+          className="absolute top-4 left-4 px-4 py-2 rounded-lg
+                     bg-black/60 text-white text-sm font-medium backdrop-blur-sm"
         >
           {getDisplayMessage()}
         </div>
+
+        {/* Location Info */}
+        {mapType === "currentlyDisplayed" && hasDisplayed && (
+          <div
+            className="absolute bottom-4 left-4 right-4 p-3 rounded-lg
+                       bg-black/60 text-white text-sm backdrop-blur-sm"
+          >
+            <span className="font-medium">Museum:</span>{" "}
+            {artPiece.museum || "Unknown"}
+            {artPiece.displayedLocation && (
+              <>
+                <br />
+                <span className="font-medium">Location:</span>{" "}
+                {artPiece.displayedLocation}
+              </>
+            )}
+          </div>
+        )}
+
+        {mapType === "originated" && hasOrigin && artPiece.location && (
+          <div
+            className="absolute bottom-4 left-4 right-4 p-3 rounded-lg
+                       bg-black/60 text-white text-sm backdrop-blur-sm"
+          >
+            <span className="font-medium">Created in:</span> {artPiece.location}
+          </div>
+        )}
       </div>
     </div>
   );
