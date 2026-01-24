@@ -24,13 +24,44 @@ export const formatDateDisplay = (dateStr) => {
     : parts[0] + " CE";
 };
 
+// Get the current academic year start (September)
+// Academic year runs Sep-May, so:
+// - If current month is Sep-Dec, academic year started this calendar year
+// - If current month is Jan-Aug, academic year started last calendar year
+export const getCurrentAcademicYear = () => {
+  const now = new Date();
+  const month = now.getMonth(); // 0-indexed (0 = Jan, 8 = Sep)
+  const year = now.getFullYear();
+
+  // If September (8) through December (11), we're in fall of current year
+  // If January (0) through August (7), academic year started previous year
+  return month >= 8 ? year : year - 1;
+};
+
+// Convert month-day string to full date with correct academic year
+// Format: "M-D" (e.g., "9-3" for September 3)
+export const getAcademicDate = (monthDayStr) => {
+  const parts = monthDayStr.split("-");
+  const month = parseInt(parts[0], 10);
+  const day = parseInt(parts[1], 10);
+
+  const academicYearStart = getCurrentAcademicYear();
+
+  // Fall semester (Sep-Dec) uses the academic year start
+  // Spring semester (Jan-May) uses academic year start + 1
+  const year = month >= 9 ? academicYearStart : academicYearStart + 1;
+
+  return new Date(year, month - 1, day); // month is 0-indexed in Date
+};
+
 // Create due dates map from assignments data
+// Now handles month-day format and calculates year automatically
 export const createDueDatesMap = (dueDatesData) => {
   const map = new Map();
   dueDatesData.assignments.forEach((assignment) => {
     const id = parseInt(assignment.id, 10);
     if (!isNaN(id)) {
-      map.set(id, new Date(assignment.dueDate));
+      map.set(id, getAcademicDate(assignment.dueDate));
     }
   });
   return map;
