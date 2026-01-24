@@ -1,4 +1,5 @@
 import React from "react";
+import { getContentAreaName } from "../../data/contentAreas";
 
 function Identifiers({ artPiece }) {
   const formatDate = (date) => {
@@ -11,64 +12,68 @@ function Identifiers({ artPiece }) {
     if (dateParts.length === 2) {
       dateParts[0] = toBCE(dateParts[0]);
       dateParts[1] = toBCE(dateParts[1]);
-      dateParts = dateParts.join(" - ");
+      return dateParts.join(" - ");
     } else {
-      dateParts[0] = toBCE(dateParts[0]);
-      dateParts = dateParts[0];
+      return toBCE(dateParts[0]);
     }
-
-    return dateParts;
   };
 
+  const identifiers = [
+    {
+      label: "Artist/Culture",
+      value: artPiece.artist_culture,
+      show: artPiece.artist_culture !== "None",
+    },
+    {
+      label: "Location Made",
+      value: artPiece.location,
+      show: artPiece.location !== "None",
+    },
+    {
+      label: "Date Created",
+      value: formatDate(artPiece.date),
+      show: artPiece.date !== "None",
+    },
+    {
+      label: "Materials",
+      value: artPiece.materials,
+      show: artPiece.materials !== "None",
+    },
+    {
+      label: "Content Area",
+      value: `Unit ${artPiece.unit}: ${getContentAreaName(artPiece.unit)}`,
+      show: true,
+    },
+  ];
+
   return (
-    <div
-      className="flex flex-col justify-center items-center w-full h-full p-4 border rounded-lg"
-      style={{
-        backgroundColor: "var(--foreground-color)",
-        color: "var(--accent-color)",
-        borderColor: "var(--accent-color)",
-        borderWidth: "1px",
-      }}
-    >
-      <h2
-        className="text-center font-bold mb-4"
-        style={{
-          fontSize: "2.5vw", // Dynamically sized header
-          color: "var(--accent-color)",
-        }}
-      >
-        Identifiers
-      </h2>
+    <div className="h-full">
       <div
-        className="space-y-4 text-center"
-        style={{
-          fontSize: "1.75vw", // Responsive font size for content
-          lineHeight: "1.5", // Improves readability
-        }}
+        className="bg-[var(--foreground-color)] rounded-xl p-6 sm:p-8 h-full
+                   border-2 border-[var(--accent-color)]/50"
       >
-        {artPiece.artist_culture !== "None" && (
-          <p>
-            <strong>Artist/Culture:</strong> {artPiece.artist_culture}
-          </p>
-        )}
-        {artPiece.location !== "None" && (
-          <p>
-            <strong>Location Made:</strong> {artPiece.location}
-          </p>
-        )}
-        {artPiece.date !== "None" && (
-          <p>
-            <strong>Year Created:</strong> {formatDate(artPiece.date)}
-          </p>
-        )}
-        {artPiece.materials !== "None" && (
-          <p>
-            <strong>Materials:</strong> {artPiece.materials}
-          </p>
-        )}
-        <p>
-          <strong>Unit:</strong> {artPiece.unit}
-        </p>
+        <h2 className="text-xl sm:text-2xl font-bold text-[var(--accent-color)] mb-6 text-center">
+          Identifiers
+        </h2>
+
+        <div className="space-y-4">
+          {identifiers
+            .filter((item) => item.show)
+            .map((item, index) => (
+              <div
+                key={index}
+                className="bg-[var(--background-color)]/10 rounded-lg p-4
+                           hover:bg-[var(--background-color)]/20 transition-colors duration-200"
+              >
+                <div className="text-sm font-semibold text-[var(--accent-color)]/80 uppercase tracking-wide mb-1">
+                  {item.label}
+                </div>
+                <div className="text-base sm:text-lg text-[var(--accent-color)] font-medium">
+                  {item.value}
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
