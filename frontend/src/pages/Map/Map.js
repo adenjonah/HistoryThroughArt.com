@@ -4,14 +4,17 @@ import "./Map.css";
 
 function Map() {
   return (
-    <div className="map pagecontainer">
-      <h1 className="title">Map</h1>
-      <p className="blurb">Explore the locations of the 250 art pieces.</p>
+    <div className="flex flex-col items-center px-4 py-8 max-w-6xl mx-auto">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-[var(--text-color)]">
+          Art Origins Map
+        </h1>
+        <p className="text-sm md:text-base text-[var(--text-color)] opacity-60 mt-3 max-w-xl mx-auto">
+          Explore where artworks originated and where they're displayed today
+        </p>
+      </div>
 
-      <div
-        className="map-container"
-        style={{ width: "100%", maxWidth: "1400px", height: "70vh", margin: "0 auto" }}
-      >
+      <div className="w-full rounded-2xl overflow-hidden shadow-xl">
         <MapBox />
       </div>
     </div>

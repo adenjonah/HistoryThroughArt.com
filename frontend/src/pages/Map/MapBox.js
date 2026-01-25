@@ -150,27 +150,25 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
                 "circle-color": [
                   "step",
                   ["get", "point_count"],
-                  "#ff9999",
-                  5,
-                  "#ff6666",
+                  "rgba(112, 71, 163, 0.6)",
                   10,
-                  "#ff3333",
-                  15,
-                  "#cc0000",
+                  "rgba(112, 71, 163, 0.8)",
+                  25,
+                  "rgba(112, 71, 163, 1)",
                 ],
                 "circle-radius": [
-                  "step",
+                  "interpolate",
+                  ["linear"],
                   ["get", "point_count"],
-                  10,
-                  5,
-                  15,
-                  10,
-                  20,
-                  25,
-                  25,
+                  2, 12,
+                  10, 18,
+                  50, 28,
+                  100, 36,
                 ],
-                "circle-stroke-color": "#000000",
+                "circle-stroke-color": "rgba(255, 255, 255, 0.8)",
                 "circle-stroke-width": 2,
+                "circle-blur": 0.15,
+                "circle-opacity": 0.95,
               },
             });
 
@@ -195,10 +193,10 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
               source: "points",
               filter: ["!", ["has", "point_count"]],
               paint: {
-                "circle-color": "#ff0000",
-                "circle-radius": 5,
+                "circle-color": "#7047A3",
+                "circle-radius": 7,
                 "circle-stroke-width": 2,
-                "circle-stroke-color": "#000000",
+                "circle-stroke-color": "rgba(255, 255, 255, 0.8)",
               },
             });
 
@@ -230,15 +228,17 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
               }
 
               // Create popup content with null/undefined checks
-              const imgTag = imageUrl ? `<img src="${imageUrl}" height="200" width="200" /><br/>` : '';
               const nameText = name || 'Unknown';
               const locationText = location || 'Unknown location';
-              
+
               const popupContent = `
-                <div>
-                  ${imgTag}
-                  ${id}. ${nameText}<br/>
-                  ${locationText}<br/>
+                <div class="map-popup-content">
+                  ${imageUrl ? `
+                    <img src="${imageUrl}" class="map-popup-image" alt="${nameText}" />
+                  ` : ''}
+                  <p class="map-popup-title">${id}. ${nameText}</p>
+                  <p class="map-popup-location">${locationText}</p>
+                  <p class="map-popup-hint">Click to view →</p>
                 </div>
               `;
 
@@ -288,53 +288,40 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
   if (mapError) {
     return (
       <div
+        className="flex items-center justify-center bg-[var(--foreground-color)]
+          rounded-2xl p-5 text-center min-h-[200px]"
         style={{
           width: size?.width || "100%",
           height: size?.height || "calc(100% - 20px)",
-          minHeight: "200px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#f0f0f0",
-          borderRadius: "20px",
-          padding: "20px",
-          textAlign: "center",
         }}
       >
-        <p>Map could not be loaded: {mapError}</p>
+        <p className="text-[var(--text-color)] opacity-70">Map could not be loaded: {mapError}</p>
       </div>
     );
   }
 
   return (
-    <div style={{ position: "relative" }}>
+    <div className="relative">
       <div
         ref={mapContainerRef}
+        className="w-full min-h-[600px] rounded-2xl"
         style={{
           width: size?.width || "100%",
           height: size?.height || "calc(100% - 20px)",
-          minHeight: "600px", 
-          borderRadius: "20px",
         }}
       />
       {mapInitialized && (
         <button
           onClick={handleMapToggle}
-          style={{
-            position: "absolute",
-            top: "10px",
-            left: "10px",
-            zIndex: 1,
-            backgroundColor: "var(--button-color, rgba(174, 143, 177, 0.8))",
-            color: "var(--button-text-color, white)",
-            padding: "10px 15px",
-            borderRadius: "5px",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
+          className="absolute top-4 left-4 z-10
+            px-4 py-2.5 rounded-lg
+            bg-[var(--foreground-color)] text-[var(--background-color)]
+            font-medium text-sm
+            shadow-lg hover:shadow-xl
+            transition-all duration-200
+            hover:scale-105 border-none cursor-pointer"
         >
-          Switch To {mapType === "originated" ? "Displayed" : "Origin"} Locations
+          {mapType === "originated" ? "Show Current Locations" : "Show Origins"}
         </button>
       )}
     </div>
