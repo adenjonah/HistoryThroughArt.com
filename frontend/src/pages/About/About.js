@@ -42,7 +42,7 @@ function About() {
             {/* Back Side */}
             <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
               <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--accent-color)] italic mt-8">
+                <p className="text-[var(--background-color)] italic mt-8">
                   Caleb is a Senior at Eastern Washington University. A proud alum of
                   Mrs. Korus' history classes, graduated in 2021 and brings his tech
                   expertise to our team.
@@ -51,7 +51,7 @@ function About() {
                   href="https://www.linkedin.com/in/caleb-stewart-281594274/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--button-color)] text-[var(--button-text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300"
+                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300"
                 >
                   View LinkedIn
                 </a>
@@ -77,7 +77,7 @@ function About() {
             {/* Back Side */}
             <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
               <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--accent-color)] italic mt-8">
+                <p className="text-[var(--background-color)] italic mt-8">
                   The passionate AP Art History teacher at North Central High School
                   who inspires curiosity and a love for art in her students.
                 </p>
@@ -85,7 +85,7 @@ function About() {
                   href="https://www.spokesman.com/stories/2010/mar/11/teacher-of-year-honors-go-to-three/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--button-color)] text-[var(--button-text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300"
+                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300"
                 >
                   Read Article
                 </a>
@@ -111,7 +111,7 @@ function About() {
             {/* Back Side */}
             <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
               <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--accent-color)] italic mt-8">
+                <p className="text-[var(--background-color)] italic mt-8">
                   Jonah is a Junior at Columbia University majoring in Computer
                   Science, Political Science, and Statistics. He had Mrs. Korus as a
                   history teacher in 7th, 8th, 10th, and 12th grade. Jonah graduated
@@ -121,7 +121,7 @@ function About() {
                   href="https://www.linkedin.com/in/jonah-aden/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--button-color)] text-[var(--button-text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] transition-colors duration-300"
+                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300"
                 >
                   View LinkedIn
                 </a>
@@ -161,7 +161,7 @@ function About() {
         rel="noopener noreferrer"
         className="mb-24"
       >
-        <button className="bg-[var(--button-color)] text-[var(--text-color)] px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 hover:bg-[#586069] hover:-translate-y-1 border-none">
+        <button className="bg-[var(--button-color)] text-[var(--button-text-color)] px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] hover:-translate-y-1 border-none">
           View on GitHub
         </button>
       </a>

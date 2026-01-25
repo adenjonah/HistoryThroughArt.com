@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getContentAreaName } from "../../data/contentAreas";
-import { formatDateDisplay } from "./flashcardUtils";
+import { formatDateDisplay, hasSeenFlipHint, markFlipHintSeen } from "./flashcardUtils";
 
 const FlashcardCard = ({
   card,
@@ -15,6 +15,15 @@ const FlashcardCard = ({
   const cardRef = useRef(null);
   const touchStartRef = useRef({ x: 0, y: 0 });
   const [swipeDirection, setSwipeDirection] = useState(null);
+  const [showFlipHint, setShowFlipHint] = useState(!hasSeenFlipHint());
+
+  // Dismiss flip hint on first flip
+  useEffect(() => {
+    if (isFlipped && showFlipHint) {
+      setShowFlipHint(false);
+      markFlipHintSeen();
+    }
+  }, [isFlipped, showFlipHint]);
 
   // Reset card transform when animation completes
   useEffect(() => {
@@ -103,6 +112,8 @@ const FlashcardCard = ({
     .filter(Boolean)
     .join(" ");
 
+  const imageSrc = require(`../../artImages/${card.image[0]}`);
+
   return (
     <>
       {swipeDirection && (
@@ -121,49 +132,66 @@ const FlashcardCard = ({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <span className="flip-hint">Press SPACE to flip</span>
+          {showFlipHint && (
+            <span className="flip-hint">Press SPACE to flip</span>
+          )}
           <div className="flashcard-inner">
-            {/* Front - Image */}
+            {/* Front - Image Only */}
             <div className="flashcard-front">
-              <img
-                src={require(`../../artImages/${card.image[0]}`)}
-                alt={card.name}
-                className="flashcard-image"
-              />
-              <Link
-                to={`/exhibit?id=${card.id}`}
-                className="full-page-button"
-                onClick={(e) => e.stopPropagation()}
-              >
-                View Details
-              </Link>
+              <div className="image-viewport">
+                {/* Blurred background layer for letterboxing */}
+                <div
+                  className="image-backdrop"
+                  style={{ backgroundImage: `url(${imageSrc})` }}
+                />
+                {/* Main image with contain */}
+                <img
+                  src={imageSrc}
+                  alt={card.name}
+                  className="flashcard-image"
+                />
+              </div>
             </div>
 
-            {/* Back - Details */}
+            {/* Back - Details Only */}
             <div className="flashcard-back">
-              {isFlipped && (
-                <>
-                  <h3 className="flashcard-title">
-                    {card.id}. <strong>{card.name}</strong>
-                  </h3>
-                  <div className="flashcard-content">
-                    <p>Location: {card.location}</p>
-                    <p>Artist/Culture: {card.artist_culture || "Unknown"}</p>
-                    <p>Date: {formatDateDisplay(card.date)}</p>
-                    <p>Materials: {card.materials}</p>
-                    <p>Content Area: {getContentAreaName(card.unit)}</p>
+              <div className="back-content">
+                <h3 className="flashcard-title">
+                  <span className="card-number">{card.id}.</span>
+                  <span className="card-name">{card.name}</span>
+                </h3>
+
+                <div className="flashcard-metadata">
+                  <div className="metadata-row">
+                    <span className="metadata-label">Artist/Culture</span>
+                    <span className="metadata-value">{card.artist_culture || "Unknown"}</span>
                   </div>
-                  <div className="details-link-container">
-                    <Link
-                      to={`/exhibit?id=${card.id}`}
-                      className="full-page-button back-side"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      View Details
-                    </Link>
+                  <div className="metadata-row">
+                    <span className="metadata-label">Date</span>
+                    <span className="metadata-value">{formatDateDisplay(card.date)}</span>
                   </div>
-                </>
-              )}
+                  <div className="metadata-row">
+                    <span className="metadata-label">Location</span>
+                    <span className="metadata-value">{card.location || "—"}</span>
+                  </div>
+                  <div className="metadata-row">
+                    <span className="metadata-label">Materials</span>
+                    <span className="metadata-value">{card.materials || "—"}</span>
+                  </div>
+                  <div className="metadata-row">
+                    <span className="metadata-label">Content Area</span>
+                    <span className="metadata-value">{getContentAreaName(card.unit)}</span>
+                  </div>
+                </div>
+
+                <Link
+                  to={`/exhibit?id=${card.id}`}
+                  className="view-details-link"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  View Full Details
+                </Link>
+              </div>
             </div>
           </div>
         </div>

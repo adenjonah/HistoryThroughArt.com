@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import SearchComponent from "./SearchComponent";
 import ActiveFiltersComponent from "./ActiveFiltersComponent";
-import "./ControlBar.css";
 
 function ControlBar({
   search,
@@ -12,8 +11,6 @@ function ControlBar({
   sort,
   unitFilters,
   setUnitFilters,
-  searchBy,
-  setSearchBy,
 }) {
   const [clearFilters, setClearFilters] = useState(true);
 
@@ -27,8 +24,10 @@ function ControlBar({
       unit6: false,
       unit7: false,
       unit8: false,
+      unit9: false,
+      unit10: false,
     });
-    setSort("Korus Sort");
+    setSort("Relevance");
     setSearch("");
     setClearFilters(true);
   };
@@ -36,24 +35,22 @@ function ControlBar({
   const areFiltersActive = Object.values(unitFilters).some((filter) => filter);
 
   return (
-    <div className="w3-card-4 w3-padding w3-center control-bar-container">
+    <div className="bg-[var(--foreground-color)] rounded-xl shadow-lg p-4 sm:p-6 max-w-6xl mx-auto">
       <SearchComponent
         search={search}
         setSearch={setSearch}
         setClearFilters={setClearFilters}
         unitFilters={unitFilters}
-        setUnitFilters={setUnitFilters} // Pass setUnitFilters
+        setUnitFilters={setUnitFilters}
         sort={sort}
         setSort={setSort}
-        searchBy={searchBy}
-        setSearchBy={setSearchBy}
       />
       {areFiltersActive && (
         <ActiveFiltersComponent
           unitFilters={unitFilters}
           handleClearFilters={handleClearFilters}
           clearFilters={clearFilters}
-          setUnitFilters={setUnitFilters} // Pass setUnitFilters
+          setUnitFilters={setUnitFilters}
         />
       )}
     </div>

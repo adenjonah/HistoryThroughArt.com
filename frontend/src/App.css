@@ -5,6 +5,23 @@
   --text-color: #d8b4e2;
   --button-color: #ae759f;
   --button-text-color: #55286f;
+
+  /* Flashcard feedback colors - semantic tokens */
+  --fc-bad-color: #ef4444;
+  --fc-bad-bg: rgba(239, 68, 68, 0.9);
+  --fc-good-color: #eab308;
+  --fc-good-bg: rgba(234, 179, 8, 0.9);
+  --fc-great-color: #22c55e;
+  --fc-great-bg: rgba(34, 197, 94, 0.9);
+
+  /* Z-index scale */
+  --z-base: 1;
+  --z-card: 10;
+  --z-indicator: 20;
+  --z-controls: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-toast: 60;
 }
 
 body,

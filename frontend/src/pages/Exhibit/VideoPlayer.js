@@ -49,6 +49,16 @@ function VideoPlayer({ id }) {
 
   const onPlayerStateChange = () => {};
 
+  // Safe JSON parse wrapper for transcript data
+  const safeParseTranscript = (transcriptString) => {
+    try {
+      return JSON.parse(transcriptString);
+    } catch (e) {
+      console.error("Failed to parse transcript:", e);
+      return [];
+    }
+  };
+
   useEffect(() => {
     const foundArtPiece = artPiecesData.find(
       (piece) => piece.id.toString() === id
@@ -56,7 +66,7 @@ function VideoPlayer({ id }) {
     if (foundArtPiece && foundArtPiece.videoLink && foundArtPiece.transcript) {
       const combinedVideos = foundArtPiece.videoLink.map((video, index) => ({
         videoLink: video,
-        transcript: JSON.parse(foundArtPiece.transcript[index]),
+        transcript: safeParseTranscript(foundArtPiece.transcript[index]),
       }));
       setArtVideos(combinedVideos);
     }
@@ -158,12 +168,14 @@ function VideoPlayer({ id }) {
                         key={index}
                         className={`transcript-entry w-full text-left p-2 rounded-lg transition-all duration-200 ${
                           isActive
-                            ? "bg-yellow-500/30 text-[var(--text-color)]"
+                            ? "bg-[var(--foreground-color)]/40 text-[var(--text-color)]"
                             : "bg-[var(--accent-color)]/20 text-[var(--text-color)]/80 hover:bg-[var(--accent-color)]/30"
                         }`}
                         onClick={() => handleTranscriptClick(entry.start)}
+                        aria-current={isActive ? "true" : undefined}
                       >
                         <span className="text-xs font-mono text-[var(--foreground-color)] mr-2">
+                          <span className="sr-only">Timestamp: </span>
                           {ConvertToMins(entry.start)}
                         </span>
                         <span className="text-sm">{entry.text}</span>
@@ -181,15 +193,19 @@ function VideoPlayer({ id }) {
         {/* Transcript Toggle */}
         <button
           className="px-4 py-2 rounded-lg font-medium transition-all duration-200
-                     bg-blue-600 hover:bg-blue-700 text-white
+                     bg-[var(--button-color)] hover:bg-[var(--accent-color)]
+                     text-[var(--button-text-color)]
                      flex items-center gap-2"
           onClick={handleToggleTranscript}
+          aria-pressed={visibleTranscript}
+          aria-label={visibleTranscript ? "Hide video transcript" : "Show video transcript"}
         >
           <svg
             className="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"

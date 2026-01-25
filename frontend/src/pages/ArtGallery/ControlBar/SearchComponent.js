@@ -1,7 +1,5 @@
-// SearchComponent.js
 import React, { useState, useRef, useEffect } from "react";
 import SortComponent from "./SortComponent";
-import "./SearchComponent.css";
 
 function SearchComponent({
   search,
@@ -11,8 +9,6 @@ function SearchComponent({
   setUnitFilters,
   sort,
   setSort,
-  searchBy,
-  setSearchBy,
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -20,20 +16,14 @@ function SearchComponent({
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearch(value);
+    // Auto-switch to Relevance sort when searching (always)
+    if (value.length > 0) {
+      setSort("Relevance");
+    }
     setClearFilters(
       value.length === 0 &&
         Object.values(unitFilters).every((v) => !v) &&
-        sort === "ID Ascending"
-    );
-  };
-
-  const handleSearchByChange = (e) => {
-    const value = e.target.value;
-    setSearchBy(value);
-    setClearFilters(
-      value.length === 0 &&
-        Object.values(unitFilters).every((v) => !v) &&
-        sort === "ID Ascending"
+        (sort === "ID Ascending" || sort === "Relevance")
     );
   };
 
@@ -56,9 +46,9 @@ function SearchComponent({
       unit7: "West and Central Asia",
       unit8: "South, East, and Southeast Asia",
       unit9: "The Pacific",
-      unit10: "Global Contemporary"
+      unit10: "Global Contemporary",
     };
-    
+
     return contentAreas[unitKey] || unitKey.replace("unit", "Unit ");
   };
 
@@ -72,76 +62,110 @@ function SearchComponent({
     }
   };
 
+  // Keyboard navigation for dropdown items
+  const handleListItemKeyDown = (e, unit) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleFilterChange(unit);
+    } else if (e.key === "Escape") {
+      setDropdownOpen(false);
+    }
+  };
+
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
-    <div className="p-4 m-4 border border-gray-300 bg-white rounded shadow-sm">
-      <div className="grid grid-cols-12 gap-2">
-        <div className="col-span-4 sm:col-span-4 md:col-span-4 lg:col-span-2">
-          <select
-            className="w-full p-2 border border-gray-300 rounded bg-gray-200 text-gray-700"
-            value={searchBy}
-            onChange={handleSearchByChange}
-          >
-            <option value="all">By All</option>
-            <option value="name">By Name</option>
-            <option value="id">By ID</option>
-            <option value="year">By Year</option>
-            <option value="location">By Location</option>
-          </select>
-        </div>
-
-        <div className="col-span-8 sm:col-span-8 md:col-span-8 lg:col-span-5">
+    <div className="p-4 bg-[var(--foreground-color)] rounded-xl">
+      <div className="grid grid-cols-12 gap-2 sm:gap-3">
+        {/* Search Input - white bg with dark text for max contrast */}
+        <div className="col-span-12 lg:col-span-7">
+          <label htmlFor="gallery-search" className="sr-only">
+            Search artworks
+          </label>
           <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded text-gray-700"
-            placeholder="Search..."
+            id="gallery-search"
+            type="search"
+            className="w-full min-h-[44px] p-2 border border-[var(--accent-color)]/50 rounded-lg
+                       bg-white text-gray-800
+                       focus:outline-none focus:ring-2 focus:ring-[var(--button-color)]
+                       placeholder:text-gray-500 text-sm sm:text-base"
+            placeholder="Search by ID, name, year, location..."
             value={search}
             onChange={handleSearchChange}
+            aria-describedby="search-hint"
           />
+          <span id="search-hint" className="sr-only">
+            Smart search: ID matches shown first, then names, years, and locations
+          </span>
         </div>
 
+        {/* Filter Dropdown - dark text on light bg for contrast */}
         <div
-          className="col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-2 relative"
+          className="col-span-6 lg:col-span-2 relative"
           ref={dropdownRef}
         >
           <button
-            className="flex items-center w-full px-4 py-2 border border-gray-300 rounded bg-gray-200 text-gray-700 justify-between"
+            className="flex items-center justify-between w-full min-h-[44px] px-4 py-2
+                       border border-[var(--accent-color)]/50 rounded-lg
+                       bg-white text-gray-800
+                       hover:bg-gray-50 transition-colors
+                       focus:outline-none focus:ring-2 focus:ring-[var(--button-color)]
+                       text-sm sm:text-base"
             onClick={toggleDropdown}
+            aria-expanded={dropdownOpen}
+            aria-haspopup="listbox"
+            aria-controls="filter-listbox"
+            aria-label="Filter by content area"
           >
             <span>Filters</span>
-            <span>{dropdownOpen ? "▲" : "▼"}</span>
+            <span className="ml-2">{dropdownOpen ? "\u25B2" : "\u25BC"}</span>
           </button>
           {dropdownOpen && (
-            <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded shadow z-10">
+            <ul
+              role="listbox"
+              id="filter-listbox"
+              aria-label="Content area filters"
+              className="absolute mt-1 w-full min-w-[200px] bg-white border border-[var(--accent-color)]/30
+                         rounded-lg shadow-lg z-20 max-h-[300px] overflow-y-auto"
+            >
               {Object.keys(unitFilters).map((unit) => (
-                <div
+                <li
                   key={unit}
-                  className="p-2 hover:bg-gray-100 cursor-pointer"
+                  role="option"
+                  aria-selected={unitFilters[unit]}
+                  tabIndex={0}
+                  className="p-3 hover:bg-[var(--accent-color)]/10 cursor-pointer
+                             focus:bg-[var(--accent-color)]/20 focus:outline-none
+                             text-sm text-gray-700"
                   onClick={() => handleFilterChange(unit)}
+                  onKeyDown={(e) => handleListItemKeyDown(e, unit)}
                 >
-                  <label className="flex items-center space-x-2">
+                  <label className="flex items-center space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
-                      className="form-checkbox h-4 w-4"
+                      className="h-4 w-4 rounded border-gray-300 text-[var(--button-color)]
+                                 focus:ring-[var(--button-color)]"
                       checked={unitFilters[unit]}
                       readOnly
                     />
-                    <span>
-                      {getContentAreaName(unit)}
-                      {unitFilters[unit] ? " ✓" : ""}
-                    </span>
+                    <span className="flex-1">{getContentAreaName(unit)}</span>
+                    {unitFilters[unit] && (
+                      <span className="text-[var(--button-color)]">
+                        &#x2713;
+                      </span>
+                    )}
                   </label>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
         </div>
 
-        <div className="col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-3">
+        {/* Sort Dropdown */}
+        <div className="col-span-6 lg:col-span-3">
           <SortComponent
             sort={sort}
             setSort={setSort}

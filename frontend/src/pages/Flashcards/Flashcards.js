@@ -178,10 +178,11 @@ const Flashcards = () => {
     <div className="flashcards-container">
       <h1 className="title">Flashcards</h1>
 
-      {/* Progress */}
-      <div className="progress">{deck.length} cards remaining</div>
-      <div className="order-info">
-        Cards are {isShuffled ? "randomly shuffled" : "in learning sequence"}
+      {/* Consolidated Status Line */}
+      <div className="status-line">
+        <span>{deck.length} remaining</span>
+        <span className="separator">•</span>
+        <span>{isShuffled ? "shuffled" : "ordered"}</span>
       </div>
 
       {/* Notifications */}

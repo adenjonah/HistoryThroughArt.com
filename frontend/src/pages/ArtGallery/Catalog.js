@@ -1,22 +1,126 @@
 import React, { useEffect, useState } from "react";
 import Card from "./ArtCard";
-import "./Catalog.css";
 import artPiecesData from "../../data/artworks.json";
 import JSZip from "jszip";
+
 const images = require.context("../../artImages", false, /\.webp$/);
 
-function Catalog({
-  search,
-  setArtPiecesArray,
-  layout,
-  sort,
-  unitFilters,
-  searchBy,
-}) {
+// Extract first year from a date string for sorting
+const extractYear = (dateString) => {
+  return parseInt(dateString.split("/")[0].split("~")[0].trim());
+};
+
+// Extract all years from a date string (handles ranges like "-1500/-1400" or "1500/1510")
+const extractAllYears = (dateString) => {
+  const matches = dateString.match(/-?\d+/g);
+  return matches ? matches.map((y) => Math.abs(parseInt(y))) : [];
+};
+
+// Calculate relevance score for smart search ranking
+const calculateRelevanceScore = (item, searchTerm) => {
+  if (!searchTerm) return 0;
+
+  const term = searchTerm.toLowerCase().trim();
+  const termAsNumber = parseInt(term, 10);
+  const isNumericSearch = !isNaN(termAsNumber);
+  let score = 0;
+
+  // Priority 1: Exact ID match (highest priority)
+  if (isNumericSearch && item.id === termAsNumber) {
+    score += 10000;
+  }
+  // Priority 2: ID starts with search term
+  else if (isNumericSearch && item.id.toString().startsWith(term)) {
+    score += 5000;
+  }
+  // Priority 3: ID contains search term
+  else if (item.id.toString().includes(term)) {
+    score += 2000;
+  }
+
+  // Priority 4: Name starts with search term (case insensitive)
+  const nameLower = item.name.toLowerCase();
+  if (nameLower.startsWith(term)) {
+    score += 1500;
+  }
+  // Priority 5: Name contains search term as a word boundary
+  else if (nameLower.includes(` ${term}`) || nameLower.includes(`${term} `)) {
+    score += 1000;
+  }
+  // Priority 6: Name contains search term anywhere
+  else if (nameLower.includes(term)) {
+    score += 500;
+  }
+
+  // Priority 7: Year/date matches (for numeric searches)
+  if (isNumericSearch) {
+    const years = extractAllYears(item.date);
+    // Exact year match
+    if (years.includes(termAsNumber)) {
+      score += 400;
+    }
+    // Year starts with term (e.g., "15" matches 1500, 1510, etc.)
+    else if (years.some((y) => y.toString().startsWith(term))) {
+      score += 300;
+    }
+    // Year contains term
+    else if (years.some((y) => y.toString().includes(term))) {
+      score += 200;
+    }
+  }
+
+  // Priority 8: Location match
+  const locationLower = (item.location || "").toLowerCase();
+  if (locationLower.startsWith(term)) {
+    score += 150;
+  } else if (locationLower.includes(term)) {
+    score += 100;
+  }
+
+  // Priority 9: Artist/culture match
+  const artistLower = (item.artist_culture || "").toLowerCase();
+  if (artistLower.startsWith(term)) {
+    score += 80;
+  } else if (artistLower.includes(term)) {
+    score += 50;
+  }
+
+  // Priority 10: Materials match
+  const materialsLower = (item.materials || "").toLowerCase();
+  if (materialsLower.includes(term)) {
+    score += 30;
+  }
+
+  // Priority 11: Museum match
+  const museumLower = (item.museum || "").toLowerCase();
+  if (museumLower.includes(term)) {
+    score += 20;
+  }
+
+  // Priority 12: Transcript match (lowest priority - fallback search)
+  if (item.transcript && score === 0) {
+    try {
+      const transcriptText = item.transcript
+        .map((t) => JSON.parse(t))
+        .flat()
+        .map((segment) => segment.text)
+        .join(" ")
+        .toLowerCase();
+      if (transcriptText.includes(term)) {
+        score += 10;
+      }
+    } catch (e) {
+      // Skip if transcript parsing fails
+    }
+  }
+
+  return score;
+};
+
+function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
   const [currPageNumber, setCurrPageNumber] = useState(1);
   const [fullArtPiecesArray, setFullArtPiecesArray] = useState([]);
   const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
-  const [preloadedImages, setPreloadedImages] = useState([]);
 
   const getImagePath = (imageName) => {
     try {
@@ -26,27 +130,12 @@ function Catalog({
       return "";
     }
   };
-  useEffect(() => {
-    const preloadImages = () => {
-      const image = artPiecesData.map((item) => {
-        const img = new Image();
-        img.src = getImagePath(item.image[0]);
-        return img;
-      });
-      setPreloadedImages(image);
-    };
 
-    preloadImages();
+  // Initialize art pieces data without preloading all images
+  useEffect(() => {
     setFullArtPiecesArray(artPiecesData);
     setLocalArtPiecesArray(artPiecesData);
   }, []);
-
-  const parseYear = (date) => {
-    return date.replace(/[bce]/gi, "").trim();
-  };
-  const extractYear = (dateString) => {
-    return parseInt(dateString.split("/")[0].split("~")[0].trim());
-  };
 
   useEffect(() => {
     const korusArray = [
@@ -67,60 +156,32 @@ function Catalog({
       229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243,
       244, 245, 246, 247, 248, 249, 250,
     ];
-    //Allows for O(1) access of the index of the art piece in the korusArray
+    // O(1) access of the index of the art piece in the korusArray
     const korusMap = new Map(korusArray.map((id, index) => [id, index]));
 
-    let filteredArtPieces = fullArtPiecesArray
+    // Calculate relevance scores for all items when there's a search term
+    const itemsWithScores = fullArtPiecesArray.map((item) => ({
+      ...item,
+      relevanceScore: search ? calculateRelevanceScore(item, search) : 0,
+    }));
+
+    let filteredArtPieces = itemsWithScores
       .filter((item) => {
-        //Gets the transcript from each available video
-        //and fetches only the text and puts it into the transcriptText
-        let transcriptText = "";
-        if (item.transcript) {
-          const tempArr = item.transcript.map((x) => JSON.parse(x));
-          transcriptText = tempArr.map((x) => x.map((y) => y.text)).join(" ");
-        }
+        // If no search term, show all
+        if (!search) return true;
 
-        //Checks the string for the search key
-        const checkIncludes = (item, date) => {
-          if (!date) {
-            return item.toString().toLowerCase().includes(search.toLowerCase());
-          } else {
-            //Need to parse the year from item.date
-            return item
-              .toString()
-              .toLowerCase()
-              .includes(parseYear(search.toLowerCase()));
-          }
-        };
-
-        switch (searchBy) {
-          case "name":
-            return checkIncludes(item.name);
-          case "id":
-            return checkIncludes(item.id);
-          case "artist/culture":
-            return checkIncludes(item.artist_culture);
-          case "medium":
-            return checkIncludes(item.materials);
-          case "year":
-            return checkIncludes(item.date, 1);
-          case "location":
-            return checkIncludes(item.location);
-          case "transcript":
-            return item.transcript && checkIncludes(transcriptText);
-          default:
-            return (
-              checkIncludes(item.name) ||
-              checkIncludes(item.id) ||
-              checkIncludes(item.artist_culture) ||
-              checkIncludes(item.date, 1) ||
-              checkIncludes(item.materials) ||
-              checkIncludes(item.location) ||
-              (item.transcript && checkIncludes(transcriptText))
-            );
-        }
+        // Only show items with a relevance score > 0
+        return item.relevanceScore > 0;
       })
       .sort((a, b) => {
+        // When searching and sort is "Relevance" (or default), sort by relevance score
+        if (search && (sort === "Relevance" || sort === "ID Ascending")) {
+          const scoreDiff = b.relevanceScore - a.relevanceScore;
+          if (scoreDiff !== 0) return scoreDiff;
+          // Secondary sort by ID for items with same relevance
+          return a.id - b.id;
+        }
+
         switch (sort) {
           case "Name Descending":
             return b.name.localeCompare(a.name);
@@ -137,11 +198,14 @@ function Catalog({
           case "ID Ascending":
             return a.id - b.id;
           case "Date Descending":
-            return extractYear(b.date) - Math.abs(extractYear(a.date)); //Funky math stuff
+            return extractYear(b.date) - Math.abs(extractYear(a.date));
           case "Date Ascending":
             return Math.abs(extractYear(a.date)) - extractYear(b.date);
           case "Korus Sort":
-            return korusMap.get(a.id) - korusMap.get(b.id); //Sort by the order Korus teaches the art pieces
+            return korusMap.get(a.id) - korusMap.get(b.id);
+          case "Relevance":
+            // When no search, relevance sort falls back to ID
+            return a.id - b.id;
           default:
             return a.id - b.id;
         }
@@ -159,17 +223,9 @@ function Catalog({
     if (currPageNumber > Math.ceil(filteredArtPieces.length / itemsPerPage)) {
       setCurrPageNumber(1);
     }
-  }, [
-    search,
-    sort,
-    unitFilters,
-    fullArtPiecesArray,
-    currPageNumber,
-    setArtPiecesArray,
-    searchBy,
-  ]);
+  }, [search, sort, unitFilters, fullArtPiecesArray, currPageNumber, setArtPiecesArray]);
 
-  //Changes the page number
+  // Changes the page number
   const handlePageClick = (pageNum) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setCurrPageNumber(pageNum);
@@ -179,93 +235,95 @@ function Catalog({
   const startIndex = (currPageNumber - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentArtPieces = artPiecesArray.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(artPiecesArray.length / itemsPerPage);
 
   const handleDownloadAllArtworks = async () => {
     const zip = new JSZip();
     let totalImages = 0;
     let processedImages = 0;
-    
+
     // Create a status message element
-    const statusElement = document.createElement('div');
-    statusElement.className = 'w3-panel w3-pale-blue w3-display-container w3-padding';
-    statusElement.style.position = 'fixed';
-    statusElement.style.top = '50%';
-    statusElement.style.left = '50%';
-    statusElement.style.transform = 'translate(-50%, -50%)';
-    statusElement.style.zIndex = '1000';
-    statusElement.style.minWidth = '300px';
-    statusElement.style.textAlign = 'center';
-    statusElement.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-    statusElement.style.borderRadius = '8px';
-    
+    const statusElement = document.createElement("div");
+    statusElement.className =
+      "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] min-w-[300px] text-center p-6 bg-[var(--foreground-color)] rounded-xl shadow-xl";
     document.body.appendChild(statusElement);
-    statusElement.innerHTML = '<p>Preparing to download all images...</p>';
-    
+    statusElement.innerHTML =
+      '<p class="text-[var(--text-color)]">Preparing to download all images...</p>';
+
     try {
       // Count total images first
-      artPiecesData.forEach(artPiece => {
+      artPiecesData.forEach((artPiece) => {
         if (artPiece.image && Array.isArray(artPiece.image)) {
           totalImages += artPiece.image.length;
         }
       });
-      
-      statusElement.innerHTML = `<p>Starting download of ${totalImages} images...</p>`;
-      
+
+      statusElement.innerHTML = `<p class="text-[var(--text-color)]">Starting download of ${totalImages} images...</p>`;
+
       // Process each artwork
       for (const artPiece of artPiecesData) {
-        if (!artPiece.image || !Array.isArray(artPiece.image) || artPiece.image.length === 0) {
+        if (
+          !artPiece.image ||
+          !Array.isArray(artPiece.image) ||
+          artPiece.image.length === 0
+        ) {
           continue;
         }
-        
+
         // Create a folder for each artwork
-        const folderName = `${artPiece.id}_${artPiece.name.replace(/[^\w\s]/gi, '')}`;
-        
+        const folderName = `${artPiece.id}_${artPiece.name.replace(
+          /[^\w\s]/gi,
+          ""
+        )}`;
+
         // Process each image for this artwork
         for (const imageName of artPiece.image) {
           if (!imageName) continue;
-          
+
           const imagePath = getImagePath(imageName);
           if (!imagePath) continue;
-          
+
           try {
             const response = await fetch(imagePath);
             const blob = await response.blob();
             zip.file(`${folderName}/${imageName}`, blob);
-            
+
             processedImages++;
-            statusElement.innerHTML = `<p>Downloaded ${processedImages} of ${totalImages} images...</p>`;
+            statusElement.innerHTML = `<p class="text-[var(--text-color)]">Downloaded ${processedImages} of ${totalImages} images...</p>`;
           } catch (error) {
             console.error(`Failed to fetch image ${imageName}:`, error);
           }
         }
       }
-      
-      statusElement.innerHTML = '<p>Creating ZIP file...</p>';
-      
+
+      statusElement.innerHTML =
+        '<p class="text-[var(--text-color)]">Creating ZIP file...</p>';
+
       // Generate the zip file
       const zipBlob = await zip.generateAsync({ type: "blob" });
-      
+
       // Create a download link for the zip file
       const link = document.createElement("a");
       link.href = URL.createObjectURL(zipBlob);
       link.download = "all_artwork_images.zip";
       document.body.appendChild(link);
       link.click();
-      
+
       // Clean up
       document.body.removeChild(link);
       URL.revokeObjectURL(link.href);
-      
-      statusElement.innerHTML = '<p>Download complete!</p>';
-      
+
+      statusElement.innerHTML =
+        '<p class="text-[var(--text-color)]">Download complete!</p>';
+
       // Remove status element after a short delay
       setTimeout(() => {
         document.body.removeChild(statusElement);
       }, 3000);
     } catch (error) {
       console.error("Failed to create ZIP file:", error);
-      statusElement.innerHTML = `<p>Error: ${error.message}</p>`;
-      
+      statusElement.innerHTML = `<p class="text-red-400">Error: ${error.message}</p>`;
+
       // Remove status element after a longer delay for error messages
       setTimeout(() => {
         document.body.removeChild(statusElement);
@@ -273,52 +331,96 @@ function Catalog({
     }
   };
 
-  //Passes the image index to the Card component
+  // Create image object for lazy loading
+  const getImage = (item) => {
+    if (!item.image || !item.image[0]) return null;
+    const img = new Image();
+    img.src = getImagePath(item.image[0]);
+    return img;
+  };
+
   return (
-    <div>
-      <div className="w3-row-padding">
-        {currentArtPieces.map((item, index) => (
-          <div key={index} className="w3-col s12 m6 l4">
-            <Card
-              item={item}
-              layout={layout}
-              image={preloadedImages[item.id - 1]}
-              search={search.toLowerCase()}
-            />
-          </div>
+    <div className="px-4 py-6">
+      {/* Result count display - light text on dark bg for contrast */}
+      <div className="flex items-center justify-between mb-4 px-2">
+        <p className="text-sm text-[var(--text-color)]">
+          Showing {currentArtPieces.length} of {artPiecesArray.length} artworks
+          {artPiecesArray.length !== artPiecesData.length && (
+            <span> (filtered from {artPiecesData.length} total)</span>
+          )}
+        </p>
+      </div>
+
+      {/* Art cards grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        {currentArtPieces.map((item) => (
+          <Card
+            key={item.id}
+            item={item}
+            layout={layout}
+            image={getImage(item)}
+            search={search.toLowerCase()}
+          />
         ))}
         {artPiecesArray.length === 0 && (
-          <p className={`blurb`}>No results found</p>
+          <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <h3 className="text-xl font-semibold text-[var(--text-color)] mb-2">
+              No artworks found
+            </h3>
+            <p className="text-[var(--text-color)] max-w-md">
+              Try adjusting your search or filters.
+            </p>
+          </div>
         )}
       </div>
-      <div className="w3-bar">
-        {[...Array(Math.ceil(artPiecesArray.length / itemsPerPage)).keys()].map(
-          (pageNum) => (
-            <a
-              key={pageNum}
-              href={`#${pageNum + 1}`}
-              className={`w3-button w3-margin-left ${
-                currPageNumber === pageNum + 1 ? "w3-blue" : "w3-light-gray"
-              }`}
-              onClick={() => handlePageClick(pageNum + 1)}
-            >
-              {pageNum + 1}
-            </a>
-          )
-        )}
-      </div>
-      <div className="w3-container w3-center w3-padding-32">
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <nav
+          className="flex items-center justify-center gap-2 mt-8 flex-wrap"
+          aria-label="Pagination"
+        >
+          {[...Array(totalPages).keys()].map((pageNum) => {
+            const isActive = currPageNumber === pageNum + 1;
+            return (
+              <button
+                key={pageNum}
+                className={`min-h-[44px] min-w-[44px] px-4 py-2 rounded-lg font-medium transition-colors
+                           focus:outline-none focus:ring-2 focus:ring-[var(--button-color)] focus:ring-offset-2
+                           ${
+                             isActive
+                               ? "bg-[var(--button-color)] text-[var(--button-text-color)]"
+                               : "bg-[var(--accent-color)]/30 text-[var(--text-color)] hover:bg-[var(--accent-color)]/50"
+                           }`}
+                onClick={() => handlePageClick(pageNum + 1)}
+                aria-current={isActive ? "page" : undefined}
+                aria-label={`Page ${pageNum + 1}`}
+              >
+                {pageNum + 1}
+              </button>
+            );
+          })}
+        </nav>
+      )}
+
+      {/* Download all button */}
+      <div className="flex flex-col items-center justify-center py-8">
         <button
-          className="w3-button w3-purple w3-ripple w3-round-large w3-xlarge"
+          className="px-6 py-3 bg-[var(--button-color)] text-[var(--button-text-color)]
+                     rounded-lg font-medium text-lg
+                     hover:bg-[var(--accent-color)] hover:text-[var(--text-color)]
+                     transition-colors duration-200
+                     focus:outline-none focus:ring-2 focus:ring-[var(--button-color)] focus:ring-offset-2"
           onClick={handleDownloadAllArtworks}
         >
           Download All Artwork Images as ZIP
         </button>
-        <p className="w3-small w3-text-grey">
-          This will download all images from all {artPiecesData.length} artworks.
+        <p className="text-sm text-[var(--text-color)] mt-2">
+          This will download all images from all {artPiecesData.length}{" "}
+          artworks.
         </p>
       </div>
-      <br />
     </div>
   );
 }

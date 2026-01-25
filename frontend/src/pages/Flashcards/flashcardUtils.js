@@ -136,6 +136,7 @@ const STORAGE_KEYS = {
   dueDate: "flashcards_displayCardsDueBy",
   isShuffled: "flashcards_isShuffled",
   hasSeenInstructions: "flashcards_hasSeenSwipeInstructions",
+  hasSeenFlipHint: "flashcards_hasSeenFlipHint",
 };
 
 // Save flashcard state to localStorage
@@ -188,4 +189,14 @@ export const hasSeenSwipeInstructions = () => {
 // Mark swipe instructions as seen
 export const markSwipeInstructionsSeen = () => {
   localStorage.setItem(STORAGE_KEYS.hasSeenInstructions, "true");
+};
+
+// Check if user has seen flip hint
+export const hasSeenFlipHint = () => {
+  return localStorage.getItem(STORAGE_KEYS.hasSeenFlipHint) === "true";
+};
+
+// Mark flip hint as seen
+export const markFlipHintSeen = () => {
+  localStorage.setItem(STORAGE_KEYS.hasSeenFlipHint, "true");
 };
