@@ -5,7 +5,6 @@ import "./Calendar.css";
 import dueDatesData from "./DueDates.json";
 import artPiecesData from "../../data/artworks.json";
 
-// Get the current academic year start (September)
 const getCurrentAcademicYear = () => {
   const now = new Date();
   const month = now.getMonth();
@@ -13,7 +12,6 @@ const getCurrentAcademicYear = () => {
   return month >= 8 ? year : year - 1;
 };
 
-// Convert month-day string to full date with correct academic year
 const getAcademicDate = (monthDayStr) => {
   const parts = monthDayStr.split("-");
   const month = parseInt(parts[0], 10);
@@ -23,7 +21,6 @@ const getAcademicDate = (monthDayStr) => {
   return new Date(year, month - 1, day);
 };
 
-// Format date to comparable string
 const formatDateKey = (date) => {
   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 };
@@ -33,10 +30,10 @@ function CalendarPage() {
   const [assignments, setAssignments] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
 
-  // Pre-compute all dates with academic year applied
   const dueDatesWithYear = useMemo(() => {
     const assignmentsByDate = {};
     const quizzesByDate = {};
+    const allDatesWithItems = new Set();
 
     dueDatesData.assignments.forEach((assignment) => {
       const date = getAcademicDate(assignment.dueDate);
@@ -45,6 +42,7 @@ function CalendarPage() {
         assignmentsByDate[key] = [];
       }
       assignmentsByDate[key].push(assignment);
+      allDatesWithItems.add(key);
     });
 
     dueDatesData.quizzes?.forEach((quiz) => {
@@ -54,9 +52,10 @@ function CalendarPage() {
         quizzesByDate[key] = [];
       }
       quizzesByDate[key].push(quiz);
+      allDatesWithItems.add(key);
     });
 
-    return { assignmentsByDate, quizzesByDate };
+    return { assignmentsByDate, quizzesByDate, allDatesWithItems };
   }, []);
 
   const onDateClick = (date) => {
@@ -66,57 +65,67 @@ function CalendarPage() {
     setQuizzes(dueDatesWithYear.quizzesByDate[key] || []);
   };
 
-  // Select current date on mount
   useEffect(() => {
     onDateClick(new Date());
     // eslint-disable-next-line
   }, []);
 
-  const renderAssignments = () => {
-    if (assignments.length === 0) {
-      return null;
+  // Event dot - dark, visible
+  const tileContent = ({ date, view }) => {
+    if (view !== 'month') return null;
+    const key = formatDateKey(date);
+    if (dueDatesWithYear.allDatesWithItems.has(key)) {
+      return (
+        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--background-color)] opacity-60" />
+      );
     }
+    return null;
+  };
+
+  const renderAssignments = () => {
+    if (assignments.length === 0) return null;
 
     return (
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-3" style={{ color: "var(--accent-color)" }}>
-          Homework Due:
+      <div className="mb-5">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--background-color)] opacity-50 mb-3">
+          Homework Due
         </h3>
-        <ul className="space-y-2" style={{ color: "var(--accent-color)" }}>
+        <ul className="space-y-0.5">
           {assignments.map((assignment, index) => {
             if (isNaN(parseInt(assignment.id))) {
               return (
                 <li
                   key={`${assignment.id}-${index}`}
-                  className="py-1 px-2 rounded hover:bg-[var(--button-color)] transition-colors duration-200"
+                  className="py-2.5 px-3 rounded text-sm text-[var(--background-color)] font-medium
+                    hover:bg-[var(--background-color)]/10 transition-colors duration-150"
                 >
                   {assignment.id}
                 </li>
               );
-            } else {
-              const artPiece = artPiecesData.find(
-                (piece) => piece.id === parseInt(assignment.id)
-              );
-              if (!artPiece) return null;
-
-              return (
-                <li
-                  key={`${assignment.id}-${index}`}
-                  className="py-1 px-2 rounded hover:bg-[var(--button-color)] transition-colors duration-200"
-                >
-                  <a
-                    href={`/exhibit?id=${assignment.id}`}
-                    className="flex items-center transition-colors duration-200"
-                    style={{ color: "var(--accent-color)" }}
-                  >
-                    <span className="font-bold mr-2" style={{ color: "var(--accent-color)" }}>
-                      {assignment.id}.
-                    </span>
-                    <span style={{ color: "var(--accent-color)" }}>{artPiece.name}</span>
-                  </a>
-                </li>
-              );
             }
+
+            const artPiece = artPiecesData.find(
+              (piece) => piece.id === parseInt(assignment.id)
+            );
+            if (!artPiece) return null;
+
+            return (
+              <li key={`${assignment.id}-${index}`}>
+                <a
+                  href={`/exhibit?id=${assignment.id}`}
+                  className="flex items-center py-2.5 px-3 rounded text-sm
+                    text-[var(--background-color)] hover:bg-[var(--background-color)]/10
+                    transition-colors duration-150 group"
+                >
+                  <span className="font-bold mr-3 min-w-[1.75rem]">
+                    {assignment.id}
+                  </span>
+                  <span className="font-medium">
+                    {artPiece.name}
+                  </span>
+                </a>
+              </li>
+            );
           })}
         </ul>
       </div>
@@ -124,20 +133,19 @@ function CalendarPage() {
   };
 
   const renderQuizzes = () => {
-    if (quizzes.length === 0) {
-      return null;
-    }
+    if (quizzes.length === 0) return null;
 
     return (
-      <div className="mb-4">
-        <h3 className="text-xl font-semibold mb-3" style={{ color: "var(--accent-color)" }}>
-          Quizzes:
+      <div>
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--background-color)] opacity-50 mb-3">
+          Quizzes
         </h3>
-        <ul className="space-y-2" style={{ color: "var(--text-color)" }}>
+        <ul className="space-y-0.5">
           {quizzes.map((quiz, index) => (
             <li
               key={index}
-              className="py-1 px-2 rounded hover:bg-[var(--button-color)] transition-colors duration-200"
+              className="py-2.5 px-3 rounded text-sm text-[var(--background-color)] font-medium
+                hover:bg-[var(--background-color)]/10 transition-colors duration-150"
             >
               {quiz.title}
             </li>
@@ -150,16 +158,16 @@ function CalendarPage() {
   const renderContent = () => {
     if (assignments.length === 0 && quizzes.length === 0) {
       return (
-        <div className="text-center py-8">
-          <p className="text-lg" style={{ color: "var(--text-color)" }}>
-            Nothing due today.
+        <div className="py-6 text-center">
+          <p className="text-sm text-[var(--background-color)] opacity-50 font-medium">
+            No assignments due
           </p>
         </div>
       );
     }
 
     return (
-      <div className="py-4">
+      <div className="py-2">
         {renderAssignments()}
         {renderQuizzes()}
       </div>
@@ -170,50 +178,47 @@ function CalendarPage() {
   const formattedSelectedDate = selectedDate
     ? selectedDate.toLocaleDateString("en-US", {
         weekday: "long",
-        year: "numeric",
         month: "long",
         day: "numeric",
       })
     : "";
 
   return (
-    <div
-      className="flex flex-col items-center p-6 max-w-4xl mx-auto"
-      style={{ color: "var(--text-color)" }}
-    >
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-3" style={{ color: "var(--accent-color)" }}>
-          Class Calendar
+    <div className="flex flex-col items-center px-4 py-8 max-w-2xl mx-auto">
+      {/* Header */}
+      <div className="text-center mb-6 w-full">
+        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-color)] opacity-60">
+          {academicYearStart}–{academicYearStart + 1}
+        </p>
+        <h1 className="text-2xl font-bold text-[var(--text-color)] mt-1">
+          Study Calendar
         </h1>
-        <p className="text-md max-w-2xl mx-auto" style={{ color: "var(--text-color)" }}>
-          This calendar breaks down a consistent study approach to cover all materials by
-          the date of the AP test in the spring.
-        </p>
-        <p className="text-sm mt-2" style={{ color: "var(--text-color)", opacity: 0.8 }}>
-          Academic Year: {academicYearStart}-{academicYearStart + 1}
-        </p>
       </div>
 
-      <div className="w-full max-w-xl bg-[var(--foreground-color)] rounded-xl shadow-lg overflow-hidden">
+      {/* Calendar card */}
+      <div className="w-full bg-[var(--foreground-color)] rounded-lg overflow-hidden">
         <Calendar
           onClickDay={onDateClick}
           value={selectedDate}
           className="custom-calendar"
           locale="en-US"
-          nextLabel={<span className="calendar-nav-arrow">›</span>}
-          prevLabel={<span className="calendar-nav-arrow">‹</span>}
-          next2Label={<span className="calendar-nav-arrow">»</span>}
-          prev2Label={<span className="calendar-nav-arrow">«</span>}
+          tileContent={tileContent}
+          nextLabel="›"
+          prevLabel="‹"
+          next2Label={null}
+          prev2Label={null}
         />
-      </div>
 
-      <div className="w-full max-w-xl mt-8 bg-[var(--foreground-color)] rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-[var(--button-color)] py-3 px-6" style={{ color: "var(--button-text-color)" }}>
-          <h2 className="text-xl font-semibold">{formattedSelectedDate}</h2>
-        </div>
-
-        <div className="p-6" style={{ color: "var(--text-color)" }}>
-          {selectedDate ? renderContent() : <p className="text-center py-4">Select a date to view items due</p>}
+        {/* Details panel */}
+        <div className="border-t border-[var(--background-color)]/15">
+          <div className="px-5 py-4">
+            <h2 className="text-base font-semibold text-[var(--background-color)]">
+              {formattedSelectedDate}
+            </h2>
+          </div>
+          <div className="px-5 pb-5">
+            {renderContent()}
+          </div>
         </div>
       </div>
     </div>
