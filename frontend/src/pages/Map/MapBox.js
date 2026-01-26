@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import artPiecesData from "../../data/artworks.json";
@@ -9,10 +9,21 @@ const images = require.context("../../artImages", false, /\.webp$/);
 const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMapType }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const popupRef = useRef(null);
   const [mapType, setMapType] = useState(initialMapType || "originated");
   const [overlayData, setOverlayData] = useState([]);
   const [mapInitialized, setMapInitialized] = useState(false);
   const [mapError, setMapError] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Handle resize for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleMapToggle = () => {
     setMapType((prevType) => {
@@ -29,7 +40,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
 
   const getImagePath = (imageName) => {
     if (!imageName) return "";
-    
+
     try {
       return images(`./${imageName}`);
     } catch (e) {
@@ -37,6 +48,44 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       return "";
     }
   };
+
+  // Close popup helper
+  const closePopup = useCallback(() => {
+    if (popupRef.current) {
+      popupRef.current.remove();
+      popupRef.current = null;
+    }
+  }, []);
+
+  // Show popup helper
+  const showPopup = useCallback((map, coordinates, properties) => {
+    closePopup();
+
+    const { id, name, location, imageUrl } = properties;
+    const nameText = name || 'Unknown';
+    const locationText = location || 'Unknown location';
+
+    const popupContent = `
+      <div class="map-popup-content">
+        ${imageUrl ? `
+          <img src="${imageUrl}" class="map-popup-image" alt="${nameText}" />
+        ` : ''}
+        <p class="map-popup-title">${id}. ${nameText}</p>
+        <p class="map-popup-location">${locationText}</p>
+        <p class="map-popup-hint">Tap to view details</p>
+      </div>
+    `;
+
+    popupRef.current = new mapboxgl.Popup({
+      closeButton: true,
+      closeOnClick: false,
+      maxWidth: isMobile ? '260px' : '300px',
+      offset: isMobile ? 15 : 10,
+    })
+      .setLngLat(coordinates)
+      .setHTML(popupContent)
+      .addTo(map);
+  }, [closePopup, isMobile]);
 
   // Update overlay data when map type changes
   useEffect(() => {
@@ -79,15 +128,13 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
 
     // Ensure the map container is empty before initializing
     if (mapContainerRef.current) {
-      // Remove any existing content
       while (mapContainerRef.current.firstChild) {
         mapContainerRef.current.removeChild(mapContainerRef.current.firstChild);
       }
     }
 
-    const isMobile = window.innerWidth <= 768;
     const defaultZoom = isMobile ? 1 : 4;
-    
+
     try {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
@@ -99,15 +146,30 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       mapRef.current = map;
       setMapInitialized(true);
 
-      map.addControl(new mapboxgl.NavigationControl(), "top-right");
+      // Add navigation controls - position based on device
+      map.addControl(
+        new mapboxgl.NavigationControl({ showCompass: !isMobile }),
+        "top-right"
+      );
+
+      // Add geolocation control for mobile
+      if (isMobile) {
+        map.addControl(
+          new mapboxgl.GeolocateControl({
+            positionOptions: { enableHighAccuracy: true },
+            trackUserLocation: false,
+            showUserHeading: false,
+          }),
+          "top-right"
+        );
+      }
 
       map.on("load", () => {
         if (overlayData && overlayData.length > 0) {
-          // Create a valid GeoJSON data structure
           const geojsonData = {
             type: "FeatureCollection",
             features: overlayData
-              .filter(overlay => overlay.longitude && overlay.latitude) // Filter out any invalid coordinates
+              .filter(overlay => overlay.longitude && overlay.latitude)
               .map((overlay) => ({
                 type: "Feature",
                 geometry: {
@@ -123,9 +185,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
               })),
           };
 
-          // Only add source if there are valid features
           if (geojsonData.features.length > 0) {
-            // Check if source already exists and remove it if it does
             if (map.getSource("points")) {
               map.removeLayer("clusters");
               map.removeLayer("cluster-count");
@@ -138,9 +198,10 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
               data: geojsonData,
               cluster: true,
               clusterMaxZoom: 14,
-              clusterRadius: 25,
+              clusterRadius: isMobile ? 40 : 25,
             });
 
+            // Clusters layer - larger on mobile for touch
             map.addLayer({
               id: "clusters",
               type: "circle",
@@ -160,10 +221,10 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
                   "interpolate",
                   ["linear"],
                   ["get", "point_count"],
-                  2, 12,
-                  10, 18,
-                  50, 28,
-                  100, 36,
+                  2, isMobile ? 16 : 12,
+                  10, isMobile ? 24 : 18,
+                  50, isMobile ? 34 : 28,
+                  100, isMobile ? 44 : 36,
                 ],
                 "circle-stroke-color": "rgba(255, 255, 255, 0.8)",
                 "circle-stroke-width": 2,
@@ -180,13 +241,14 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
               layout: {
                 "text-field": ["get", "point_count_abbreviated"],
                 "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-                "text-size": 14,
+                "text-size": isMobile ? 16 : 14,
               },
               paint: {
                 "text-color": "#ffffff",
               },
             });
 
+            // Unclustered points - larger touch targets on mobile
             map.addLayer({
               id: "unclustered-point",
               type: "circle",
@@ -194,73 +256,78 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
               filter: ["!", ["has", "point_count"]],
               paint: {
                 "circle-color": "#7047A3",
-                "circle-radius": 7,
+                "circle-radius": isMobile ? 12 : 7,
                 "circle-stroke-width": 2,
                 "circle-stroke-color": "rgba(255, 255, 255, 0.8)",
               },
             });
 
+            // Cluster click - zoom in
             map.on("click", "clusters", (e) => {
+              closePopup();
               const features = map.queryRenderedFeatures(e.point, {
                 layers: ["clusters"],
               });
               const clusterId = features[0].properties.cluster_id;
               map
                 .getSource("points")
-                .getClusterExpansionZoom(clusterId, (err, zoom) => {
+                .getClusterExpansionZoom(clusterId, (err, expandZoom) => {
                   if (err) return;
 
                   map.easeTo({
                     center: features[0].geometry.coordinates,
-                    zoom: zoom,
+                    zoom: expandZoom,
+                    duration: 500,
                   });
                 });
             });
 
-            map.on("mouseenter", "unclustered-point", (e) => {
-              map.getCanvas().style.cursor = "pointer";
-
+            // Point click - show popup and navigate
+            map.on("click", "unclustered-point", (e) => {
               const coordinates = e.features[0].geometry.coordinates.slice();
-              const { id, name, location, imageUrl } = e.features[0].properties;
+              const properties = e.features[0].properties;
 
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                 coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
               }
 
-              // Create popup content with null/undefined checks
-              const nameText = name || 'Unknown';
-              const locationText = location || 'Unknown location';
-
-              const popupContent = `
-                <div class="map-popup-content">
-                  ${imageUrl ? `
-                    <img src="${imageUrl}" class="map-popup-image" alt="${nameText}" />
-                  ` : ''}
-                  <p class="map-popup-title">${id}. ${nameText}</p>
-                  <p class="map-popup-location">${locationText}</p>
-                  <p class="map-popup-hint">Click to view →</p>
-                </div>
-              `;
-
-              new mapboxgl.Popup()
-                .setLngLat(coordinates)
-                .setHTML(popupContent)
-                .addTo(map);
-            });
-
-            map.on("mouseleave", "unclustered-point", () => {
-              map.getCanvas().style.cursor = "";
-              const popups = document.getElementsByClassName("mapboxgl-popup");
-              if (popups.length) {
-                popups[0].remove();
+              // If popup is already open for this point, navigate
+              if (popupRef.current && popupRef.current._lngLat) {
+                const currentLng = popupRef.current._lngLat.lng;
+                const currentLat = popupRef.current._lngLat.lat;
+                if (
+                  Math.abs(currentLng - coordinates[0]) < 0.0001 &&
+                  Math.abs(currentLat - coordinates[1]) < 0.0001
+                ) {
+                  window.location.href = `/exhibit?id=${properties.id}&mapType=${mapType}`;
+                  return;
+                }
               }
+
+              showPopup(map, coordinates, properties);
             });
 
-            map.on("click", "unclustered-point", (e) => {
-              const { id } = e.features[0].properties;
-              window.location.href = `/exhibit?id=${id}&mapType=${mapType}`;
-            });
+            // Desktop hover behavior
+            if (!isMobile) {
+              map.on("mouseenter", "unclustered-point", (e) => {
+                map.getCanvas().style.cursor = "pointer";
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                const properties = e.features[0].properties;
 
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                  coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                showPopup(map, coordinates, properties);
+              });
+
+              map.on("mouseleave", "unclustered-point", () => {
+                map.getCanvas().style.cursor = "";
+                closePopup();
+              });
+            }
+
+            // Cursor styling
             map.on("mouseenter", "clusters", () => {
               map.getCanvas().style.cursor = "pointer";
             });
@@ -268,12 +335,31 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
             map.on("mouseleave", "clusters", () => {
               map.getCanvas().style.cursor = "";
             });
+
+            if (isMobile) {
+              map.on("mouseenter", "unclustered-point", () => {
+                map.getCanvas().style.cursor = "pointer";
+              });
+              map.on("mouseleave", "unclustered-point", () => {
+                map.getCanvas().style.cursor = "";
+              });
+            }
+
+            // Close popup when clicking elsewhere on the map
+            map.on("click", (e) => {
+              const features = map.queryRenderedFeatures(e.point, {
+                layers: ["unclustered-point", "clusters"],
+              });
+              if (features.length === 0) {
+                closePopup();
+              }
+            });
           }
         }
       });
 
-      // Cleanup function to remove the map when component unmounts
       return () => {
+        closePopup();
         if (map) {
           map.remove();
         }
@@ -282,44 +368,48 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       console.error("Error initializing map:", error);
       setMapError(`Failed to initialize map: ${error.message}`);
     }
-  }, [center, zoom, style, overlayData, mapType]);
+  }, [center, zoom, style, overlayData, mapType, isMobile, closePopup, showPopup]);
 
   // Show error state if necessary
   if (mapError) {
     return (
       <div
         className="flex items-center justify-center bg-[var(--foreground-color)]
-          rounded-2xl p-5 text-center min-h-[200px]"
+          rounded-2xl p-5 text-center min-h-[300px] md:min-h-[400px]"
         style={{
           width: size?.width || "100%",
-          height: size?.height || "calc(100% - 20px)",
+          height: size?.height || "100%",
         }}
       >
-        <p className="text-[var(--text-color)] opacity-70">Map could not be loaded: {mapError}</p>
+        <p className="text-[var(--text-color)] opacity-70 text-sm md:text-base px-4">
+          Map could not be loaded: {mapError}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full h-full">
       <div
         ref={mapContainerRef}
-        className="w-full min-h-[600px] rounded-2xl"
+        className="w-full h-full min-h-[350px] sm:min-h-[450px] md:min-h-[550px] lg:min-h-[600px] rounded-2xl"
         style={{
           width: size?.width || "100%",
-          height: size?.height || "calc(100% - 20px)",
+          height: size?.height || "100%",
         }}
       />
       {mapInitialized && (
         <button
           onClick={handleMapToggle}
-          className="absolute top-4 left-4 z-10
-            px-4 py-2.5 rounded-lg
+          className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10
+            px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg
             bg-[var(--foreground-color)] text-[var(--background-color)]
-            font-medium text-sm
-            shadow-lg hover:shadow-xl
+            font-medium text-xs sm:text-sm
+            shadow-lg hover:shadow-xl active:scale-95
             transition-all duration-200
-            hover:scale-105 border-none cursor-pointer"
+            hover:scale-105 border-none cursor-pointer
+            touch-manipulation select-none"
+          aria-label={mapType === "originated" ? "Show current locations" : "Show origin locations"}
         >
           {mapType === "originated" ? "Show Current Locations" : "Show Origins"}
         </button>
