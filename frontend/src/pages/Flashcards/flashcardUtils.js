@@ -90,14 +90,20 @@ export const buildDeck = (artworks, options = {}) => {
     dueDatesMap,
     dueByDate = new Date(),
     selectedUnits = [],
-    shouldShuffle = false
+    shouldShuffle = false,
+    useAllCards = false,
   } = options;
 
-  // Get cards due by date
-  const cardsDueByDate = getCardsDueByDate(dueDatesMap, dueByDate);
+  let cardsInOrder;
 
-  // Filter to Korus order
-  const cardsInOrder = filterByKorusOrder(cardsDueByDate);
+  if (useAllCards) {
+    // Use all cards in Korus teaching order
+    cardsInOrder = [...korusOrder];
+  } else {
+    // Get cards due by date and filter to Korus order
+    const cardsDueByDate = getCardsDueByDate(dueDatesMap, dueByDate);
+    cardsInOrder = filterByKorusOrder(cardsDueByDate);
+  }
 
   // Create artwork lookup map
   const artworksById = new Map(artworks.map((a) => [a.id, a]));
@@ -135,6 +141,7 @@ const STORAGE_KEYS = {
   selectedUnits: "flashcards_selectedUnits",
   dueDate: "flashcards_displayCardsDueBy",
   isShuffled: "flashcards_isShuffled",
+  deckMode: "flashcards_deckMode",
   hasSeenInstructions: "flashcards_hasSeenSwipeInstructions",
   hasSeenFlipHint: "flashcards_hasSeenFlipHint",
 };
@@ -147,6 +154,7 @@ export const saveState = (state) => {
     localStorage.setItem(STORAGE_KEYS.selectedUnits, JSON.stringify(state.selectedUnits));
     localStorage.setItem(STORAGE_KEYS.dueDate, state.dueDate.toISOString());
     localStorage.setItem(STORAGE_KEYS.isShuffled, JSON.stringify(state.isShuffled));
+    localStorage.setItem(STORAGE_KEYS.deckMode, state.deckMode || "korus");
   } catch (error) {
     console.error("Error saving flashcard state:", error);
   }
@@ -161,6 +169,7 @@ export const loadState = () => {
     const dueDateStr = localStorage.getItem(STORAGE_KEYS.dueDate);
     const dueDate = dueDateStr ? new Date(dueDateStr) : new Date();
     const isShuffled = JSON.parse(localStorage.getItem(STORAGE_KEYS.isShuffled) || "false");
+    const deckMode = localStorage.getItem(STORAGE_KEYS.deckMode) || "korus";
 
     // Ensure selectedUnits are numbers (in case they were stored as strings)
     const selectedUnits = Array.isArray(rawSelectedUnits)
@@ -173,6 +182,7 @@ export const loadState = () => {
       selectedUnits,
       dueDate,
       isShuffled,
+      deckMode,
     };
   } catch (error) {
     console.error("Error loading flashcard state:", error);

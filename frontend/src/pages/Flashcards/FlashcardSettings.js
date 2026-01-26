@@ -15,6 +15,8 @@ const FlashcardSettings = ({
   onToggleUnit,
   dueDate,
   onDateChange,
+  deckMode,
+  onDeckModeChange,
   cardCountInfo,
   isTransitioning,
 }) => {
@@ -28,16 +30,61 @@ const FlashcardSettings = ({
     <div className={`settings-modal ${isOpen ? "show" : ""}`}>
       <h3>Settings</h3>
 
-      {/* Due Date Setting */}
-      <div className="due-date-setting">
-        <h4>Show Cards Due By</h4>
-        <div className="date-selector">
-          <input
-            type="date"
-            value={formatDateForInput(dueDate)}
-            onChange={handleDateChange}
-            className="date-input"
-          />
+      {/* Deck Mode Toggle */}
+      <div className="deck-mode-setting">
+        <h4>Card Selection</h4>
+        <div className="deck-mode-toggle">
+          <button
+            className={`mode-button ${deckMode === "korus" ? "active" : ""}`}
+            onClick={() => onDeckModeChange("korus")}
+          >
+            Up to Date
+          </button>
+          <button
+            className={`mode-button ${deckMode === "all" ? "active" : ""}`}
+            onClick={() => onDeckModeChange("all")}
+          >
+            All Cards
+          </button>
+        </div>
+        <p className="mode-hint">
+          {deckMode === "korus"
+            ? "Shows cards due by selected date in Korus' teaching order"
+            : "Shows all 250 cards regardless of due date"}
+        </p>
+      </div>
+
+      {/* Due Date Setting - only show for korus mode */}
+      {deckMode === "korus" && (
+        <div className="due-date-setting">
+          <h4>Show Cards Due By</h4>
+          <div className="date-selector">
+            <input
+              type="date"
+              value={formatDateForInput(dueDate)}
+              onChange={handleDateChange}
+              className="date-input"
+            />
+            <p className="card-count-info">
+              {cardCountInfo.hasUnitFilter ? (
+                <>
+                  {cardCountInfo.filteredCards} of {cardCountInfo.totalCards} cards
+                  (filtered by unit)
+                </>
+              ) : (
+                <>
+                  {cardCountInfo.totalCards} cards (up to #
+                  {cardCountInfo.highestCard} in Korus' order)
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Card count for all mode */}
+      {deckMode === "all" && (
+        <div className="due-date-setting">
           <p className="card-count-info">
             {cardCountInfo.hasUnitFilter ? (
               <>
@@ -45,14 +92,11 @@ const FlashcardSettings = ({
                 (filtered by unit)
               </>
             ) : (
-              <>
-                {cardCountInfo.totalCards} cards (up to #
-                {cardCountInfo.highestCard} in Korus' order)
-              </>
+              <>{cardCountInfo.totalCards} cards total</>
             )}
           </p>
         </div>
-      </div>
+      )}
 
       {/* Unit Selection */}
       <div className="unit-selection">

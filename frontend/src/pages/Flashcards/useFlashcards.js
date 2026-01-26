@@ -22,6 +22,7 @@ export const useFlashcards = () => {
   // Settings
   const [selectedUnits, setSelectedUnits] = useState([]);
   const [dueDate, setDueDate] = useState(new Date());
+  const [deckMode, setDeckMode] = useState("korus"); // "korus" or "all"
 
   // UI state
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -42,6 +43,7 @@ export const useFlashcards = () => {
       setSelectedUnits(savedState.selectedUnits);
       setDueDate(savedState.dueDate);
       setIsShuffled(savedState.isShuffled);
+      setDeckMode(savedState.deckMode || "korus");
     } else {
       // Create fresh deck
       const newDeck = buildDeck(artworksData, {
@@ -49,6 +51,7 @@ export const useFlashcards = () => {
         dueByDate: new Date(),
         selectedUnits: [],
         shouldShuffle: false,
+        useAllCards: false,
       });
       setDeck(newDeck);
     }
@@ -64,9 +67,10 @@ export const useFlashcards = () => {
         selectedUnits,
         dueDate,
         isShuffled,
+        deckMode,
       });
     }
-  }, [deck, currentCard, selectedUnits, dueDate, isShuffled]);
+  }, [deck, currentCard, selectedUnits, dueDate, isShuffled, deckMode]);
 
   // Get current card data
   const currentCardData = deck[currentCard] || null;
@@ -163,20 +167,24 @@ export const useFlashcards = () => {
         dueByDate: dueDate,
         selectedUnits,
         shouldShuffle: shuffle,
+        useAllCards: deckMode === "all",
       });
 
       setDeck(newDeck);
       setCurrentCard(0);
       setIsFlipped(false);
     },
-    [dueDate, selectedUnits]
+    [dueDate, selectedUnits, deckMode]
   );
 
   // Update settings - rebuild deck when settings change
   const updateSettings = useCallback(
-    (newUnits, newDate) => {
+    (newUnits, newDate, newMode) => {
       setSelectedUnits(newUnits);
       setDueDate(newDate);
+      if (newMode !== undefined) {
+        setDeckMode(newMode);
+      }
 
       // Rebuild deck with new settings
       clearDeckStorage();
@@ -185,6 +193,7 @@ export const useFlashcards = () => {
         dueByDate: newDate,
         selectedUnits: newUnits,
         shouldShuffle: isShuffled,
+        useAllCards: (newMode !== undefined ? newMode : deckMode) === "all",
       });
 
       setDeck(newDeck);
@@ -192,7 +201,7 @@ export const useFlashcards = () => {
       setIsFlipped(false);
       setUndoHistory([]);
     },
-    [isShuffled]
+    [isShuffled, deckMode]
   );
 
   // Toggle unit selection
@@ -203,7 +212,7 @@ export const useFlashcards = () => {
       const newUnits = selectedUnits.includes(unitNum)
         ? selectedUnits.filter((u) => u !== unitNum)
         : [...selectedUnits, unitNum];
-      updateSettings(newUnits, dueDate);
+      updateSettings(newUnits, dueDate, undefined);
     },
     [selectedUnits, dueDate, updateSettings]
   );
@@ -211,19 +220,30 @@ export const useFlashcards = () => {
   // Update due date
   const updateDueDate = useCallback(
     (newDate) => {
-      updateSettings(selectedUnits, newDate);
+      updateSettings(selectedUnits, newDate, undefined);
     },
     [selectedUnits, updateSettings]
   );
 
+  // Toggle deck mode (korus order vs all cards)
+  const toggleDeckMode = useCallback(
+    (newMode) => {
+      updateSettings(selectedUnits, dueDate, newMode);
+    },
+    [selectedUnits, dueDate, updateSettings]
+  );
+
   // Get card count info for current filters
   const getCardCountInfo = useCallback(() => {
-    // Get total cards available (all units)
+    const useAll = deckMode === "all";
+
+    // Get total cards available (all units, current mode)
     const allCardsDeck = buildDeck(artworksData, {
       dueDatesMap,
       dueByDate: dueDate,
       selectedUnits: [],
       shouldShuffle: false,
+      useAllCards: useAll,
     });
 
     // Get cards with current unit filter
@@ -232,6 +252,7 @@ export const useFlashcards = () => {
       dueByDate: dueDate,
       selectedUnits,
       shouldShuffle: false,
+      useAllCards: useAll,
     });
 
     return {
@@ -240,7 +261,7 @@ export const useFlashcards = () => {
       highestCard: allCardsDeck.length > 0 ? allCardsDeck[allCardsDeck.length - 1]?.id : 0,
       hasUnitFilter: selectedUnits.length > 0,
     };
-  }, [dueDate, selectedUnits]);
+  }, [dueDate, selectedUnits, deckMode]);
 
   return {
     // State
@@ -253,6 +274,7 @@ export const useFlashcards = () => {
     showSettings,
     selectedUnits,
     dueDate,
+    deckMode,
     undoHistory,
     canUndo: undoHistory.length > 0,
     maxUndoSteps: MAX_UNDO_STEPS,
@@ -264,6 +286,7 @@ export const useFlashcards = () => {
     resetDeck,
     toggleUnit,
     updateDueDate,
+    toggleDeckMode,
     setShowSettings,
     getCardCountInfo,
   };

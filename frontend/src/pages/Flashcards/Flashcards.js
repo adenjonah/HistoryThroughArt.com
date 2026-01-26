@@ -16,6 +16,7 @@ const Flashcards = () => {
     showSettings,
     selectedUnits,
     dueDate,
+    deckMode,
     undoHistory,
     canUndo,
     maxUndoSteps,
@@ -25,6 +26,7 @@ const Flashcards = () => {
     resetDeck,
     toggleUnit,
     updateDueDate,
+    toggleDeckMode,
     setShowSettings,
     getCardCountInfo,
   } = useFlashcards();
@@ -183,6 +185,8 @@ const Flashcards = () => {
           onToggleUnit={toggleUnit}
           dueDate={dueDate}
           onDateChange={updateDueDate}
+          deckMode={deckMode}
+          onDeckModeChange={toggleDeckMode}
           cardCountInfo={cardInfo}
           isTransitioning={false}
         />
@@ -262,6 +266,8 @@ const Flashcards = () => {
         onToggleUnit={toggleUnit}
         dueDate={dueDate}
         onDateChange={updateDueDate}
+        deckMode={deckMode}
+        onDeckModeChange={toggleDeckMode}
         cardCountInfo={getCardCountInfo()}
         isTransitioning={isTransitioning}
       />
