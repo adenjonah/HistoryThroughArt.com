@@ -114,21 +114,22 @@ function Exhibit() {
       </section>
 
       {/* Navigation Section */}
-      <nav className="mt-12 mb-8">
-        <div className="bg-[var(--background-color)] rounded-xl shadow-lg p-6 sm:p-8">
-          <div className="flex justify-center items-center gap-4 sm:gap-6 md:gap-8">
+      <nav className="mt-8 sm:mt-12 mb-8">
+        <div className="bg-[var(--background-color)] rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
+          <div className="flex justify-center items-center gap-3 sm:gap-6 md:gap-8">
             <button
-              className="flex-1 max-w-[200px] px-4 py-3 sm:px-6 sm:py-4
+              className="flex-1 max-w-[160px] sm:max-w-[200px] min-h-[48px] px-3 py-3 sm:px-6 sm:py-4
                          bg-[var(--button-color)] text-[var(--button-text-color)]
                          font-semibold rounded-lg
                          hover:brightness-110 active:scale-95
                          transition-all duration-200
-                         flex items-center justify-center gap-2"
+                         flex items-center justify-center gap-1 sm:gap-2
+                         touch-manipulation"
               onClick={() => handleNavigation(getPreviousID())}
             >
-              <span className="text-xl">←</span>
+              <span className="text-lg sm:text-xl">←</span>
               <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden">Prev</span>
+              <span className="sm:hidden text-sm">Prev</span>
             </button>
 
             <div className="text-sm sm:text-base text-[var(--text-color)] opacity-70 hidden md:block">
@@ -136,22 +137,23 @@ function Exhibit() {
             </div>
 
             <button
-              className="flex-1 max-w-[200px] px-4 py-3 sm:px-6 sm:py-4
+              className="flex-1 max-w-[160px] sm:max-w-[200px] min-h-[48px] px-3 py-3 sm:px-6 sm:py-4
                          bg-[var(--button-color)] text-[var(--button-text-color)]
                          font-semibold rounded-lg
                          hover:brightness-110 active:scale-95
                          transition-all duration-200
-                         flex items-center justify-center gap-2"
+                         flex items-center justify-center gap-1 sm:gap-2
+                         touch-manipulation"
               onClick={() => handleNavigation(getNextID())}
             >
               <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden">Next</span>
-              <span className="text-xl">→</span>
+              <span className="sm:hidden text-sm">Next</span>
+              <span className="text-lg sm:text-xl">→</span>
             </button>
           </div>
 
           {/* Mobile position indicator */}
-          <div className="mt-4 text-center text-sm text-[var(--text-color)] opacity-70 md:hidden">
+          <div className="mt-3 sm:mt-4 text-center text-xs sm:text-sm text-[var(--text-color)] opacity-70 md:hidden">
             Artwork {korusOrder.indexOf(exhibitID) + 1} of {korusOrder.length}
           </div>
         </div>

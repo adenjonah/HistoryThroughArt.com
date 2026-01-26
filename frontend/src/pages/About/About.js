@@ -21,28 +21,28 @@ function About() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start text-center h-full w-full bg-[var(--background-color)] pt-10">
-      <h1 className="text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">About Us</h1>
+    <div className="flex flex-col items-center justify-start text-center h-full w-full bg-[var(--background-color)] pt-6 sm:pt-10 px-4">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">About Us</h1>
 
-      <div className="flex justify-center flex-wrap max-w-7xl mx-auto mb-8 gap-5">
+      <div className="flex justify-center flex-wrap max-w-7xl mx-auto mb-8 gap-4 sm:gap-5 w-full">
         {/* Caleb Card */}
-        <div className="w-[350px] md:w-[280px] h-[400px] group [perspective:1000px]">
-          <div 
+        <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
+          <div
             className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer ${
               flippedCards.caleb ? '[transform:rotateY(180deg)]' : ''
             } lg:group-hover:[transform:rotateY(180deg)]`}
             onClick={(e) => handleCardClick('caleb', e)}
           >
             {/* Front Side */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
-              <img src={CalebHeadshot} alt="Caleb Stewart" className="h-[300px] w-[220px] object-cover rounded-full mx-auto mb-4" />
-              <h2 className="text-2xl text-[var(--accent-color)] font-bold">Caleb Stewart</h2>
+            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center flex flex-col items-center justify-center">
+              <img src={CalebHeadshot} alt="Caleb Stewart" className="h-[200px] w-[160px] sm:h-[280px] sm:w-[200px] object-cover rounded-full mb-4" />
+              <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">Caleb Stewart</h2>
             </div>
-            
+
             {/* Back Side */}
-            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
+            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center">
               <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--background-color)] italic mt-8">
+                <p className="text-[var(--background-color)] italic mt-6 sm:mt-8 text-sm sm:text-base">
                   Caleb is a Senior at Eastern Washington University. A proud alum of
                   Mrs. Korus' history classes, graduated in 2021 and brings his tech
                   expertise to our team.
@@ -51,7 +51,7 @@ function About() {
                   href="https://www.linkedin.com/in/caleb-stewart-281594274/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300"
+                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2.5 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300 active:scale-95 touch-manipulation"
                 >
                   View LinkedIn
                 </a>
@@ -61,23 +61,23 @@ function About() {
         </div>
 
         {/* Mrs. Korus Card */}
-        <div className="w-[350px] md:w-[280px] h-[400px] group [perspective:1000px]">
-          <div 
+        <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
+          <div
             className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer ${
               flippedCards.korus ? '[transform:rotateY(180deg)]' : ''
             } lg:group-hover:[transform:rotateY(180deg)]`}
             onClick={(e) => handleCardClick('korus', e)}
           >
             {/* Front Side */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
-              <img src={KorusHeadshot} alt="Mrs. Korus" className="h-[300px] w-[220px] object-cover rounded-full mx-auto mb-4" />
-              <h2 className="text-2xl text-[var(--accent-color)] font-bold">Mrs. Korus</h2>
+            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center flex flex-col items-center justify-center">
+              <img src={KorusHeadshot} alt="Mrs. Korus" className="h-[200px] w-[160px] sm:h-[280px] sm:w-[200px] object-cover rounded-full mb-4" />
+              <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">Mrs. Korus</h2>
             </div>
-            
+
             {/* Back Side */}
-            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
+            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center">
               <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--background-color)] italic mt-8">
+                <p className="text-[var(--background-color)] italic mt-6 sm:mt-8 text-sm sm:text-base">
                   The passionate AP Art History teacher at North Central High School
                   who inspires curiosity and a love for art in her students.
                 </p>
@@ -85,7 +85,7 @@ function About() {
                   href="https://www.spokesman.com/stories/2010/mar/11/teacher-of-year-honors-go-to-three/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300"
+                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2.5 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300 active:scale-95 touch-manipulation"
                 >
                   Read Article
                 </a>
@@ -95,23 +95,23 @@ function About() {
         </div>
 
         {/* Jonah Card */}
-        <div className="w-[350px] md:w-[280px] h-[400px] group [perspective:1000px]">
-          <div 
+        <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
+          <div
             className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer ${
               flippedCards.jonah ? '[transform:rotateY(180deg)]' : ''
             } lg:group-hover:[transform:rotateY(180deg)]`}
             onClick={(e) => handleCardClick('jonah', e)}
           >
             {/* Front Side */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
-              <img src={JonahHeadshot} alt="Jonah Aden" className="h-[300px] w-[220px] object-cover rounded-full mx-auto mb-4" />
-              <h2 className="text-2xl text-[var(--accent-color)] font-bold">Jonah Aden</h2>
+            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center flex flex-col items-center justify-center">
+              <img src={JonahHeadshot} alt="Jonah Aden" className="h-[200px] w-[160px] sm:h-[280px] sm:w-[200px] object-cover rounded-full mb-4" />
+              <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">Jonah Aden</h2>
             </div>
-            
+
             {/* Back Side */}
-            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-5 rounded-xl shadow-lg text-center">
+            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center">
               <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--background-color)] italic mt-8">
+                <p className="text-[var(--background-color)] italic mt-6 sm:mt-8 text-sm sm:text-base">
                   Jonah is a Junior at Columbia University majoring in Computer
                   Science, Political Science, and Statistics. He had Mrs. Korus as a
                   history teacher in 7th, 8th, 10th, and 12th grade. Jonah graduated
@@ -121,7 +121,7 @@ function About() {
                   href="https://www.linkedin.com/in/jonah-aden/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300"
+                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2.5 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300 active:scale-95 touch-manipulation"
                 >
                   View LinkedIn
                 </a>
@@ -131,8 +131,8 @@ function About() {
         </div>
       </div>
 
-      <h1 className="text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">Our Story</h1>
-      <p className="text-lg text-[var(--text-color)] max-w-[80%] mx-auto mb-8 leading-relaxed lg:max-w-[40%]">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">Our Story</h1>
+      <p className="text-base sm:text-lg text-[var(--text-color)] max-w-[90%] sm:max-w-[80%] mx-auto mb-8 leading-relaxed lg:max-w-[40%]">
         This project began in the summer of 2024 with the initial goal of
         creating a platform to centralize the educational content that Mrs.
         Korus had produced for her AP Art History classes. Jonah took AP Art
@@ -146,22 +146,22 @@ function About() {
         of features over the school year.
       </p>
 
-      <p className="text-[var(--text-color)] mb-4 max-w-[80%] lg:max-w-[40%]">
-        Reach out to us at: <br></br>
+      <p className="text-[var(--text-color)] mb-4 max-w-[90%] sm:max-w-[80%] lg:max-w-[40%] text-sm sm:text-base">
+        Reach out to us at: <br />
         <strong>
-          <a href="mailto:HistoryThroughArt@gmail.com" className="ml-2">
+          <a href="mailto:HistoryThroughArt@gmail.com" className="ml-2 break-all">
             HistoryThroughArt@gmail.com
           </a>
         </strong>
       </p>
-      
+
       <a
         href="https://github.com/adenjonah/APAH"
         target="_blank"
         rel="noopener noreferrer"
-        className="mb-24"
+        className="mb-16 sm:mb-24"
       >
-        <button className="bg-[var(--button-color)] text-[var(--button-text-color)] px-6 py-3 rounded-full font-semibold text-lg transition-all duration-300 hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] hover:-translate-y-1 border-none">
+        <button className="bg-[var(--button-color)] text-[var(--button-text-color)] px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] hover:-translate-y-1 active:scale-95 border-none touch-manipulation">
           View on GitHub
         </button>
       </a>

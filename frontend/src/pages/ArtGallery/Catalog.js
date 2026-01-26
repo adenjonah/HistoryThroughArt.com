@@ -245,7 +245,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     // Create a status message element
     const statusElement = document.createElement("div");
     statusElement.className =
-      "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] min-w-[300px] text-center p-6 bg-[var(--foreground-color)] rounded-xl shadow-xl";
+      "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1000] w-[90%] max-w-[300px] text-center p-4 sm:p-6 bg-[var(--foreground-color)] rounded-xl shadow-xl";
     document.body.appendChild(statusElement);
     statusElement.innerHTML =
       '<p class="text-[var(--text-color)]">Preparing to download all images...</p>';
