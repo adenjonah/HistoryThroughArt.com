@@ -198,9 +198,11 @@ export const useFlashcards = () => {
   // Toggle unit selection
   const toggleUnit = useCallback(
     (unit) => {
-      const newUnits = selectedUnits.includes(unit)
-        ? selectedUnits.filter((u) => u !== unit)
-        : [...selectedUnits, unit];
+      // Ensure unit is a number for consistent comparison
+      const unitNum = typeof unit === 'string' ? parseInt(unit, 10) : unit;
+      const newUnits = selectedUnits.includes(unitNum)
+        ? selectedUnits.filter((u) => u !== unitNum)
+        : [...selectedUnits, unitNum];
       updateSettings(newUnits, dueDate);
     },
     [selectedUnits, dueDate, updateSettings]
@@ -214,19 +216,31 @@ export const useFlashcards = () => {
     [selectedUnits, updateSettings]
   );
 
-  // Get card count info
+  // Get card count info for current filters
   const getCardCountInfo = useCallback(() => {
-    const testDeck = buildDeck(artworksData, {
+    // Get total cards available (all units)
+    const allCardsDeck = buildDeck(artworksData, {
       dueDatesMap,
       dueByDate: dueDate,
       selectedUnits: [],
       shouldShuffle: false,
     });
+
+    // Get cards with current unit filter
+    const filteredDeck = buildDeck(artworksData, {
+      dueDatesMap,
+      dueByDate: dueDate,
+      selectedUnits,
+      shouldShuffle: false,
+    });
+
     return {
-      totalCards: testDeck.length,
-      highestCard: testDeck.length > 0 ? testDeck[testDeck.length - 1]?.id : 0,
+      totalCards: allCardsDeck.length,
+      filteredCards: filteredDeck.length,
+      highestCard: allCardsDeck.length > 0 ? allCardsDeck[allCardsDeck.length - 1]?.id : 0,
+      hasUnitFilter: selectedUnits.length > 0,
     };
-  }, [dueDate]);
+  }, [dueDate, selectedUnits]);
 
   return {
     // State

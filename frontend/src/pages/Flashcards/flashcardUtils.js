@@ -157,15 +157,20 @@ export const loadState = () => {
   try {
     const deck = JSON.parse(localStorage.getItem(STORAGE_KEYS.deck) || "[]");
     const currentCard = parseInt(localStorage.getItem(STORAGE_KEYS.currentCard) || "0", 10);
-    const selectedUnits = JSON.parse(localStorage.getItem(STORAGE_KEYS.selectedUnits) || "[]");
+    const rawSelectedUnits = JSON.parse(localStorage.getItem(STORAGE_KEYS.selectedUnits) || "[]");
     const dueDateStr = localStorage.getItem(STORAGE_KEYS.dueDate);
     const dueDate = dueDateStr ? new Date(dueDateStr) : new Date();
     const isShuffled = JSON.parse(localStorage.getItem(STORAGE_KEYS.isShuffled) || "false");
 
+    // Ensure selectedUnits are numbers (in case they were stored as strings)
+    const selectedUnits = Array.isArray(rawSelectedUnits)
+      ? rawSelectedUnits.map((u) => (typeof u === 'string' ? parseInt(u, 10) : u)).filter((u) => !isNaN(u))
+      : [];
+
     return {
       deck: Array.isArray(deck) ? deck : [],
       currentCard: isNaN(currentCard) ? 0 : currentCard,
-      selectedUnits: Array.isArray(selectedUnits) ? selectedUnits : [],
+      selectedUnits,
       dueDate,
       isShuffled,
     };

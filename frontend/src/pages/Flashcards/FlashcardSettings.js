@@ -39,8 +39,17 @@ const FlashcardSettings = ({
             className="date-input"
           />
           <p className="card-count-info">
-            This includes {cardCountInfo.totalCards} cards (up to #
-            {cardCountInfo.highestCard} in Korus' order)
+            {cardCountInfo.hasUnitFilter ? (
+              <>
+                {cardCountInfo.filteredCards} of {cardCountInfo.totalCards} cards
+                (filtered by content area)
+              </>
+            ) : (
+              <>
+                {cardCountInfo.totalCards} cards (up to #
+                {cardCountInfo.highestCard} in Korus' order)
+              </>
+            )}
           </p>
         </div>
       </div>

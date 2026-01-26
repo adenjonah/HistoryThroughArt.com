@@ -134,16 +134,36 @@ const Flashcards = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isTransitioning, onAction, flipCard]);
 
+  // Get card count info for messaging
+  const cardInfo = getCardCountInfo();
+
   // Empty deck state
   if (deck.length === 0) {
+    const isFilteredEmpty = cardInfo.hasUnitFilter && cardInfo.filteredCards === 0 && cardInfo.totalCards > 0;
+
     return (
       <div className="flashcards-container">
         <h1 className="title">Flashcards</h1>
         <div className="end-of-deck-message">
-          <h2>All cards completed!</h2>
-          <p>Reset the deck to continue studying.</p>
+          {isFilteredEmpty ? (
+            <>
+              <h2>No cards match your filters</h2>
+              <p>Try selecting different content areas or adjusting the due date in settings.</p>
+            </>
+          ) : (
+            <>
+              <h2>All cards completed!</h2>
+              <p>Reset the deck to continue studying.</p>
+            </>
+          )}
         </div>
         <div className="reset-button-container">
+          <button
+            className="reset-button"
+            onClick={() => setShowSettings(true)}
+          >
+            Open Settings
+          </button>
           <button className="reset-button" onClick={() => resetDeck(false)}>
             Reset Deck (Ordered)
           </button>
@@ -154,6 +174,18 @@ const Flashcards = () => {
             Reset Deck (Shuffled)
           </button>
         </div>
+
+        {/* Settings Panel - accessible even when deck is empty */}
+        <FlashcardSettings
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          selectedUnits={selectedUnits}
+          onToggleUnit={toggleUnit}
+          dueDate={dueDate}
+          onDateChange={updateDueDate}
+          cardCountInfo={cardInfo}
+          isTransitioning={false}
+        />
       </div>
     );
   }
