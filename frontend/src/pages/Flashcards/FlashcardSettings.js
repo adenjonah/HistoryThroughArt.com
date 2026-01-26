@@ -42,7 +42,7 @@ const FlashcardSettings = ({
             {cardCountInfo.hasUnitFilter ? (
               <>
                 {cardCountInfo.filteredCards} of {cardCountInfo.totalCards} cards
-                (filtered by content area)
+                (filtered by unit)
               </>
             ) : (
               <>
@@ -56,8 +56,8 @@ const FlashcardSettings = ({
 
       {/* Unit Selection */}
       <div className="unit-selection">
-        <h4>Content Areas to Include</h4>
-        <p className="unit-hint">No selection means all content areas</p>
+        <h4>Filter by Unit / Content Area</h4>
+        <p className="unit-hint">No selection means all units</p>
         {availableUnits.map((unit) => (
           <label key={unit}>
             <input
@@ -66,7 +66,7 @@ const FlashcardSettings = ({
               onChange={() => onToggleUnit(unit)}
               checked={selectedUnits.includes(unit)}
             />
-            {getContentAreaName(unit)}
+            <span className="unit-number">Unit {unit}:</span> {getContentAreaName(unit)}
           </label>
         ))}
       </div>

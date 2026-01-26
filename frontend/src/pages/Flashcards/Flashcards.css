@@ -511,6 +511,11 @@
   color: var(--background-color);
 }
 
+.unit-selection label .unit-number {
+  font-weight: 600;
+  opacity: 0.9;
+}
+
 .unit-hint {
   font-size: 0.85rem;
   color: var(--background-color);
