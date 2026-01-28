@@ -1,0 +1,182 @@
+{
+  "The Metropolitan Museum of Art": {
+    "aliases": ["MET", "Met", "Metropolitan Museum"],
+    "city": "New York City, USA",
+    "center": { "lat": 40.7794, "lng": -73.9632 },
+    "bounds": { "minLat": 40.7785, "maxLat": 40.7803, "minLng": -73.9645, "maxLng": -73.9619 }
+  },
+  "Louvre Museum": {
+    "aliases": ["Louvre", "Musée du Louvre"],
+    "city": "Paris, France",
+    "center": { "lat": 48.8606, "lng": 2.3376 },
+    "bounds": { "minLat": 48.8598, "maxLat": 48.8614, "minLng": 2.3350, "maxLng": 2.3402 }
+  },
+  "British Museum": {
+    "aliases": [],
+    "city": "London, UK",
+    "center": { "lat": 51.5194, "lng": -0.1270 },
+    "bounds": { "minLat": 51.5186, "maxLat": 51.5202, "minLng": -0.1285, "maxLng": -0.1255 }
+  },
+  "Vatican Museums": {
+    "aliases": ["Vatican", "Musei Vaticani", "Sistine Chapel"],
+    "city": "Vatican City",
+    "center": { "lat": 41.9065, "lng": 12.4536 },
+    "bounds": { "minLat": 41.9050, "maxLat": 41.9080, "minLng": 12.4510, "maxLng": 12.4560 }
+  },
+  "National Gallery (London)": {
+    "aliases": ["National Gallery London", "National Gallery"],
+    "city": "London, UK",
+    "center": { "lat": 51.5089, "lng": -0.1283 },
+    "bounds": { "minLat": 51.5083, "maxLat": 51.5095, "minLng": -0.1295, "maxLng": -0.1270 }
+  },
+  "Uffizi Gallery": {
+    "aliases": ["Uffizi", "Galleria degli Uffizi"],
+    "city": "Florence, Italy",
+    "center": { "lat": 43.7687, "lng": 11.2559 },
+    "bounds": { "minLat": 43.7680, "maxLat": 43.7694, "minLng": 11.2548, "maxLng": 11.2570 }
+  },
+  "Prado Museum": {
+    "aliases": ["Prado", "Museo del Prado"],
+    "city": "Madrid, Spain",
+    "center": { "lat": 40.4138, "lng": -3.6921 },
+    "bounds": { "minLat": 40.4128, "maxLat": 40.4148, "minLng": -3.6935, "maxLng": -3.6907 }
+  },
+  "Rijksmuseum": {
+    "aliases": [],
+    "city": "Amsterdam, Netherlands",
+    "center": { "lat": 52.3600, "lng": 4.8852 },
+    "bounds": { "minLat": 52.3590, "maxLat": 52.3610, "minLng": 4.8835, "maxLng": 4.8870 }
+  },
+  "Musée d'Orsay": {
+    "aliases": ["Orsay", "Musee d'Orsay"],
+    "city": "Paris, France",
+    "center": { "lat": 48.8600, "lng": 2.3266 },
+    "bounds": { "minLat": 48.8593, "maxLat": 48.8607, "minLng": 2.3250, "maxLng": 2.3282 }
+  },
+  "National Museum of Anthropology (Mexico)": {
+    "aliases": ["National Museum of Anthropology", "Museo Nacional de Antropología"],
+    "city": "Mexico City, Mexico",
+    "center": { "lat": 19.4260, "lng": -99.1863 },
+    "bounds": { "minLat": 19.4248, "maxLat": 19.4272, "minLng": -99.1880, "maxLng": -99.1846 }
+  },
+  "National Archaeological Museum (Athens)": {
+    "aliases": ["National Archaeological Museum Athens", "Athens Archaeological Museum"],
+    "city": "Athens, Greece",
+    "center": { "lat": 37.9893, "lng": 23.7328 },
+    "bounds": { "minLat": 37.9885, "maxLat": 37.9901, "minLng": 23.7315, "maxLng": 23.7341 }
+  },
+  "Egyptian Museum (Cairo)": {
+    "aliases": ["Egyptian Museum", "Cairo Museum", "Museum of Egyptian Antiquities"],
+    "city": "Cairo, Egypt",
+    "center": { "lat": 30.0478, "lng": 31.2336 },
+    "bounds": { "minLat": 30.0470, "maxLat": 30.0486, "minLng": 31.2325, "maxLng": 31.2347 }
+  },
+  "National Palace Museum (Taipei)": {
+    "aliases": ["National Palace Museum", "Taipei Palace Museum"],
+    "city": "Taipei, Taiwan",
+    "center": { "lat": 25.1024, "lng": 121.5485 },
+    "bounds": { "minLat": 25.1010, "maxLat": 25.1038, "minLng": 121.5468, "maxLng": 121.5502 }
+  },
+  "Hermitage Museum": {
+    "aliases": ["Hermitage", "State Hermitage Museum"],
+    "city": "St. Petersburg, Russia",
+    "center": { "lat": 59.9398, "lng": 30.3146 },
+    "bounds": { "minLat": 59.9385, "maxLat": 59.9411, "minLng": 30.3120, "maxLng": 30.3172 }
+  },
+  "Pergamon Museum": {
+    "aliases": ["Pergamon", "Pergamonmuseum"],
+    "city": "Berlin, Germany",
+    "center": { "lat": 52.5212, "lng": 13.3968 },
+    "bounds": { "minLat": 52.5205, "maxLat": 52.5219, "minLng": 13.3955, "maxLng": 13.3981 }
+  },
+  "Museum of Modern Art (MoMA)": {
+    "aliases": ["MoMA", "Museum of Modern Art"],
+    "city": "New York City, USA",
+    "center": { "lat": 40.7614, "lng": -73.9776 },
+    "bounds": { "minLat": 40.7606, "maxLat": 40.7622, "minLng": -73.9790, "maxLng": -73.9762 }
+  },
+  "Guggenheim Museum (New York)": {
+    "aliases": ["Guggenheim", "Solomon R. Guggenheim Museum"],
+    "city": "New York City, USA",
+    "center": { "lat": 40.7830, "lng": -73.9590 },
+    "bounds": { "minLat": 40.7822, "maxLat": 40.7838, "minLng": -73.9602, "maxLng": -73.9578 }
+  },
+  "National Gallery of Art (Washington)": {
+    "aliases": ["National Gallery of Art", "NGA"],
+    "city": "Washington D.C., USA",
+    "center": { "lat": 38.8913, "lng": -77.0199 },
+    "bounds": { "minLat": 38.8900, "maxLat": 38.8926, "minLng": -77.0225, "maxLng": -77.0173 }
+  },
+  "Art Institute of Chicago": {
+    "aliases": ["AIC", "Chicago Art Institute"],
+    "city": "Chicago, USA",
+    "center": { "lat": 41.8796, "lng": -87.6237 },
+    "bounds": { "minLat": 41.8785, "maxLat": 41.8807, "minLng": -87.6255, "maxLng": -87.6219 }
+  },
+  "Tate Modern": {
+    "aliases": ["Tate"],
+    "city": "London, UK",
+    "center": { "lat": 51.5076, "lng": -0.0994 },
+    "bounds": { "minLat": 51.5065, "maxLat": 51.5087, "minLng": -0.1010, "maxLng": -0.0978 }
+  },
+  "Centre Pompidou": {
+    "aliases": ["Pompidou", "Beaubourg"],
+    "city": "Paris, France",
+    "center": { "lat": 48.8606, "lng": 2.3522 },
+    "bounds": { "minLat": 48.8598, "maxLat": 48.8614, "minLng": 2.3508, "maxLng": 2.3536 }
+  },
+  "Smithsonian American Art Museum": {
+    "aliases": ["SAAM", "Smithsonian American Art"],
+    "city": "Washington D.C., USA",
+    "center": { "lat": 38.8979, "lng": -77.0230 },
+    "bounds": { "minLat": 38.8970, "maxLat": 38.8988, "minLng": -77.0245, "maxLng": -77.0215 }
+  },
+  "Museo Nacional Centro de Arte Reina Sofía": {
+    "aliases": ["Reina Sofía", "Reina Sofia"],
+    "city": "Madrid, Spain",
+    "center": { "lat": 40.4086, "lng": -3.6943 },
+    "bounds": { "minLat": 40.4076, "maxLat": 40.4096, "minLng": -3.6958, "maxLng": -3.6928 }
+  },
+  "National Museum of Korea": {
+    "aliases": [],
+    "city": "Seoul, South Korea",
+    "center": { "lat": 37.5239, "lng": 126.9803 },
+    "bounds": { "minLat": 37.5220, "maxLat": 37.5258, "minLng": 126.9780, "maxLng": 126.9826 }
+  },
+  "Tokyo National Museum": {
+    "aliases": [],
+    "city": "Tokyo, Japan",
+    "center": { "lat": 35.7189, "lng": 139.7765 },
+    "bounds": { "minLat": 35.7175, "maxLat": 35.7203, "minLng": 139.7745, "maxLng": 139.7785 }
+  },
+  "State Museum of Namibia": {
+    "aliases": ["Namibia Museum"],
+    "city": "Windhoek, Namibia",
+    "center": { "lat": -22.5609, "lng": 17.0836 },
+    "bounds": { "minLat": -22.5620, "maxLat": -22.5598, "minLng": 17.0822, "maxLng": 17.0850 }
+  },
+  "National Gallery of Victoria": {
+    "aliases": ["NGV"],
+    "city": "Melbourne, Australia",
+    "center": { "lat": -37.8226, "lng": 144.9689 },
+    "bounds": { "minLat": -37.8238, "maxLat": -37.8214, "minLng": 144.9672, "maxLng": 144.9706 }
+  },
+  "Museo Archeologico Nazionale di Napoli": {
+    "aliases": ["Naples Archaeological Museum", "MANN"],
+    "city": "Naples, Italy",
+    "center": { "lat": 40.8536, "lng": 14.2505 },
+    "bounds": { "minLat": 40.8528, "maxLat": 40.8544, "minLng": 14.2492, "maxLng": 14.2518 }
+  },
+  "Acropolis Museum": {
+    "aliases": [],
+    "city": "Athens, Greece",
+    "center": { "lat": 37.9685, "lng": 23.7286 },
+    "bounds": { "minLat": 37.9677, "maxLat": 37.9693, "minLng": 23.7274, "maxLng": 23.7298 }
+  },
+  "Getty Center": {
+    "aliases": ["Getty Museum", "J. Paul Getty Museum"],
+    "city": "Los Angeles, USA",
+    "center": { "lat": 34.0780, "lng": -118.4741 },
+    "bounds": { "minLat": 34.0765, "maxLat": 34.0795, "minLng": -118.4760, "maxLng": -118.4722 }
+  }
+}

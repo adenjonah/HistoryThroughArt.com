@@ -6,7 +6,11 @@
   "scripts": {
     "migrate": "node migrate-to-sanity.js",
     "migrate:dry-run": "node migrate-to-sanity.js --dry-run",
-    "migrate:images": "node migrate-to-sanity.js --images"
+    "migrate:images": "node migrate-to-sanity.js --images",
+    "research": "node research-locations.js",
+    "research:dry-run": "node research-locations.js --dry-run",
+    "push-updates": "node push-location-updates.js",
+    "push-updates:dry-run": "node push-location-updates.js --dry-run"
   },
   "dependencies": {
     "@sanity/client": "^6"
