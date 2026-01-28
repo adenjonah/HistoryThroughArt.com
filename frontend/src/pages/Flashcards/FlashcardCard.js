@@ -112,7 +112,17 @@ const FlashcardCard = ({
     .filter(Boolean)
     .join(" ");
 
-  const imageSrc = require(`../../artImages/${card.image[0]}`);
+  // Get image source - handle both Sanity URLs and legacy local paths
+  const getImageSrc = () => {
+    if (!card.image || !card.image[0]) return "";
+    const imagePath = card.image[0];
+    // If it's already a URL (from Sanity), use it directly
+    if (imagePath.startsWith("http")) return imagePath;
+    // Fallback for legacy local images (shouldn't happen after migration)
+    return imagePath;
+  };
+
+  const imageSrc = getImageSrc();
 
   return (
     <>

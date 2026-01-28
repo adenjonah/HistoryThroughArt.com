@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import artPiecesData from "../../data/artworks.json";
+import { useArtworks } from "../../hooks/useSanityData";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
-const images = require.context("../../artImages", false, /\.webp$/);
 
 const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMapType }) => {
   const mapContainerRef = useRef(null);
@@ -15,6 +14,9 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
   const [mapInitialized, setMapInitialized] = useState(false);
   const [mapError, setMapError] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Fetch artworks from Sanity
+  const { artworks: artPiecesData, loading: artworksLoading } = useArtworks();
 
   // Handle resize for responsive behavior
   useEffect(() => {
@@ -38,15 +40,12 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
     });
   };
 
-  const getImagePath = (imageName) => {
-    if (!imageName) return "";
-
-    try {
-      return images(`./${imageName}`);
-    } catch (e) {
-      console.error(`Cannot find image: ${imageName}`);
-      return "";
-    }
+  // Get image URL - images from Sanity are already URLs
+  const getImagePath = (imageUrl) => {
+    if (!imageUrl) return "";
+    // Sanity images come as full URLs
+    if (imageUrl.startsWith('http')) return imageUrl;
+    return imageUrl;
   };
 
   // Close popup helper
@@ -87,8 +86,10 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       .addTo(map);
   }, [closePopup, isMobile]);
 
-  // Update overlay data when map type changes
+  // Update overlay data when map type changes or artworks load
   useEffect(() => {
+    if (artworksLoading || artPiecesData.length === 0) return;
+
     if (mapType === "originated") {
       const filteredData = artPiecesData.filter(
         (piece) => piece.originatedLatitude && piece.originatedLongitude
@@ -116,7 +117,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       }));
       setOverlayData(overlayData);
     }
-  }, [mapType]);
+  }, [mapType, artPiecesData, artworksLoading]);
 
   // Initialize the map
   useEffect(() => {
@@ -369,6 +370,24 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       setMapError(`Failed to initialize map: ${error.message}`);
     }
   }, [center, zoom, style, overlayData, mapType, isMobile, closePopup, showPopup]);
+
+  // Show loading state
+  if (artworksLoading) {
+    return (
+      <div
+        className="flex items-center justify-center bg-[var(--foreground-color)]
+          rounded-2xl p-5 text-center min-h-[300px] md:min-h-[400px]"
+        style={{
+          width: size?.width || "100%",
+          height: size?.height || "100%",
+        }}
+      >
+        <p className="text-[var(--text-color)] animate-pulse text-sm md:text-base px-4">
+          Loading map data...
+        </p>
+      </div>
+    );
+  }
 
   // Show error state if necessary
   if (mapError) {

@@ -1,0 +1,14 @@
+{
+  "name": "history-through-art-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Migration and utility scripts for History Through Art",
+  "scripts": {
+    "migrate": "node migrate-to-sanity.js",
+    "migrate:dry-run": "node migrate-to-sanity.js --dry-run",
+    "migrate:images": "node migrate-to-sanity.js --images"
+  },
+  "dependencies": {
+    "@sanity/client": "^6"
+  }
+}

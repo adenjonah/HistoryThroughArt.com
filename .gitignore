@@ -119,7 +119,10 @@ frontend/package-lock-DESKTOP-UODP4MO.json
 frontend/package-DESKTOP-UODP4MO.json
 package-DESKTOP-UODP4MO.json
 package-lock-DESKTOP-UODP4MO.json
-/scripts
+
+# Sanity
+sanity/.env
+scripts/node_modules/
 
 *.cmd
 *.ps1

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "./ArtCard";
-import artPiecesData from "../../data/artworks.json";
 import JSZip from "jszip";
-
-const images = require.context("../../artImages", false, /\.webp$/);
+import { useArtworks } from "../../hooks/useSanityData";
 
 // Extract first year from a date string for sorting
 const extractYear = (dateString) => {
@@ -122,20 +120,25 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
   const [fullArtPiecesArray, setFullArtPiecesArray] = useState([]);
   const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
 
-  const getImagePath = (imageName) => {
-    try {
-      return images(`./${imageName}`);
-    } catch (e) {
-      console.error(`Cannot find image: ${imageName}`);
-      return "";
+  // Fetch artworks from Sanity CMS
+  const { artworks: artPiecesData, loading, error } = useArtworks();
+
+  // Get image path - now images are direct URLs from Sanity
+  const getImagePath = (imageUrl) => {
+    // If it's already a URL (from Sanity), return it directly
+    if (imageUrl && imageUrl.startsWith('http')) {
+      return imageUrl;
     }
+    return imageUrl || "";
   };
 
-  // Initialize art pieces data without preloading all images
+  // Initialize art pieces data when loaded from Sanity
   useEffect(() => {
-    setFullArtPiecesArray(artPiecesData);
-    setLocalArtPiecesArray(artPiecesData);
-  }, []);
+    if (artPiecesData.length > 0) {
+      setFullArtPiecesArray(artPiecesData);
+      setLocalArtPiecesArray(artPiecesData);
+    }
+  }, [artPiecesData]);
 
   useEffect(() => {
     const korusArray = [
@@ -338,6 +341,32 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     img.src = getImagePath(item.image[0]);
     return img;
   };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <div className="animate-pulse text-lg text-[var(--text-color)]">
+            Loading artworks...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <div className="text-lg text-red-500">
+            Failed to load artworks. Please try again.
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 py-6">

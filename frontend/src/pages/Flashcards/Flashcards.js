@@ -20,6 +20,8 @@ const Flashcards = () => {
     undoHistory,
     canUndo,
     maxUndoSteps,
+    dataLoading,
+    artworksData,
     flipCard,
     handleAction,
     undo,
@@ -139,6 +141,18 @@ const Flashcards = () => {
   // Get card count info for messaging
   const cardInfo = getCardCountInfo();
 
+  // Loading state
+  if (dataLoading) {
+    return (
+      <div className="flashcards-container">
+        <h1 className="title">Flashcards</h1>
+        <div className="end-of-deck-message">
+          <h2 className="animate-pulse">Loading flashcards...</h2>
+        </div>
+      </div>
+    );
+  }
+
   // Empty deck state
   if (deck.length === 0) {
     const isFilteredEmpty = cardInfo.hasUnitFilter && cardInfo.filteredCards === 0 && cardInfo.totalCards > 0;
@@ -189,6 +203,7 @@ const Flashcards = () => {
           onDeckModeChange={toggleDeckMode}
           cardCountInfo={cardInfo}
           isTransitioning={false}
+          artworksData={artworksData}
         />
       </div>
     );
@@ -270,6 +285,7 @@ const Flashcards = () => {
         onDeckModeChange={toggleDeckMode}
         cardCountInfo={getCardCountInfo()}
         isTransitioning={isTransitioning}
+        artworksData={artworksData}
       />
     </div>
   );

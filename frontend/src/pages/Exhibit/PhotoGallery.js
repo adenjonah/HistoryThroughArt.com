@@ -1,10 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import artPiecesData from "../../data/artworks.json";
 import JSZip from "jszip";
-
-const images = require.context("../../artImages", false, /\.webp$/);
-
-const FALLBACK_IMAGE = "placeholder.webp";
+import { useArtwork } from "../../hooks/useSanityData";
 
 function PhotoGallery({ id }) {
   const [artImages, setArtImages] = useState([]);
@@ -17,25 +13,19 @@ function PhotoGallery({ id }) {
   const modalRef = useRef(null);
   const closeButtonRef = useRef(null);
 
-  const getImagePath = (imageName) => {
-    if (!imageName) {
-      return "";
-    }
-    try {
-      return images(`./${imageName}`);
-    } catch (e) {
-      try {
-        return images(`./${FALLBACK_IMAGE}`);
-      } catch (fallbackError) {
-        return "";
-      }
-    }
+  // Fetch artwork from Sanity
+  const { artwork: foundArtPiece, loading } = useArtwork(parseInt(id, 10));
+
+  // Get image URL - images from Sanity are already URLs
+  const getImagePath = (imageUrl) => {
+    if (!imageUrl) return "";
+    // Sanity images come as full URLs
+    if (imageUrl.startsWith('http')) return imageUrl;
+    return imageUrl;
   };
 
   useEffect(() => {
-    const foundArtPiece = artPiecesData.find(
-      (piece) => piece.id.toString() === id
-    );
+    if (loading) return;
 
     if (foundArtPiece && foundArtPiece.image && foundArtPiece.image.length > 0) {
       setArtImages(foundArtPiece.image);
@@ -44,7 +34,7 @@ function PhotoGallery({ id }) {
       setArtImages([]);
       setHasImages(false);
     }
-  }, [id]);
+  }, [foundArtPiece, loading]);
 
   const showSlides = useCallback(
     (n) => {
@@ -168,9 +158,6 @@ function PhotoGallery({ id }) {
     if (!hasImages || artImages.length === 0) return;
 
     const zip = new JSZip();
-    const foundArtPiece = artPiecesData.find(
-      (piece) => piece.id.toString() === id
-    );
     const folderName = foundArtPiece
       ? `${foundArtPiece.id}_${foundArtPiece.name.replace(/[^\w\s]/gi, "")}`
       : `artwork_${id}`;
@@ -225,6 +212,16 @@ function PhotoGallery({ id }) {
     }
     return getImagePath(artImages[slideIndex - 1]);
   }, [artImages, slideIndex, hasImages]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8 rounded-xl bg-[var(--accent-color)]/20">
+        <p className="text-[var(--text-color)] opacity-70 animate-pulse">
+          Loading images...
+        </p>
+      </div>
+    );
+  }
 
   if (!hasImages || artImages.length === 0) {
     return (

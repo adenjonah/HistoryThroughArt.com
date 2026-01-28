@@ -1,12 +1,6 @@
-import React from "react";
-import artworksData from "../../data/artworks.json";
+import React, { useMemo } from "react";
 import { getContentAreaName } from "../../data/contentAreas";
 import { formatDateForInput } from "./flashcardUtils";
-
-// Get unique units from artwork data
-const availableUnits = [...new Set(artworksData.map((item) => item.unit))].sort(
-  (a, b) => a - b
-);
 
 const FlashcardSettings = ({
   isOpen,
@@ -19,7 +13,13 @@ const FlashcardSettings = ({
   onDeckModeChange,
   cardCountInfo,
   isTransitioning,
+  artworksData = [], // Now passed from parent hook
 }) => {
+  // Get unique units from artwork data (dynamically)
+  const availableUnits = useMemo(
+    () => [...new Set(artworksData.map((item) => item.unit))].sort((a, b) => a - b),
+    [artworksData]
+  );
   const handleDateChange = (e) => {
     const inputDate = e.target.value;
     const selectedDate = new Date(inputDate + "T00:00:00");

@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import VideoPlayer from "./VideoPlayer";
 import PhotoGallery from "./PhotoGallery";
 import MiniMap from "./MiniMap";
-import artPiecesData from "../../data/artworks.json";
 import Identifiers from "./Identifiers";
 import { korusOrder } from "../../data/korusOrder";
+import { useArtwork } from "../../hooks/useSanityData";
 
 function Exhibit() {
-  const [artPiece, setArtPiece] = useState(null);
-
   const urlParam = new URLSearchParams(window.location.search);
   const exhibitID = parseInt(urlParam.get("id"));
 
@@ -16,10 +14,8 @@ function Exhibit() {
     urlParam.get("mapType") || "currentlyDisplayed"
   );
 
-  useEffect(() => {
-    const foundArtPiece = artPiecesData.find((piece) => piece.id === exhibitID);
-    setArtPiece(foundArtPiece);
-  }, [exhibitID]);
+  // Fetch artwork from Sanity CMS
+  const { artwork: artPiece, loading, error } = useArtwork(exhibitID);
 
   const pronounceTitle = () => {
     if (artPiece && artPiece.name) {
@@ -47,12 +43,24 @@ function Exhibit() {
     window.location.search = `?id=${newID}&mapType=${mapType}`;
   };
 
-  if (!artPiece) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
           <div className="animate-pulse text-lg text-[var(--text-color)]">
             Loading artwork...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !artPiece) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <div className="text-lg text-red-500">
+            {error ? "Failed to load artwork" : "Artwork not found"}
           </div>
         </div>
       </div>

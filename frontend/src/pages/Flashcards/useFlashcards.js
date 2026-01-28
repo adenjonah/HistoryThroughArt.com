@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import artworksData from "../../data/artworks.json";
-import dueDatesData from "../Calendar/DueDates.json";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useArtworks, useDueDates } from "../../hooks/useSanityData";
 import {
   buildDeck,
   createDueDatesMap,
@@ -9,10 +8,23 @@ import {
   clearDeckStorage,
 } from "./flashcardUtils";
 
-const dueDatesMap = createDueDatesMap(dueDatesData);
 const MAX_UNDO_STEPS = 3;
 
 export const useFlashcards = () => {
+  // Fetch data from Sanity
+  const { artworks: artworksData, loading: artworksLoading } = useArtworks();
+  const { dueDates: dueDatesData, loading: dueDatesLoading } = useDueDates();
+
+  const dataLoading = artworksLoading || dueDatesLoading;
+
+  // Create due dates map from Sanity data
+  const dueDatesMap = useMemo(() => {
+    if (dataLoading || !dueDatesData.assignments) {
+      return new Map();
+    }
+    return createDueDatesMap(dueDatesData);
+  }, [dueDatesData, dataLoading]);
+
   // Core state
   const [deck, setDeck] = useState([]);
   const [currentCard, setCurrentCard] = useState(0);
@@ -33,9 +45,17 @@ export const useFlashcards = () => {
 
   // Initialization flag
   const isInitialized = useRef(false);
+  const dataLoadedRef = useRef(false);
 
-  // Initialize from localStorage on mount
+  // Initialize from localStorage on mount when data is ready
   useEffect(() => {
+    // Wait for data to load
+    if (dataLoading || artworksData.length === 0) return;
+
+    // Only initialize once when data becomes available
+    if (dataLoadedRef.current) return;
+    dataLoadedRef.current = true;
+
     const savedState = loadState();
     if (savedState && savedState.deck.length > 0) {
       setDeck(savedState.deck);
@@ -56,7 +76,7 @@ export const useFlashcards = () => {
       setDeck(newDeck);
     }
     isInitialized.current = true;
-  }, []);
+  }, [dataLoading, artworksData, dueDatesMap]);
 
   // Save state when it changes
   useEffect(() => {
@@ -158,6 +178,8 @@ export const useFlashcards = () => {
   // Reset deck
   const resetDeck = useCallback(
     (shuffle = false) => {
+      if (dataLoading || artworksData.length === 0) return;
+
       clearDeckStorage();
       setIsShuffled(shuffle);
       setUndoHistory([]);
@@ -174,12 +196,14 @@ export const useFlashcards = () => {
       setCurrentCard(0);
       setIsFlipped(false);
     },
-    [dueDate, selectedUnits, deckMode]
+    [dueDate, selectedUnits, deckMode, dataLoading, artworksData, dueDatesMap]
   );
 
   // Update settings - rebuild deck when settings change
   const updateSettings = useCallback(
     (newUnits, newDate, newMode) => {
+      if (dataLoading || artworksData.length === 0) return;
+
       setSelectedUnits(newUnits);
       setDueDate(newDate);
       if (newMode !== undefined) {
@@ -201,7 +225,7 @@ export const useFlashcards = () => {
       setIsFlipped(false);
       setUndoHistory([]);
     },
-    [isShuffled, deckMode]
+    [isShuffled, deckMode, dataLoading, artworksData, dueDatesMap]
   );
 
   // Toggle unit selection
@@ -235,6 +259,15 @@ export const useFlashcards = () => {
 
   // Get card count info for current filters
   const getCardCountInfo = useCallback(() => {
+    if (dataLoading || artworksData.length === 0) {
+      return {
+        totalCards: 0,
+        filteredCards: 0,
+        highestCard: 0,
+        hasUnitFilter: false,
+      };
+    }
+
     const useAll = deckMode === "all";
 
     // Get total cards available (all units, current mode)
@@ -261,7 +294,7 @@ export const useFlashcards = () => {
       highestCard: allCardsDeck.length > 0 ? allCardsDeck[allCardsDeck.length - 1]?.id : 0,
       hasUnitFilter: selectedUnits.length > 0,
     };
-  }, [dueDate, selectedUnits, deckMode]);
+  }, [dueDate, selectedUnits, deckMode, dataLoading, artworksData, dueDatesMap]);
 
   return {
     // State
@@ -278,6 +311,8 @@ export const useFlashcards = () => {
     undoHistory,
     canUndo: undoHistory.length > 0,
     maxUndoSteps: MAX_UNDO_STEPS,
+    dataLoading,
+    artworksData,
 
     // Actions
     flipCard,

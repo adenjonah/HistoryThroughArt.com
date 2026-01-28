@@ -2,8 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.css";
-import dueDatesData from "./DueDates.json";
-import artPiecesData from "../../data/artworks.json";
+import { useDueDates, useArtworks } from "../../hooks/useSanityData";
 
 const getCurrentAcademicYear = () => {
   const now = new Date();
@@ -30,7 +29,17 @@ function CalendarPage() {
   const [assignments, setAssignments] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
 
+  // Fetch data from Sanity
+  const { dueDates: dueDatesData, loading: dueDatesLoading } = useDueDates();
+  const { artworks: artPiecesData, loading: artworksLoading } = useArtworks();
+
+  const loading = dueDatesLoading || artworksLoading;
+
   const dueDatesWithYear = useMemo(() => {
+    if (loading || !dueDatesData.assignments) {
+      return { assignmentsByDate: {}, quizzesByDate: {}, allDatesWithItems: new Set() };
+    }
+
     const assignmentsByDate = {};
     const quizzesByDate = {};
     const allDatesWithItems = new Set();
@@ -56,7 +65,7 @@ function CalendarPage() {
     });
 
     return { assignmentsByDate, quizzesByDate, allDatesWithItems };
-  }, []);
+  }, [loading, dueDatesData]);
 
   const onDateClick = (date) => {
     setSelectedDate(date);
@@ -182,6 +191,18 @@ function CalendarPage() {
         day: "numeric",
       })
     : "";
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <div className="animate-pulse text-lg text-[var(--text-color)]">
+            Loading calendar...
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center px-4 py-8 max-w-2xl mx-auto">

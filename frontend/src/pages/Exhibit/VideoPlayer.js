@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import artPiecesData from "../../data/artworks.json";
+import { useArtwork } from "../../hooks/useSanityData";
 
 function VideoPlayer({ id }) {
   const [artVideos, setArtVideos] = useState([]);
@@ -10,6 +10,9 @@ function VideoPlayer({ id }) {
   const transcriptRef = useRef(null);
   const playerRef = useRef(null);
   const intervalRef = useRef(null);
+
+  // Fetch artwork from Sanity
+  const { artwork: foundArtPiece, loading } = useArtwork(parseInt(id, 10));
 
   useEffect(() => {
     const tag = document.createElement("script");
@@ -60,9 +63,8 @@ function VideoPlayer({ id }) {
   };
 
   useEffect(() => {
-    const foundArtPiece = artPiecesData.find(
-      (piece) => piece.id.toString() === id
-    );
+    if (loading) return;
+
     if (foundArtPiece && foundArtPiece.videoLink && foundArtPiece.transcript) {
       const combinedVideos = foundArtPiece.videoLink.map((video, index) => ({
         videoLink: video,
@@ -70,7 +72,7 @@ function VideoPlayer({ id }) {
       }));
       setArtVideos(combinedVideos);
     }
-  }, [id]);
+  }, [foundArtPiece, loading]);
 
   const handleVideoSelection = (index) => {
     setSelectedVideo(index);
