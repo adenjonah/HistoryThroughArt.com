@@ -264,3 +264,245 @@
     padding-bottom: max(32px, env(safe-area-inset-bottom));
   }
 }
+
+/* ========================================
+   Map UI Controls
+   ======================================== */
+
+/* Segmented Mode Toggle */
+.map-mode-toggle {
+  display: flex;
+  background: rgba(26, 26, 26, 0.9);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.map-mode-toggle button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.map-mode-toggle button:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.map-mode-toggle button.active {
+  background: #7047A3;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(112, 71, 163, 0.4);
+}
+
+@media (max-width: 768px) {
+  .map-mode-toggle button {
+    padding: 10px 14px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+}
+
+/* Status Bar */
+.map-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(26, 26, 26, 0.9);
+  border-radius: 8px;
+  padding: 8px 14px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+}
+
+.map-status-bar strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.map-status-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.map-status-warning:hover {
+  background: rgba(245, 158, 11, 0.35);
+}
+
+@media (max-width: 768px) {
+  .map-status-bar {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .map-status-warning {
+    min-height: 36px;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Missing Locations Panel */
+.map-missing-panel {
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.map-missing-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.map-missing-panel-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+}
+
+.map-missing-panel-header p {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 4px 0 0 0;
+}
+
+.map-missing-panel-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  margin: -4px -4px 0 8px;
+}
+
+.map-missing-panel-close:hover {
+  color: #fff;
+}
+
+.map-missing-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  max-height: calc(50vh - 80px);
+}
+
+.map-missing-panel-list li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.map-missing-panel-list li:last-child {
+  border-bottom: none;
+}
+
+.map-missing-panel-list a {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.map-missing-panel-list a:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.map-missing-panel-list .artwork-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map-missing-panel-list .artwork-location {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .map-missing-panel {
+    max-height: 45vh;
+  }
+
+  .map-missing-panel-list {
+    max-height: calc(45vh - 80px);
+  }
+
+  .map-missing-panel-list a {
+    padding: 14px 16px;
+    min-height: 44px;
+  }
+}
+
+/* Mapbox zoom controls - dark theme override */
+.mapboxgl-ctrl-group {
+  background: rgba(26, 26, 26, 0.9) !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(8px);
+}
+
+.mapboxgl-ctrl-group button {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.mapboxgl-ctrl-group button + button {
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.mapboxgl-ctrl-group button:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Tint the icons purple/white */
+.mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
+  filter: brightness(0) invert(1);
+  opacity: 0.75;
+  transition: opacity 0.15s ease;
+}
+
+.mapboxgl-ctrl-group button:hover .mapboxgl-ctrl-icon {
+  opacity: 1;
+}

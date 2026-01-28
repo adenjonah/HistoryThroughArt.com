@@ -5,10 +5,20 @@ import { useArtworks } from "../../hooks/useSanityData";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
+// =============================================================================
+// SPINNING GLOBE FEATURE - Set to false to disable globe spin on load
+// =============================================================================
+const ENABLE_GLOBE_SPIN = true;
+const GLOBE_SPIN_SPEED = 0.5; // degrees per frame (lower = slower)
+const GLOBE_INITIAL_ZOOM = 1.5; // zoomed out to show full globe
+// =============================================================================
+
 const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMapType }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const popupRef = useRef(null);
+  const spinAnimationRef = useRef(null);
+  const userInteractedRef = useRef(false); // Use ref to avoid re-render on interaction
   const [mapType, setMapType] = useState(initialMapType || "originated");
   const [overlayData, setOverlayData] = useState([]);
   const [missingLocationData, setMissingLocationData] = useState([]);
@@ -29,17 +39,12 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleMapToggle = () => {
-    setMapType((prevType) => {
-      const newType =
-        prevType === "originated" ? "currentlyDisplayed" : "originated";
-
-      if (onMapTypeChange) {
-        onMapTypeChange(newType);
-      }
-
-      return newType;
-    });
+  const handleModeChange = (newMode) => {
+    if (newMode === mapType) return;
+    setMapType(newMode);
+    if (onMapTypeChange) {
+      onMapTypeChange(newMode);
+    }
   };
 
   // Get image URL - images from Sanity are already URLs
@@ -157,12 +162,17 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
 
     const defaultZoom = isMobile ? 1 : 4;
 
+    // Globe spin: use zoomed-out view if enabled and user hasn't interacted yet
+    const useGlobeSpin = ENABLE_GLOBE_SPIN && !userInteractedRef.current;
+    const initialZoom = useGlobeSpin ? GLOBE_INITIAL_ZOOM : (zoom !== undefined ? zoom : defaultZoom);
+
     try {
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: style || "mapbox://styles/mapbox/satellite-streets-v12",
-        center: center || [-117.420015, 47.673373],
-        zoom: zoom !== undefined ? zoom : defaultZoom,
+        center: center || [0, 20], // Center on prime meridian for globe view
+        zoom: initialZoom,
+        projection: useGlobeSpin ? 'globe' : 'mercator',
       });
 
       mapRef.current = map;
@@ -186,7 +196,44 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
         );
       }
 
+      // Globe spin animation
+      const spinGlobe = () => {
+        if (!mapRef.current || userInteractedRef.current) return;
+        const currentCenter = map.getCenter();
+        map.setCenter([currentCenter.lng + GLOBE_SPIN_SPEED, currentCenter.lat]);
+        spinAnimationRef.current = requestAnimationFrame(spinGlobe);
+      };
+
+      // Stop spinning when user interacts (no re-render needed)
+      const stopSpinning = () => {
+        if (spinAnimationRef.current) {
+          cancelAnimationFrame(spinAnimationRef.current);
+          spinAnimationRef.current = null;
+        }
+        userInteractedRef.current = true;
+      };
+
+      // Set up interaction listeners to stop spin (only if globe spin enabled)
+      if (useGlobeSpin) {
+        map.on('mousedown', stopSpinning);
+        map.on('touchstart', stopSpinning);
+        map.on('wheel', stopSpinning);
+        map.on('dragstart', stopSpinning);
+      }
+
       map.on("load", () => {
+        // Start globe spin animation if enabled
+        if (useGlobeSpin) {
+          // Add atmosphere for globe effect
+          map.setFog({
+            color: 'rgb(186, 210, 235)',
+            'high-color': 'rgb(36, 92, 223)',
+            'horizon-blend': 0.02,
+            'space-color': 'rgb(11, 11, 25)',
+            'star-intensity': 0.6
+          });
+          spinAnimationRef.current = requestAnimationFrame(spinGlobe);
+        }
         if (overlayData && overlayData.length > 0) {
           const geojsonData = {
             type: "FeatureCollection",
@@ -381,6 +428,11 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       });
 
       return () => {
+        // Cancel spin animation on cleanup
+        if (spinAnimationRef.current) {
+          cancelAnimationFrame(spinAnimationRef.current);
+          spinAnimationRef.current = null;
+        }
         closePopup();
         if (map) {
           map.remove();
@@ -440,77 +492,75 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       />
       {mapInitialized && (
         <>
-          {/* Map toggle button */}
-          <button
-            onClick={handleMapToggle}
-            className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10
-              px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg
-              bg-[var(--foreground-color)] text-[var(--background-color)]
-              font-medium text-xs sm:text-sm
-              shadow-lg hover:shadow-xl active:scale-95
-              transition-all duration-200
-              hover:scale-105 border-none cursor-pointer
-              touch-manipulation select-none"
-            aria-label={mapType === "originated" ? "Show current locations" : "Show origin locations"}
+          {/* Segmented mode toggle */}
+          <div
+            className="map-mode-toggle absolute top-3 left-3 sm:top-4 sm:left-4 z-10"
+            role="tablist"
+            aria-label="Map view mode"
           >
-            {mapType === "originated" ? "Show Current Locations" : "Show Origins"}
-          </button>
-
-          {/* Counter showing displayed vs total */}
-          <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-10
-            px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg
-            bg-[var(--foreground-color)]/90 text-[var(--text-color)]
-            text-xs sm:text-sm shadow-lg backdrop-blur-sm">
-            <span className="font-medium">{overlayData.length}</span>
-            <span className="opacity-70"> / {overlayData.length + missingLocationData.length} artworks mapped</span>
+            <button
+              role="tab"
+              aria-selected={mapType === "originated"}
+              className={mapType === "originated" ? "active" : ""}
+              onClick={() => handleModeChange("originated")}
+            >
+              Origins
+            </button>
+            <button
+              role="tab"
+              aria-selected={mapType === "currentlyDisplayed"}
+              className={mapType === "currentlyDisplayed" ? "active" : ""}
+              onClick={() => handleModeChange("currentlyDisplayed")}
+            >
+              Current
+            </button>
           </div>
 
-          {/* Missing locations panel toggle */}
-          {missingLocationData.length > 0 && (
-            <button
-              onClick={() => setShowMissingPanel(!showMissingPanel)}
-              className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10
-                px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg
-                bg-amber-500/90 text-white
-                font-medium text-xs sm:text-sm
-                shadow-lg hover:bg-amber-600 active:scale-95
-                transition-all duration-200
-                border-none cursor-pointer
-                touch-manipulation select-none"
-              aria-label="Show artworks without location data"
-            >
-              {showMissingPanel ? 'Hide' : `${missingLocationData.length} without location`}
-            </button>
-          )}
+          {/* Status bar with counter and warning badge */}
+          <div className="map-status-bar absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-10">
+            <span>
+              <strong>{overlayData.length}</strong> of {overlayData.length + missingLocationData.length} mapped
+            </span>
+            {missingLocationData.length > 0 && (
+              <button
+                className="map-status-warning"
+                onClick={() => setShowMissingPanel(!showMissingPanel)}
+                aria-expanded={showMissingPanel}
+                aria-label={`${missingLocationData.length} artworks unmapped`}
+              >
+                ! {missingLocationData.length} unmapped
+              </button>
+            )}
+          </div>
 
-          {/* Missing locations panel */}
+          {/* Missing locations panel - opens upward from status bar */}
           {showMissingPanel && missingLocationData.length > 0 && (
-            <div className="absolute top-14 right-3 sm:top-16 sm:right-4 z-20
-              w-[280px] sm:w-[320px] max-h-[60vh]
-              bg-[var(--foreground-color)]/95 backdrop-blur-sm
-              rounded-xl shadow-xl overflow-hidden
-              border border-[var(--text-color)]/10">
-              <div className="p-3 sm:p-4 border-b border-[var(--text-color)]/10">
-                <h3 className="font-semibold text-[var(--text-color)] text-sm sm:text-base">
-                  {mapType === "originated" ? "Missing Origin Location" : "Not Currently on Display"}
-                </h3>
-                <p className="text-[var(--text-color)]/60 text-xs mt-1">
-                  {missingLocationData.length} artwork{missingLocationData.length !== 1 ? 's' : ''} without map coordinates
-                </p>
+            <div className="map-missing-panel absolute bottom-16 left-3 sm:bottom-[72px] sm:left-4 z-20 w-[280px] sm:w-[320px]">
+              <div className="map-missing-panel-header">
+                <div>
+                  <h3>
+                    {mapType === "originated" ? "Missing Origin" : "Not on Display"}
+                  </h3>
+                  <p>
+                    {missingLocationData.length} artwork{missingLocationData.length !== 1 ? 's' : ''} without coordinates
+                  </p>
+                </div>
+                <button
+                  className="map-missing-panel-close"
+                  onClick={() => setShowMissingPanel(false)}
+                  aria-label="Close panel"
+                >
+                  ×
+                </button>
               </div>
-              <ul className="overflow-y-auto max-h-[calc(60vh-70px)] divide-y divide-[var(--text-color)]/5">
+              <ul className="map-missing-panel-list">
                 {missingLocationData.map((piece) => (
                   <li key={piece.id}>
-                    <a
-                      href={`/exhibit?id=${piece.id}&mapType=${mapType}`}
-                      className="block px-3 py-2.5 sm:px-4 sm:py-3
-                        hover:bg-[var(--text-color)]/5
-                        transition-colors duration-150"
-                    >
-                      <span className="text-[var(--text-color)] text-xs sm:text-sm font-medium block truncate">
+                    <a href={`/exhibit?id=${piece.id}&mapType=${mapType}`}>
+                      <span className="artwork-name">
                         {piece.id}. {piece.name}
                       </span>
-                      <span className="text-[var(--text-color)]/50 text-xs block truncate mt-0.5">
+                      <span className="artwork-location">
                         {piece.location}
                       </span>
                     </a>
