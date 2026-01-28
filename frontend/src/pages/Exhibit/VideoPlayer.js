@@ -1,15 +1,32 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useArtwork } from "../../hooks/useSanityData";
+import { useTranscriptPreferences } from "../../hooks/useTranscriptPreferences";
+import TranscriptControls from "./TranscriptControls";
+
+// Font size class mapping for transcript entries
+const fontSizeClasses = {
+  small: "text-xs",
+  medium: "text-sm",
+  large: "text-base",
+};
 
 function VideoPlayer({ id }) {
   const [artVideos, setArtVideos] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(0);
   const [visibleTranscript, setVisibleTranscript] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [userScrolled, setUserScrolled] = useState(false);
   const iframeRef = useRef(null);
   const transcriptRef = useRef(null);
   const playerRef = useRef(null);
   const intervalRef = useRef(null);
+  const entryRefs = useRef([]);
+  const scrollTimeoutRef = useRef(null);
+
+  // User preferences for transcript display
+  const { prefs, updatePref } = useTranscriptPreferences();
 
   // Fetch artwork from Sanity
   const { artwork: foundArtPiece, loading } = useArtwork(parseInt(id, 10));
@@ -37,6 +54,9 @@ function VideoPlayer({ id }) {
       }
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+      }
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
       }
       delete window.onYouTubeIframeAPIReady;
     };
@@ -88,6 +108,62 @@ function VideoPlayer({ id }) {
     setVisibleTranscript(!visibleTranscript);
   };
 
+  // Handle manual scroll - temporarily disable auto-scroll
+  const handleTranscriptScroll = () => {
+    setUserScrolled(true);
+    // Clear any existing timeout
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    // Re-enable auto-scroll after 5 seconds of inactivity
+    scrollTimeoutRef.current = setTimeout(() => {
+      setUserScrolled(false);
+    }, 5000);
+  };
+
+  const handleTranscriptKeyDown = (e) => {
+    const transcript = artVideos[selectedVideo]?.transcript || [];
+    if (transcript.length === 0) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setFocusedIndex((prev) => {
+          const next = Math.min(prev + 1, transcript.length - 1);
+          entryRefs.current[next]?.focus();
+          return next;
+        });
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setFocusedIndex((prev) => {
+          const next = Math.max(prev - 1, 0);
+          entryRefs.current[next]?.focus();
+          return next;
+        });
+        break;
+      case "Home":
+        e.preventDefault();
+        setFocusedIndex(0);
+        entryRefs.current[0]?.focus();
+        break;
+      case "End":
+        e.preventDefault();
+        setFocusedIndex(transcript.length - 1);
+        entryRefs.current[transcript.length - 1]?.focus();
+        break;
+      case "Enter":
+      case " ":
+        e.preventDefault();
+        if (transcript[focusedIndex]) {
+          handleTranscriptClick(transcript[focusedIndex].start);
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
   const ConvertToMins = (time) => {
     let minutes = Math.floor(time / 60);
     let seconds = time - minutes * 60;
@@ -107,8 +183,42 @@ function VideoPlayer({ id }) {
     return -1;
   }, [artVideos, selectedVideo, currentTime]);
 
+  // Filter transcript entries by search query
+  const getFilteredTranscript = useCallback(() => {
+    const transcript = artVideos[selectedVideo]?.transcript || [];
+    if (!searchQuery.trim()) {
+      return transcript.map((entry, index) => ({ ...entry, originalIndex: index }));
+    }
+    const query = searchQuery.toLowerCase();
+    return transcript
+      .map((entry, index) => ({ ...entry, originalIndex: index }))
+      .filter((entry) => entry.text.toLowerCase().includes(query));
+  }, [artVideos, selectedVideo, searchQuery]);
+
+  // Highlight matching search text in transcript entries
+  const highlightSearchText = (text) => {
+    if (!searchQuery.trim()) return text;
+    const query = searchQuery.toLowerCase();
+    const index = text.toLowerCase().indexOf(query);
+    if (index === -1) return text;
+
+    const before = text.slice(0, index);
+    const match = text.slice(index, index + searchQuery.length);
+    const after = text.slice(index + searchQuery.length);
+
+    return (
+      <>
+        {before}
+        <mark className="bg-yellow-300 text-black rounded px-0.5">{match}</mark>
+        {after}
+      </>
+    );
+  };
+
+  // Auto-scroll to active transcript entry (respects user preferences and manual scroll)
   useEffect(() => {
-    if (visibleTranscript && transcriptRef.current) {
+    // Only auto-scroll if enabled in prefs and user hasn't manually scrolled recently
+    if (visibleTranscript && transcriptRef.current && prefs.autoScroll && !userScrolled) {
       const activeIndex = getActiveTranscriptIndex();
       const transcriptElements =
         transcriptRef.current.querySelectorAll(".transcript-entry");
@@ -119,7 +229,7 @@ function VideoPlayer({ id }) {
         });
       }
     }
-  }, [currentTime, visibleTranscript, getActiveTranscriptIndex]);
+  }, [currentTime, visibleTranscript, getActiveTranscriptIndex, prefs.autoScroll, userScrolled]);
 
   if (artVideos.length === 0) {
     return null;
@@ -142,52 +252,153 @@ function VideoPlayer({ id }) {
           </div>
         </div>
 
-        {/* Transcript Panel */}
+        {/* Desktop: Transcript Panel */}
         {visibleTranscript && (
-          <div className="lg:w-1/4">
-            <div className="bg-[var(--background-color)] rounded-lg p-4 h-full max-h-[400px] lg:max-h-[calc(56.25vw*0.75)] overflow-hidden flex flex-col">
+          <div className="hidden lg:block lg:min-w-[200px] lg:max-w-[350px] lg:w-1/4">
+            <div
+              className={`rounded-lg p-4 h-full max-h-[400px] lg:max-h-[calc(56.25vw*0.75)] overflow-hidden flex flex-col ${
+                prefs.highContrast
+                  ? "bg-black"
+                  : "bg-[var(--background-color)]"
+              }`}
+            >
               <div className="flex justify-between items-center mb-3">
-                <h3 className="text-[var(--text-color)] font-semibold">
+                <h3
+                  className={`font-semibold ${
+                    prefs.highContrast ? "text-white" : "text-[var(--text-color)]"
+                  }`}
+                >
                   Transcript
                 </h3>
                 <button
-                  className="text-[var(--text-color)]/70 hover:text-[var(--text-color)] transition-colors"
+                  className={`transition-colors ${
+                    prefs.highContrast
+                      ? "text-white/70 hover:text-white"
+                      : "text-[var(--text-color)]/70 hover:text-[var(--text-color)]"
+                  }`}
                   onClick={handleToggleTranscript}
                   aria-label="Hide transcript"
                 >
                   ×
                 </button>
               </div>
+
+              {/* Transcript Controls */}
+              <div className="mb-3">
+                <TranscriptControls
+                  prefs={prefs}
+                  updatePref={updatePref}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                />
+              </div>
+
               <div
                 ref={transcriptRef}
+                role="list"
+                aria-label="Video transcript"
+                onKeyDown={handleTranscriptKeyDown}
+                onScroll={handleTranscriptScroll}
                 className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-[var(--accent-color)] scrollbar-track-transparent"
               >
-                {artVideos[selectedVideo].transcript &&
-                  artVideos[selectedVideo].transcript.map((entry, index) => {
-                    const isActive = index === getActiveTranscriptIndex();
-                    return (
-                      <button
-                        key={index}
-                        className={`transcript-entry w-full text-left p-2 rounded-lg transition-all duration-200 ${
-                          isActive
-                            ? "bg-[var(--foreground-color)]/40 text-[var(--text-color)]"
-                            : "bg-[var(--accent-color)]/20 text-[var(--text-color)]/80 hover:bg-[var(--accent-color)]/30"
+                {getFilteredTranscript().map((entry) => {
+                  const isActive =
+                    prefs.highlightActive &&
+                    entry.originalIndex === getActiveTranscriptIndex();
+                  return (
+                    <button
+                      key={entry.originalIndex}
+                      ref={(el) => (entryRefs.current[entry.originalIndex] = el)}
+                      role="listitem"
+                      aria-label={`${ConvertToMins(entry.start)}: ${entry.text}`}
+                      className={`transcript-entry w-full text-left p-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                        prefs.highContrast
+                          ? isActive
+                            ? "bg-yellow-400 text-black focus:ring-yellow-400"
+                            : "bg-gray-800 text-white hover:bg-gray-700 focus:ring-white"
+                          : isActive
+                            ? "bg-[var(--foreground-color)]/40 text-[var(--text-color)] focus:ring-[var(--foreground-color)]"
+                            : "bg-[var(--accent-color)]/20 text-[var(--text-color)]/80 hover:bg-[var(--accent-color)]/30 focus:ring-[var(--foreground-color)]"
+                      }`}
+                      onClick={() => handleTranscriptClick(entry.start)}
+                      onFocus={() => setFocusedIndex(entry.originalIndex)}
+                      aria-current={isActive ? "true" : undefined}
+                    >
+                      <span
+                        className={`text-xs font-mono mr-2 ${
+                          prefs.highContrast
+                            ? isActive
+                              ? "text-black"
+                              : "text-yellow-400"
+                            : "text-[var(--foreground-color)]"
                         }`}
-                        onClick={() => handleTranscriptClick(entry.start)}
-                        aria-current={isActive ? "true" : undefined}
                       >
-                        <span className="text-xs font-mono text-[var(--foreground-color)] mr-2">
-                          <span className="sr-only">Timestamp: </span>
-                          {ConvertToMins(entry.start)}
-                        </span>
-                        <span className="text-sm">{entry.text}</span>
-                      </button>
-                    );
-                  })}
+                        <span className="sr-only">Timestamp: </span>
+                        {ConvertToMins(entry.start)}
+                      </span>
+                      <span className={`${fontSizeClasses[prefs.fontSize]} leading-relaxed`}>
+                        {highlightSearchText(entry.text)}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
         )}
+      </div>
+
+      {/* Mobile: Bottom drawer */}
+      <div className={`
+        lg:hidden fixed bottom-0 left-0 right-0 z-50
+        bg-[var(--background-color)] rounded-t-2xl
+        transition-transform duration-300 ease-out
+        ${visibleTranscript ? 'translate-y-0' : 'translate-y-full'}
+        max-h-[60vh] overflow-hidden
+        shadow-[0_-4px_20px_rgba(0,0,0,0.3)]
+      `}>
+        {/* Drag handle */}
+        <div className="flex justify-center py-3">
+          <div className="w-12 h-1.5 bg-[var(--text-color)]/30 rounded-full" />
+        </div>
+        {/* Header */}
+        <div className="flex justify-between items-center px-4 pb-3">
+          <h3 className="text-[var(--text-color)] font-semibold">
+            Transcript
+          </h3>
+          <button
+            className="text-[var(--text-color)]/70 hover:text-[var(--text-color)] transition-colors p-1"
+            onClick={handleToggleTranscript}
+            aria-label="Hide transcript"
+          >
+            ×
+          </button>
+        </div>
+        {/* Transcript content */}
+        <div className="overflow-y-auto px-4 pb-6 space-y-2 max-h-[calc(60vh-80px)]">
+          {artVideos[selectedVideo]?.transcript &&
+            artVideos[selectedVideo].transcript.map((entry, index) => {
+              const isActive = index === getActiveTranscriptIndex();
+              return (
+                <button
+                  key={index}
+                  className={`transcript-entry w-full text-left p-2 rounded-lg transition-all duration-200 ${
+                    isActive
+                      ? "bg-[var(--foreground-color)]/40 text-[var(--text-color)]"
+                      : "bg-[var(--accent-color)]/20 text-[var(--text-color)]/80 hover:bg-[var(--accent-color)]/30"
+                  }`}
+                  onClick={() => handleTranscriptClick(entry.start)}
+                  aria-current={isActive ? "true" : undefined}
+                >
+                  <span className="text-xs font-mono text-[var(--foreground-color)] mr-2">
+                    <span className="sr-only">Timestamp: </span>
+                    {ConvertToMins(entry.start)}
+                  </span>
+                  <span className="text-sm">{entry.text}</span>
+                </button>
+              );
+            })}
+        </div>
       </div>
 
       {/* Controls */}
