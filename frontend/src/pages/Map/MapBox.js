@@ -121,6 +121,11 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
 
   // Initialize the map
   useEffect(() => {
+    // Don't initialize if still loading or container not ready
+    if (artworksLoading || !mapContainerRef.current) {
+      return;
+    }
+
     // Check for mapbox token
     if (!mapboxgl.accessToken) {
       setMapError("Mapbox access token is missing");
@@ -128,10 +133,8 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
     }
 
     // Ensure the map container is empty before initializing
-    if (mapContainerRef.current) {
-      while (mapContainerRef.current.firstChild) {
-        mapContainerRef.current.removeChild(mapContainerRef.current.firstChild);
-      }
+    while (mapContainerRef.current.firstChild) {
+      mapContainerRef.current.removeChild(mapContainerRef.current.firstChild);
     }
 
     const defaultZoom = isMobile ? 1 : 4;
@@ -369,7 +372,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       console.error("Error initializing map:", error);
       setMapError(`Failed to initialize map: ${error.message}`);
     }
-  }, [center, zoom, style, overlayData, mapType, isMobile, closePopup, showPopup]);
+  }, [center, zoom, style, overlayData, mapType, isMobile, closePopup, showPopup, artworksLoading]);
 
   // Show loading state
   if (artworksLoading) {
