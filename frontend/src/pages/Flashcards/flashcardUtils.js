@@ -144,7 +144,11 @@ const STORAGE_KEYS = {
   deckMode: "flashcards_deckMode",
   hasSeenInstructions: "flashcards_hasSeenSwipeInstructions",
   hasSeenFlipHint: "flashcards_hasSeenFlipHint",
+  dataVersion: "flashcards_dataVersion",
 };
+
+// Current data version - increment when data source changes (e.g., Sanity migration)
+const CURRENT_DATA_VERSION = 2;
 
 // Save flashcard state to localStorage
 export const saveState = (state) => {
@@ -155,6 +159,7 @@ export const saveState = (state) => {
     localStorage.setItem(STORAGE_KEYS.dueDate, state.dueDate.toISOString());
     localStorage.setItem(STORAGE_KEYS.isShuffled, JSON.stringify(state.isShuffled));
     localStorage.setItem(STORAGE_KEYS.deckMode, state.deckMode || "korus");
+    localStorage.setItem(STORAGE_KEYS.dataVersion, String(CURRENT_DATA_VERSION));
   } catch (error) {
     console.error("Error saving flashcard state:", error);
   }
@@ -163,6 +168,16 @@ export const saveState = (state) => {
 // Load flashcard state from localStorage
 export const loadState = () => {
   try {
+    // Check data version - if outdated, invalidate cache
+    const storedVersion = parseInt(localStorage.getItem(STORAGE_KEYS.dataVersion) || "0", 10);
+    if (storedVersion < CURRENT_DATA_VERSION) {
+      // Clear outdated deck data (images now come from Sanity CDN)
+      localStorage.removeItem(STORAGE_KEYS.deck);
+      localStorage.removeItem(STORAGE_KEYS.currentCard);
+      localStorage.setItem(STORAGE_KEYS.dataVersion, String(CURRENT_DATA_VERSION));
+      return null; // Force fresh deck rebuild
+    }
+
     const deck = JSON.parse(localStorage.getItem(STORAGE_KEYS.deck) || "[]");
     const currentCard = parseInt(localStorage.getItem(STORAGE_KEYS.currentCard) || "0", 10);
     const rawSelectedUnits = JSON.parse(localStorage.getItem(STORAGE_KEYS.selectedUnits) || "[]");
