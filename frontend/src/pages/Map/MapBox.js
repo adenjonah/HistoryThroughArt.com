@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useArtworks } from "../../hooks/useSanityData";
+import { getImageHotspot } from "../../lib/sanity";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -67,14 +68,15 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
   const showPopup = useCallback((map, coordinates, properties) => {
     closePopup();
 
-    const { id, name, location, imageUrl } = properties;
+    const { id, name, location, imageUrl, imageHotspot } = properties;
     const nameText = name || 'Unknown';
     const locationText = location || 'Unknown location';
+    const hotspotStyle = imageHotspot || 'center center';
 
     const popupContent = `
       <div class="map-popup-content">
         ${imageUrl ? `
-          <img src="${imageUrl}" class="map-popup-image" alt="${nameText}" />
+          <img src="${imageUrl}" class="map-popup-image" style="object-position: ${hotspotStyle};" alt="${nameText}" />
         ` : ''}
         <p class="map-popup-title">${id}. ${nameText}</p>
         <p class="map-popup-location">${locationText}</p>
@@ -111,6 +113,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
         latitude: piece.originatedLatitude,
         longitude: piece.originatedLongitude,
         image: piece.image && piece.image.length > 0 ? piece.image[0] : null,
+        imageHotspot: getImageHotspot(piece.imageData?.[0]),
       }));
       setOverlayData(overlayData);
       setMissingLocationData(withoutCoords.map((piece) => ({
@@ -132,6 +135,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
         latitude: piece.displayedLatitude,
         longitude: piece.displayedLongitude,
         image: piece.image && piece.image.length > 0 ? piece.image[0] : null,
+        imageHotspot: getImageHotspot(piece.imageData?.[0]),
       }));
       setOverlayData(overlayData);
       setMissingLocationData(withoutCoords.map((piece) => ({
@@ -250,6 +254,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
                   name: overlay.name,
                   location: overlay.location,
                   imageUrl: overlay.image ? getImagePath(overlay.image) : "",
+                  imageHotspot: overlay.imageHotspot || "center center",
                 },
               })),
           };

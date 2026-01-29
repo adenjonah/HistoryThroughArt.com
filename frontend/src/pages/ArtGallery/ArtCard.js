@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { getImageHotspot } from "../../lib/sanity";
 
 function ArtCard({ item, layout, image, search }) {
   const navigate = useNavigate();
@@ -115,6 +116,7 @@ function ArtCard({ item, layout, image, search }) {
         {item.image && image && (
           <img
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            style={{ objectPosition: getImageHotspot(item.imageData?.[0]) }}
             src={image.src}
             alt={item.name}
             loading="lazy"

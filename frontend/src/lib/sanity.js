@@ -22,22 +22,39 @@ export function urlFor(source) {
 }
 
 /**
- * Get image URL with default optimizations
- * @param {Object} source - Sanity image object
+ * Get image URL with default optimizations and hotspot support
+ * @param {Object} source - Sanity image object (includes hotspot/crop data)
  * @param {Object} options - Optional size/format options
  * @returns {string} - Optimized image URL
  */
 export function getImageUrl(source, options = {}) {
   if (!source) return '';
 
-  const { width = 800, height, format = 'webp', quality = 80 } = options;
+  const { width = 800, height, format = 'webp', quality = 80, fit = 'max' } = options;
 
   let url = builder.image(source).format(format).quality(quality);
 
+  // When using fit='crop', the builder automatically uses hotspot data
+  if (fit) url = url.fit(fit);
   if (width) url = url.width(width);
   if (height) url = url.height(height);
 
   return url.url();
+}
+
+/**
+ * Get CSS object-position value from Sanity image hotspot
+ * Use this when displaying images with object-fit: cover to ensure
+ * the hotspot (focal point) stays visible
+ * @param {Object} source - Sanity image object with hotspot data
+ * @returns {string} - CSS object-position value (e.g., "30% 20%")
+ */
+export function getImageHotspot(source) {
+  if (!source?.hotspot) return 'center center';
+
+  const { x, y } = source.hotspot;
+  // Hotspot values are 0-1, convert to percentage
+  return `${Math.round(x * 100)}% ${Math.round(y * 100)}%`;
 }
 
 // GROQ Queries
@@ -55,7 +72,12 @@ export const queries = {
     displayedLocation,
     displayedCoordinates,
     originatedCoordinates,
-    images,
+    "images": images[] {
+      ...,
+      hotspot,
+      crop,
+      asset->
+    },
     videos
   }`,
 
@@ -72,7 +94,12 @@ export const queries = {
     displayedLocation,
     displayedCoordinates,
     originatedCoordinates,
-    images,
+    "images": images[] {
+      ...,
+      hotspot,
+      crop,
+      asset->
+    },
     videos
   }`,
 
@@ -122,8 +149,11 @@ export function transformArtwork(sanityArtwork) {
     }
   }
 
-  // Convert images array to legacy format (array of filenames replaced with URLs)
+  // Convert images array to legacy format (array of URLs) for backward compatibility
   const image = images?.map((img) => getImageUrl(img, { width: 1200 })) || [];
+
+  // Also keep raw image data with hotspot info for components that need it
+  const imageData = images || [];
 
   // Convert videos array to legacy format
   const videoLink = videos?.map((v) => v.url).filter(Boolean) || null;
@@ -140,6 +170,7 @@ export function transformArtwork(sanityArtwork) {
     originatedLatitude: originatedCoordinates?.latitude,
     originatedLongitude: originatedCoordinates?.longitude,
     image,
+    imageData, // Raw Sanity image objects with hotspot/crop data
     videoLink: videoLink?.length ? videoLink : null,
     transcript: transcript?.length ? transcript : null,
   };

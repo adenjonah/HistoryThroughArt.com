@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getContentAreaName } from "../../data/contentAreas";
 import { formatDateDisplay, hasSeenFlipHint, markFlipHintSeen } from "./flashcardUtils";
+import { getImageHotspot } from "../../lib/sanity";
 
 const FlashcardCard = ({
   card,
@@ -152,7 +153,10 @@ const FlashcardCard = ({
                 {/* Blurred background layer for letterboxing */}
                 <div
                   className="image-backdrop"
-                  style={{ backgroundImage: `url(${imageSrc})` }}
+                  style={{
+                    backgroundImage: `url(${imageSrc})`,
+                    backgroundPosition: getImageHotspot(card.imageData?.[0]),
+                  }}
                 />
                 {/* Main image with contain */}
                 <img
