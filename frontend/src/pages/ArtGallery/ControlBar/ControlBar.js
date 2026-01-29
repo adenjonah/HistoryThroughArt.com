@@ -27,7 +27,7 @@ function ControlBar({
       unit9: false,
       unit10: false,
     });
-    setSort("Relevance");
+    setSort("ID Ascending");
     setSearch("");
     setClearFilters(true);
   };

@@ -7,7 +7,7 @@ function Museum() {
   const [artPiecesArray, setArtPiecesArray] = useState([]);
   const [layout, setLayout] = useState("table");
   const [sort, setSort] = useState(
-    () => localStorage.getItem("sort") || "Relevance"
+    () => localStorage.getItem("sort") || "ID Ascending"
   );
   const [unitFilters, setUnitFilters] = useState(() => {
     const savedFilters = localStorage.getItem("unitFilters");

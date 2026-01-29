@@ -15,11 +15,20 @@ function SearchComponent({
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
+    const wasEmpty = search.length === 0;
+    const isNowEmpty = value.length === 0;
+
     setSearch(value);
-    // Auto-switch to Relevance sort when searching (always)
-    if (value.length > 0) {
+
+    // Auto-switch sort based on search state
+    if (wasEmpty && !isNowEmpty) {
+      // Started typing: switch to Relevance
       setSort("Relevance");
+    } else if (!wasEmpty && isNowEmpty) {
+      // Cleared search: switch back to ID Ascending
+      setSort("ID Ascending");
     }
+
     setClearFilters(
       value.length === 0 &&
         Object.values(unitFilters).every((v) => !v) &&
