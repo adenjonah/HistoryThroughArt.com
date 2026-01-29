@@ -1,390 +1,475 @@
-import React from "react";
+import React, { useState } from "react";
+
+const ChevronIcon = ({ isOpen }) => (
+  <svg
+    className={`w-5 h-5 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+  </svg>
+);
+
+const AccordionSection = ({ title, icon, children, isOpen, onToggle }) => (
+  <div className="border border-[var(--accent-color)]/30 rounded-xl overflow-hidden bg-[var(--accent-color)]/10 backdrop-blur-sm">
+    <button
+      onClick={onToggle}
+      className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-[var(--accent-color)]/20 transition-colors duration-200"
+    >
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">{icon}</span>
+        <span className="text-lg font-semibold text-[var(--text-color)]">{title}</span>
+      </div>
+      <ChevronIcon isOpen={isOpen} />
+    </button>
+    <div
+      className={`overflow-hidden transition-all duration-300 ease-in-out ${
+        isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
+      }`}
+    >
+      <div className="px-5 pb-5 pt-2 text-[var(--text-color)]/90 leading-relaxed">
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
+const SubSection = ({ title, children }) => (
+  <div className="mb-4 last:mb-0">
+    <h4 className="font-medium text-[var(--foreground-color)] mb-2">{title}</h4>
+    {children}
+  </div>
+);
+
+const KeyboardKey = ({ children }) => (
+  <kbd className="px-2 py-1 text-sm font-mono bg-[var(--background-color)] border border-[var(--accent-color)]/50 rounded-md text-[var(--text-color)]">
+    {children}
+  </kbd>
+);
 
 function Tutorial() {
+  const [openSections, setOpenSections] = useState({});
+  const [videoExpanded, setVideoExpanded] = useState(false);
+
+  const toggleSection = (section) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
+  const expandAll = () => {
+    setOpenSections({
+      intro: true,
+      gallery: true,
+      exhibit: true,
+      flashcards: true,
+      map: true,
+      calendar: true,
+      tips: true,
+      technical: true,
+    });
+  };
+
+  const collapseAll = () => {
+    setOpenSections({});
+    setVideoExpanded(false);
+  };
+
   return (
     <div className="min-h-screen bg-[var(--background-color)] px-4 py-10 md:py-16">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <h1 className="text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-6 text-center">
-          How to Use This Site
-        </h1>
-        <p className="text-lg text-[var(--text-color)] mb-8 text-center max-w-2xl mx-auto">
-          Welcome to History Through Art! This guide will help you get the most
-          out of your AP Art History study experience.
-        </p>
-
-        {/* Video Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl text-[var(--text-color)] font-semibold mb-4">
-            Video Walkthrough
-          </h2>
-          <p className="text-[var(--text-color)] opacity-80 mb-4">
-            Prefer watching? This video provides a comprehensive tour of all features:
+        <div className="text-center mb-10">
+          <h1 className="text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-3">
+            How to Use This Site
+          </h1>
+          <p className="text-[var(--text-color)]/70 text-lg">
+            Everything you need to know about History Through Art
           </p>
-          <div className="w-full">
-            <div className="relative" style={{ paddingBottom: "56.25%" }}>
-              <iframe
-                className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                src="https://www.youtube.com/embed/pv1N-USnLhE"
-                title="Tutorial"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          <button
+            onClick={expandAll}
+            className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--foreground-color)] text-[var(--background-color)] hover:opacity-90 transition-opacity"
+          >
+            Expand All
+          </button>
+          <button
+            onClick={collapseAll}
+            className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--foreground-color)] text-[var(--foreground-color)] hover:bg-[var(--foreground-color)]/10 transition-colors"
+          >
+            Collapse All
+          </button>
+        </div>
+
+        {/* Video Section - Special Card */}
+        <div className="mb-6 border border-[var(--accent-color)]/30 rounded-xl overflow-hidden bg-gradient-to-br from-[var(--accent-color)]/20 to-[var(--accent-color)]/5">
+          <button
+            onClick={() => setVideoExpanded(!videoExpanded)}
+            className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-[var(--accent-color)]/10 transition-colors duration-200"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🎬</span>
+              <div>
+                <span className="text-lg font-semibold text-[var(--text-color)]">Video Walkthrough</span>
+                <span className="ml-2 text-sm text-[var(--text-color)]/60">• Prefer watching?</span>
+              </div>
+            </div>
+            <ChevronIcon isOpen={videoExpanded} />
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              videoExpanded ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="px-5 pb-5">
+              <div className="relative rounded-lg overflow-hidden" style={{ paddingBottom: "56.25%" }}>
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full"
+                  src="https://www.youtube.com/embed/pv1N-USnLhE"
+                  title="Tutorial"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* Divider */}
-        <hr className="border-[var(--accent-color)] opacity-30 mb-12" />
-
-        {/* Written Guide */}
-        <div className="space-y-10 text-[var(--text-color)]">
+        {/* Accordion Sections */}
+        <div className="space-y-3">
           {/* Introduction */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              What is History Through Art?
-            </h2>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              History Through Art is a free study tool designed for AP Art History students.
-              It brings together all 250 required artworks from the AP curriculum with
-              educational videos, interactive flashcards, maps, and a study calendar.
+          <AccordionSection
+            title="What is History Through Art?"
+            icon="📚"
+            isOpen={openSections.intro}
+            onToggle={() => toggleSection("intro")}
+          >
+            <p className="mb-4">
+              <strong>History Through Art</strong> is a free study platform for AP Art History students.
+              It brings together all <strong>250 required artworks</strong> with educational videos,
+              interactive flashcards, maps, and a study calendar.
             </p>
-            <p className="opacity-90 leading-relaxed">
-              Whether you're preparing for a quiz, reviewing for the AP exam, or just
-              exploring art history, this site provides multiple ways to learn and retain
-              information about each artwork.
+            <p className="mb-4">
+              Created to support Mrs. Korus's AP Art History curriculum at North Central High School,
+              the site provides multiple ways to learn and retain information about each artwork.
             </p>
-          </section>
+            <div className="flex flex-wrap gap-2 mt-4">
+              <span className="px-3 py-1 rounded-full text-sm bg-[var(--accent-color)]/30 text-[var(--text-color)]">
+                250 Artworks
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm bg-[var(--accent-color)]/30 text-[var(--text-color)]">
+                Video Lessons
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm bg-[var(--accent-color)]/30 text-[var(--text-color)]">
+                Flashcards
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm bg-[var(--accent-color)]/30 text-[var(--text-color)]">
+                Interactive Map
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm bg-[var(--accent-color)]/30 text-[var(--text-color)]">
+                Study Calendar
+              </span>
+            </div>
+          </AccordionSection>
 
-          {/* Quick Start */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Quick Start
-            </h2>
-            <p className="mb-4 opacity-90">
-              From the home page, you can jump directly to the three main study tools:
-            </p>
-            <ul className="list-disc list-inside space-y-2 opacity-90 ml-4">
-              <li><strong>Flashcards</strong> — Test your knowledge with interactive study cards</li>
-              <li><strong>Gallery</strong> — Browse and search all 250 artworks</li>
-              <li><strong>Map</strong> — See where artworks originated around the world</li>
-            </ul>
-          </section>
-
-          {/* Art Gallery */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Art Gallery
-            </h2>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              The Gallery is your browsable catalog of all 250 AP Art History artworks.
-              Use it to find specific pieces, explore by content area, or discover new artworks.
-            </p>
-
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Searching
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              Type in the search bar to find artworks by ID number, name, artist, date,
-              location, or materials. The search is smart — ID matches appear first,
-              followed by other relevant results. When you start typing, the sort
-              automatically switches to "Relevance" to show the best matches first.
+          {/* Gallery */}
+          <AccordionSection
+            title="Art Gallery"
+            icon="🖼️"
+            isOpen={openSections.gallery}
+            onToggle={() => toggleSection("gallery")}
+          >
+            <p className="mb-4">
+              Browse all 250 AP Art History artworks in one searchable, filterable catalog.
             </p>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Filtering by Content Area
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              Click the "Filters" dropdown to narrow results to specific units (content areas).
-              You can select multiple units at once. Active filters appear as tags below
-              the search bar — click the X on any tag to remove that filter.
+            <SubSection title="Search">
+              <p>
+                Type to find artworks by <strong>ID, name, artist, date, location, or materials</strong>.
+                Search automatically sorts by relevance. Clear the search to return to ID order.
+              </p>
+            </SubSection>
+
+            <SubSection title="Filter by Content Area">
+              <p>
+                Use the <strong>Filters</strong> dropdown to show only specific units (1-10).
+                Select multiple units to combine filters. Active filters appear as removable tags.
+              </p>
+            </SubSection>
+
+            <SubSection title="Sort Options">
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {["ID", "Name A-Z", "Content Area", "Date", "Korus Order", "Relevance"].map((sort) => (
+                  <div key={sort} className="px-3 py-2 bg-[var(--background-color)]/50 rounded-lg text-sm">
+                    {sort}
+                  </div>
+                ))}
+              </div>
+            </SubSection>
+
+            <p className="mt-4 text-sm text-[var(--text-color)]/70">
+              💡 Click any artwork to open its detailed Exhibit page.
+            </p>
+          </AccordionSection>
+
+          {/* Exhibit */}
+          <AccordionSection
+            title="Exhibit Page"
+            icon="🎨"
+            isOpen={openSections.exhibit}
+            onToggle={() => toggleSection("exhibit")}
+          >
+            <p className="mb-4">
+              Each artwork has a dedicated page packed with study materials.
             </p>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Sorting Options
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              Use the sort dropdown to organize artworks by:
-            </p>
-            <ul className="list-disc list-inside space-y-1 opacity-90 ml-4 mb-4">
-              <li><strong>ID</strong> — The official AP Art History numbering (1-250)</li>
-              <li><strong>Name</strong> — Alphabetically by artwork title</li>
-              <li><strong>Content Area</strong> — Grouped by unit number</li>
-              <li><strong>Date</strong> — Chronologically by creation date</li>
-              <li><strong>Korus Sort</strong> — Mrs. Korus's recommended teaching order</li>
-              <li><strong>Relevance</strong> — Best matches when searching</li>
-            </ul>
+            <SubSection title="Video Lessons">
+              <p>
+                Watch Mrs. Korus explain each artwork. Videos include <strong>synchronized transcripts</strong> —
+                click any line to jump to that moment, or search within the transcript.
+              </p>
+            </SubSection>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Viewing Artworks
-            </h3>
-            <p className="opacity-90 leading-relaxed">
-              Click any artwork in the gallery to open its full Exhibit page with
-              videos, details, and more.
-            </p>
-          </section>
+            <SubSection title="Pronunciation">
+              <p>
+                Click the <strong>speaker icon</strong> next to artwork titles to hear correct pronunciation.
+              </p>
+            </SubSection>
 
-          {/* Exhibit Page */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Exhibit Page
-            </h2>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              Each artwork has a dedicated Exhibit page packed with information to help
-              you study. Here's what you'll find:
-            </p>
+            <SubSection title="Key Identifiers">
+              <p>
+                Quick reference for the essential facts: Artist/Culture, Location, Date, Materials, and Content Area.
+              </p>
+            </SubSection>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Video Lessons
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              Watch Mrs. Korus's educational videos explaining each artwork's history,
-              significance, and key details. Videos include synchronized transcripts —
-              click any line in the transcript to jump to that moment in the video.
-              You can also search within the transcript to find specific topics.
-            </p>
+            <SubSection title="Photo Gallery & Map">
+              <p>
+                Browse multiple images of each artwork. The mini map shows where it was created
+                and where it's displayed today.
+              </p>
+            </SubSection>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Pronunciation
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              Click the speaker icon next to the artwork title to hear the correct
-              pronunciation. This is especially helpful for artworks with names in
-              other languages.
+            <p className="mt-4 text-sm text-[var(--text-color)]/70">
+              💡 Use Previous/Next buttons to browse artworks without returning to the gallery.
             </p>
-
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Key Identifiers
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              The identifiers panel shows the essential facts you need to memorize:
-              Artist/Culture, Location, Date, Materials, and Content Area. These are
-              the details that appear on AP exam questions.
-            </p>
-
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Photo Gallery
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              Browse multiple images of each artwork to see different angles, details,
-              and context views.
-            </p>
-
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Origin Map
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              A mini map shows where the artwork was created and where it's currently
-              located (if different). This helps you understand the geographic and
-              cultural context.
-            </p>
-
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Navigation
-            </h3>
-            <p className="opacity-90 leading-relaxed">
-              Use the Previous/Next buttons to move through artworks sequentially
-              without returning to the gallery.
-            </p>
-          </section>
+          </AccordionSection>
 
           {/* Flashcards */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Flashcards
-            </h2>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              The Flashcards tool uses spaced repetition to help you memorize artworks
-              efficiently. Cards you struggle with appear more often, while cards you
-              know well are removed from the deck.
+          <AccordionSection
+            title="Flashcards"
+            icon="🃏"
+            isOpen={openSections.flashcards}
+            onToggle={() => toggleSection("flashcards")}
+          >
+            <p className="mb-4">
+              Study with <strong>spaced repetition</strong> — cards you struggle with appear more often.
             </p>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              How It Works
-            </h3>
-            <ol className="list-decimal list-inside space-y-2 opacity-90 ml-4 mb-4">
-              <li>A card shows an artwork image</li>
-              <li>Try to recall the title, artist, date, and other details</li>
-              <li>Click or tap the card to flip it and see the answer</li>
-              <li>Rate your recall: <strong>Bad</strong>, <strong>Good</strong>, or <strong>Great</strong></li>
-            </ol>
+            <SubSection title="How It Works">
+              <ol className="list-decimal list-inside space-y-1 ml-2">
+                <li>See an artwork image</li>
+                <li>Recall the details (title, artist, date...)</li>
+                <li>Flip to check your answer</li>
+                <li>Rate: <strong>Bad</strong>, <strong>Good</strong>, or <strong>Great</strong></li>
+              </ol>
+            </SubSection>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Rating Cards
-            </h3>
-            <ul className="list-disc list-inside space-y-2 opacity-90 ml-4 mb-4">
-              <li><strong>Bad (1)</strong> — Didn't know it. Card is duplicated and added to the end for more practice.</li>
-              <li><strong>Good (2)</strong> — Knew most of it. Card moves to the next position.</li>
-              <li><strong>Great (3)</strong> — Knew it perfectly. Card is removed from the deck.</li>
-            </ul>
+            <SubSection title="Rating System">
+              <div className="space-y-2 mt-2">
+                <div className="flex items-center gap-3 p-2 bg-red-500/10 rounded-lg">
+                  <span className="font-bold text-red-400">Bad</span>
+                  <span className="text-sm">Card duplicated for more practice</span>
+                </div>
+                <div className="flex items-center gap-3 p-2 bg-yellow-500/10 rounded-lg">
+                  <span className="font-bold text-yellow-400">Good</span>
+                  <span className="text-sm">Card moves to next position</span>
+                </div>
+                <div className="flex items-center gap-3 p-2 bg-green-500/10 rounded-lg">
+                  <span className="font-bold text-green-400">Great</span>
+                  <span className="text-sm">Card removed from deck</span>
+                </div>
+              </div>
+            </SubSection>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Keyboard Shortcuts
-            </h3>
-            <ul className="list-disc list-inside space-y-1 opacity-90 ml-4 mb-4">
-              <li><strong>Spacebar</strong> — Flip the card</li>
-              <li><strong>1</strong> — Rate as Bad</li>
-              <li><strong>2</strong> — Rate as Good</li>
-              <li><strong>3</strong> — Rate as Great</li>
-            </ul>
+            <SubSection title="Keyboard Shortcuts">
+              <div className="flex flex-wrap gap-4 mt-2">
+                <div className="flex items-center gap-2">
+                  <KeyboardKey>Space</KeyboardKey>
+                  <span className="text-sm">Flip</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <KeyboardKey>1</KeyboardKey>
+                  <span className="text-sm">Bad</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <KeyboardKey>2</KeyboardKey>
+                  <span className="text-sm">Good</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <KeyboardKey>3</KeyboardKey>
+                  <span className="text-sm">Great</span>
+                </div>
+              </div>
+            </SubSection>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Mobile Gestures
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              On mobile devices, you can swipe cards: left for Bad, up for Good,
-              right for Great.
+            <SubSection title="Mobile">
+              <p>
+                Swipe cards: <strong>left</strong> for Bad, <strong>up</strong> for Good, <strong>right</strong> for Great.
+              </p>
+            </SubSection>
+
+            <SubSection title="Settings (Gear Icon)">
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li><strong>Up to Date</strong> — Study cards due by a specific date</li>
+                <li><strong>All Cards</strong> — Study all 250 artworks</li>
+                <li><strong>Filter by Unit</strong> — Focus on specific content areas</li>
+              </ul>
+            </SubSection>
+
+            <p className="mt-4 text-sm text-[var(--text-color)]/70">
+              💡 Progress saves automatically. Close and return anytime.
             </p>
-
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Settings
-            </h3>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              Click the gear icon to open settings where you can:
-            </p>
-            <ul className="list-disc list-inside space-y-2 opacity-90 ml-4 mb-4">
-              <li><strong>Card Selection</strong> — Choose "Up to Date" to study only cards due by a certain date (follows Mrs. Korus's teaching order), or "All Cards" to study all 250 artworks.</li>
-              <li><strong>Due Date</strong> — Set a date to see only artworks assigned before that date.</li>
-              <li><strong>Filter by Unit</strong> — Select specific content areas to focus your study session.</li>
-            </ul>
-
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Progress Saving
-            </h3>
-            <p className="opacity-90 leading-relaxed">
-              Your progress is automatically saved to your browser. You can close
-              the tab and return later to continue where you left off. Use the
-              Reset buttons to start fresh (ordered or shuffled).
-            </p>
-          </section>
+          </AccordionSection>
 
           {/* Map */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Art Origins Map
-            </h2>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              The interactive map shows where each of the 250 artworks originated.
-              This helps you understand the geographic distribution of art history
-              and connect artworks to their cultural contexts.
+          <AccordionSection
+            title="Art Origins Map"
+            icon="🗺️"
+            isOpen={openSections.map}
+            onToggle={() => toggleSection("map")}
+          >
+            <p className="mb-4">
+              Explore where each artwork originated on an interactive world map.
             </p>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              Using the Map
-            </h3>
-            <ul className="list-disc list-inside space-y-2 opacity-90 ml-4 mb-4">
-              <li><strong>Zoom</strong> — Use the scroll wheel, pinch gesture, or +/- buttons</li>
-              <li><strong>Pan</strong> — Click and drag to move around the map</li>
-              <li><strong>Markers</strong> — Click any marker to see the artwork at that location</li>
-            </ul>
-            <p className="opacity-90 leading-relaxed">
-              Notice how artworks cluster in certain regions — this reflects the
-              content areas of the AP curriculum (Mediterranean, Europe, Asia, etc.).
+            <SubSection title="Controls">
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li><strong>Zoom</strong> — Scroll wheel, pinch, or +/- buttons</li>
+                <li><strong>Pan</strong> — Click and drag</li>
+                <li><strong>Markers</strong> — Click to see artwork details</li>
+              </ul>
+            </SubSection>
+
+            <p className="mt-4 text-sm text-[var(--text-color)]/70">
+              💡 Notice how artworks cluster by region — this reflects the AP curriculum's content areas.
             </p>
-          </section>
+          </AccordionSection>
 
           {/* Calendar */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Study Calendar
-            </h2>
-            <p className="mb-4 opacity-90 leading-relaxed">
-              The Calendar shows Mrs. Korus's assignment schedule for the academic year.
-              Use it to see what artworks are due on any given day and plan your study sessions.
+          <AccordionSection
+            title="Study Calendar"
+            icon="📅"
+            isOpen={openSections.calendar}
+            onToggle={() => toggleSection("calendar")}
+          >
+            <p className="mb-4">
+              View Mrs. Korus's assignment schedule and plan your studying.
             </p>
 
-            <h3 className="text-lg font-medium mb-2 text-[var(--text-color)]">
-              How to Use It
-            </h3>
-            <ul className="list-disc list-inside space-y-2 opacity-90 ml-4 mb-4">
-              <li>Click any date to see assignments and quizzes due that day</li>
-              <li>Dates with assignments show a dot indicator</li>
-              <li>Click an artwork in the details panel to go directly to its Exhibit page</li>
-              <li>Navigate between months using the arrow buttons</li>
-            </ul>
-            <p className="opacity-90 leading-relaxed">
-              The calendar follows the academic year (September through August) and
-              automatically highlights today's date.
+            <SubSection title="How to Use">
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li>Click any date to see assignments and quizzes</li>
+                <li>Dots indicate dates with due items</li>
+                <li>Click artwork names to jump to their Exhibit page</li>
+                <li>Navigate months with arrow buttons</li>
+              </ul>
+            </SubSection>
+
+            <p className="mt-4 text-sm text-[var(--text-color)]/70">
+              💡 Follows the academic year (September–August).
             </p>
-          </section>
+          </AccordionSection>
 
           {/* Tips */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Study Tips
-            </h2>
-            <ul className="list-disc list-inside space-y-3 opacity-90 ml-4">
-              <li>
-                <strong>Daily practice</strong> — Use flashcards for 10-15 minutes
-                daily rather than long cramming sessions.
-              </li>
-              <li>
-                <strong>Focus on weak areas</strong> — Filter flashcards by content
-                areas you find challenging.
-              </li>
-              <li>
-                <strong>Watch the videos</strong> — Mrs. Korus's explanations provide
-                context that makes artworks easier to remember.
-              </li>
-              <li>
-                <strong>Use the map</strong> — Geographic context helps you group
-                and remember artworks by region.
-              </li>
-              <li>
-                <strong>Check the calendar</strong> — Stay ahead of assignments by
-                reviewing artworks before they're due.
-              </li>
-              <li>
-                <strong>Say names aloud</strong> — Use the pronunciation feature to
-                practice saying artwork names correctly.
-              </li>
-            </ul>
-          </section>
+          <AccordionSection
+            title="Study Tips"
+            icon="💡"
+            isOpen={openSections.tips}
+            onToggle={() => toggleSection("tips")}
+          >
+            <div className="space-y-3">
+              <div className="flex gap-3 p-3 bg-[var(--background-color)]/50 rounded-lg">
+                <span className="text-xl">⏱️</span>
+                <div>
+                  <strong>Daily practice</strong>
+                  <p className="text-sm text-[var(--text-color)]/70">10-15 min daily beats long cramming sessions</p>
+                </div>
+              </div>
+              <div className="flex gap-3 p-3 bg-[var(--background-color)]/50 rounded-lg">
+                <span className="text-xl">🎯</span>
+                <div>
+                  <strong>Focus weak areas</strong>
+                  <p className="text-sm text-[var(--text-color)]/70">Filter flashcards to challenging content areas</p>
+                </div>
+              </div>
+              <div className="flex gap-3 p-3 bg-[var(--background-color)]/50 rounded-lg">
+                <span className="text-xl">🎥</span>
+                <div>
+                  <strong>Watch the videos</strong>
+                  <p className="text-sm text-[var(--text-color)]/70">Context makes artworks easier to remember</p>
+                </div>
+              </div>
+              <div className="flex gap-3 p-3 bg-[var(--background-color)]/50 rounded-lg">
+                <span className="text-xl">🗣️</span>
+                <div>
+                  <strong>Practice pronunciation</strong>
+                  <p className="text-sm text-[var(--text-color)]/70">Use the speaker icon to learn correct names</p>
+                </div>
+              </div>
+              <div className="flex gap-3 p-3 bg-[var(--background-color)]/50 rounded-lg">
+                <span className="text-xl">📍</span>
+                <div>
+                  <strong>Use the map</strong>
+                  <p className="text-sm text-[var(--text-color)]/70">Geographic context helps group artworks mentally</p>
+                </div>
+              </div>
+            </div>
+          </AccordionSection>
 
-          {/* Technical Notes */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Technical Notes
-            </h2>
-            <ul className="list-disc list-inside space-y-2 opacity-90 ml-4">
-              <li>
-                <strong>Browser storage</strong> — Your preferences and flashcard
-                progress are saved locally in your browser. Clearing browser data
-                will reset your progress.
-              </li>
-              <li>
-                <strong>Works offline</strong> — Once loaded, many features work
-                without an internet connection.
-              </li>
-              <li>
-                <strong>Mobile friendly</strong> — The site is fully responsive
-                and works on phones and tablets.
-              </li>
-              <li>
-                <strong>Free and open source</strong> — This site is free to use
-                and the code is available on GitHub.
-              </li>
-            </ul>
-          </section>
+          {/* Technical */}
+          <AccordionSection
+            title="Technical Notes"
+            icon="⚙️"
+            isOpen={openSections.technical}
+            onToggle={() => toggleSection("technical")}
+          >
+            <div className="space-y-3">
+              <div className="flex items-start gap-3">
+                <span className="text-lg">💾</span>
+                <p><strong>Auto-save</strong> — Preferences and flashcard progress save to your browser.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-lg">📱</span>
+                <p><strong>Mobile ready</strong> — Fully responsive on phones and tablets.</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-lg">🔓</span>
+                <p><strong>Free & open source</strong> — Code available on GitHub.</p>
+              </div>
+            </div>
+          </AccordionSection>
+        </div>
 
-          {/* Questions */}
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-[var(--foreground-color)]">
-              Questions or Feedback?
-            </h2>
-            <p className="opacity-90 leading-relaxed">
-              Visit the{" "}
-              <a
-                href="/about"
-                className="text-[var(--foreground-color)] underline hover:opacity-80"
-              >
-                About page
-              </a>{" "}
-              to learn more about the team behind this site and find contact
-              information for questions, suggestions, or bug reports.
-            </p>
-          </section>
+        {/* Footer */}
+        <div className="mt-10 text-center">
+          <p className="text-[var(--text-color)]/60 mb-4">
+            Questions or feedback?
+          </p>
+          <a
+            href="/about"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--foreground-color)] text-[var(--background-color)] font-medium hover:opacity-90 transition-opacity"
+          >
+            Visit the About Page
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
       </div>
     </div>
