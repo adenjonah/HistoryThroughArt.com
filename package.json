@@ -1,12 +1,6 @@
 {
   "dependencies": {
-    "@types/mapbox-gl": "^3.1.0",
-    "dotenv": "^16.4.5",
-    "jszip": "^3.10.1",
-    "mapbox-gl": "^3.5.2",
-    "papaparse": "^5.4.1",
-    "react-calendar": "^5.0.0",
-    "w3-css": "^4.1.0"
+    "@types/mapbox-gl": "^3.1.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
