@@ -4,6 +4,7 @@ import { formatDateForInput } from "./flashcardUtils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Check } from "lucide-react";
 
 const FlashcardSettings = ({
   isOpen,
@@ -96,21 +97,34 @@ const FlashcardSettings = ({
             <h4 className="text-sm font-semibold mb-1 text-[var(--foreground-color)]">Filter by Unit / Content Area</h4>
             <p className="text-xs text-[var(--text-color)] opacity-70 mb-3">No selection means all units</p>
             <div className="space-y-2">
-              {availableUnits.map((unit) => (
-                <label
-                  key={unit}
-                  className="flex items-center gap-2 cursor-pointer text-sm text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    value={unit}
-                    onChange={() => onToggleUnit(unit)}
-                    checked={selectedUnits.includes(unit)}
-                    className="w-4 h-4 accent-[var(--button-color)]"
-                  />
-                  <span className="font-medium">Unit {unit}:</span> {getContentAreaName(unit)}
-                </label>
-              ))}
+              {availableUnits.map((unit) => {
+                const isChecked = selectedUnits.includes(unit);
+                return (
+                  <label
+                    key={unit}
+                    className="flex items-center gap-2 cursor-pointer text-sm text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      value={unit}
+                      onChange={() => onToggleUnit(unit)}
+                      checked={isChecked}
+                      className="sr-only"
+                    />
+                    <span
+                      className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+                        isChecked
+                          ? "bg-[var(--button-color)] border-[var(--button-color)]"
+                          : "border-[var(--accent-color)] bg-transparent"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {isChecked && <Check className="w-2.5 h-2.5 text-white" />}
+                    </span>
+                    <span className="font-medium">Unit {unit}:</span> {getContentAreaName(unit)}
+                  </label>
+                );
+              })}
             </div>
           </div>
         </div>

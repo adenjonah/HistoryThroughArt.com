@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import SortComponent from "./SortComponent";
 import { Input } from "@/components/ui/input";
+import { ChevronDown } from "lucide-react";
 
 const CONTENT_AREAS = {
   unit1: "Global Prehistory",
@@ -75,91 +76,108 @@ function SearchComponent({
   const activeFilterCount = Object.values(unitFilters).filter(Boolean).length;
 
   return (
-    <div className="p-4 bg-[var(--foreground-color)] rounded-xl">
-      <div className="grid grid-cols-12 gap-2 sm:gap-3">
-        {/* Search Input */}
-        <div className="col-span-12 lg:col-span-7">
-          <label htmlFor="gallery-search" className="sr-only">Search artworks</label>
-          <Input
-            id="gallery-search"
-            type="search"
-            className="min-h-[44px] bg-white text-gray-800 border-[var(--accent-color)]/50
-                       placeholder:text-gray-500 focus-visible:ring-[var(--button-color)]"
-            placeholder="Search by ID, name, year, location..."
-            value={search}
-            onChange={handleSearchChange}
-            aria-describedby="search-hint"
-          />
-          <span id="search-hint" className="sr-only">
-            Smart search: ID matches shown first, then names, years, and locations
+    <div className="grid grid-cols-12 gap-2 sm:gap-3">
+      {/* Search Input */}
+      <div className="col-span-12 lg:col-span-7">
+        <label htmlFor="gallery-search" className="sr-only">Search artworks</label>
+        <Input
+          id="gallery-search"
+          type="search"
+          className="min-h-[44px]
+                     bg-[var(--background-color)] border-[var(--accent-color)]/50
+                     text-[var(--text-color)] placeholder:text-[var(--text-color)]/50
+                     focus-visible:ring-[var(--button-color)]"
+          placeholder="Search by ID, name, year, location..."
+          value={search}
+          onChange={handleSearchChange}
+          aria-describedby="search-hint"
+        />
+        <span id="search-hint" className="sr-only">
+          Smart search: ID matches shown first, then names, years, and locations
+        </span>
+      </div>
+
+      {/* Filter Dropdown */}
+      <div className="col-span-6 lg:col-span-2 relative" ref={dropdownRef}>
+        <button
+          className="flex items-center justify-between w-full min-h-[44px] px-4 py-2
+                     border border-[var(--accent-color)]/50 rounded-lg
+                     bg-[var(--background-color)] text-[var(--text-color)]
+                     hover:bg-[var(--accent-color)]/20 transition-colors
+                     focus:outline-none focus:ring-2 focus:ring-[var(--button-color)]
+                     text-sm sm:text-base"
+          onClick={() => setDropdownOpen((o) => !o)}
+          aria-expanded={dropdownOpen}
+          aria-haspopup="listbox"
+          aria-controls="filter-listbox"
+          aria-label="Filter by content area"
+        >
+          <span>
+            Filters{activeFilterCount > 0 && (
+              <span className="ml-1.5 bg-[var(--button-color)] text-white text-xs px-1.5 py-0.5 rounded-full">
+                {activeFilterCount}
+              </span>
+            )}
           </span>
-        </div>
+          <ChevronDown
+            className={`ml-2 w-4 h-4 opacity-70 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+            aria-hidden="true"
+          />
+        </button>
 
-        {/* Filter Dropdown */}
-        <div className="col-span-6 lg:col-span-2 relative" ref={dropdownRef}>
-          <button
-            className="flex items-center justify-between w-full min-h-[44px] px-4 py-2
-                       border border-[var(--accent-color)]/50 rounded-lg
-                       bg-white text-gray-800 hover:bg-gray-50 transition-colors
-                       focus:outline-none focus:ring-2 focus:ring-[var(--button-color)]
-                       text-sm sm:text-base"
-            onClick={() => setDropdownOpen((o) => !o)}
-            aria-expanded={dropdownOpen}
-            aria-haspopup="listbox"
-            aria-controls="filter-listbox"
-            aria-label="Filter by content area"
+        {dropdownOpen && (
+          <ul
+            role="listbox"
+            id="filter-listbox"
+            aria-label="Content area filters"
+            className="absolute mt-1 w-full min-w-[220px] z-20
+                       bg-[var(--background-color)] border border-[var(--accent-color)]/40
+                       rounded-lg shadow-xl shadow-black/40
+                       max-h-[300px] overflow-y-auto
+                       animate-in fade-in-0 zoom-in-95 duration-100"
           >
-            <span>
-              Filters{activeFilterCount > 0 && (
-                <span className="ml-1.5 bg-[var(--button-color)] text-white text-xs px-1.5 py-0.5 rounded-full">
-                  {activeFilterCount}
-                </span>
-              )}
-            </span>
-            <span className="ml-2" aria-hidden="true">{dropdownOpen ? "▲" : "▼"}</span>
-          </button>
-
-          {dropdownOpen && (
-            <ul
-              role="listbox"
-              id="filter-listbox"
-              aria-label="Content area filters"
-              className="absolute mt-1 w-full min-w-[200px] bg-white border border-[var(--accent-color)]/30
-                         rounded-lg shadow-lg z-20 max-h-[300px] overflow-y-auto"
-            >
-              {Object.keys(unitFilters).map((unit) => (
+            {Object.keys(unitFilters).map((unit) => {
+              const isChecked = unitFilters[unit];
+              return (
                 <li
                   key={unit}
                   role="option"
-                  aria-selected={unitFilters[unit]}
+                  aria-selected={isChecked}
                   tabIndex={0}
-                  className="p-3 hover:bg-[var(--accent-color)]/10 cursor-pointer
-                             focus:bg-[var(--accent-color)]/20 focus:outline-none text-sm text-gray-700"
+                  className="p-3 hover:bg-[var(--accent-color)]/20 cursor-pointer
+                             focus:bg-[var(--accent-color)]/20 focus:outline-none
+                             text-sm text-[var(--text-color)]"
                   onClick={() => handleFilterChange(unit)}
                   onKeyDown={(e) => handleListItemKeyDown(e, unit)}
                 >
-                  <label className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 accent-[var(--button-color)]"
-                      checked={unitFilters[unit]}
-                      readOnly
-                    />
+                  <span className="flex items-center gap-3">
+                    {/* Custom checkbox */}
+                    <span
+                      className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
+                        isChecked
+                          ? "bg-[var(--button-color)] border-[var(--button-color)]"
+                          : "border-[var(--accent-color)] bg-transparent"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {isChecked && (
+                        <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M2 6l3 3 5-5" />
+                        </svg>
+                      )}
+                    </span>
                     <span className="flex-1">{getContentAreaName(unit)}</span>
-                    {unitFilters[unit] && (
-                      <span className="text-[var(--button-color)]">✓</span>
-                    )}
-                  </label>
+                  </span>
                 </li>
-              ))}
-            </ul>
-          )}
-        </div>
+              );
+            })}
+          </ul>
+        )}
+      </div>
 
-        {/* Sort */}
-        <div className="col-span-6 lg:col-span-3">
-          <SortComponent sort={sort} setSort={setSort} setClearFilters={setClearFilters} />
-        </div>
+      {/* Sort */}
+      <div className="col-span-6 lg:col-span-3">
+        <SortComponent sort={sort} setSort={setSort} setClearFilters={setClearFilters} />
       </div>
     </div>
   );

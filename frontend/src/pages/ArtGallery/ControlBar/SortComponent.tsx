@@ -1,8 +1,27 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const SORT_OPTIONS = [
+  { value: "Relevance", label: "Sort: Relevance" },
+  { value: "ID Ascending", label: "Sort: ID ↑" },
+  { value: "ID Descending", label: "Sort: ID ↓" },
+  { value: "Name Ascending", label: "Sort: Name A–Z" },
+  { value: "Name Descending", label: "Sort: Name Z–A" },
+  { value: "Unit Ascending", label: "Sort: Content Area ↑" },
+  { value: "Unit Descending", label: "Sort: Content Area ↓" },
+  { value: "Date Ascending", label: "Sort: Date ↑" },
+  { value: "Date Descending", label: "Sort: Date ↓" },
+  { value: "Korus Sort", label: "Sort: Korus Order" },
+];
 
 function SortComponent({ sort, setSort, setClearFilters }) {
-  const handleSortChange = (event) => {
-    const value = event.target.value;
+  const handleSortChange = (value: string) => {
     setSort(value);
     setClearFilters(value === "Relevance" || value === "ID Ascending");
     localStorage.setItem("sort", value);
@@ -17,41 +36,33 @@ function SortComponent({ sort, setSort, setClearFilters }) {
   }, [setSort, setClearFilters]);
 
   return (
-    <div className="relative inline-block w-full">
-      <label htmlFor="sort-select" className="sr-only">
-        Sort artworks
-      </label>
-      <select
-        id="sort-select"
-        className="block w-full min-h-[44px] px-4 py-2 pr-8
-                   border border-[var(--accent-color)]/50 rounded-lg
-                   bg-white text-gray-800
-                   cursor-pointer appearance-none
-                   focus:outline-none focus:ring-2 focus:ring-[var(--button-color)]
-                   text-sm sm:text-base"
-        value={sort}
-        onChange={handleSortChange}
+    <Select value={sort} onValueChange={handleSortChange}>
+      <SelectTrigger
+        className="min-h-[44px] w-full
+                   bg-[var(--background-color)] border-[var(--accent-color)]/50
+                   text-[var(--text-color)] text-sm sm:text-base
+                   hover:bg-[var(--accent-color)]/20
+                   focus:ring-[var(--button-color)] focus:ring-offset-0"
+        aria-label="Sort artworks"
       >
-        <option value="Relevance">Sort By: Relevance</option>
-        <option value="ID Ascending">Sort By: ID Ascending</option>
-        <option value="ID Descending">Sort By: ID Descending</option>
-        <option value="Name Ascending">Sort By: Name: A-Z</option>
-        <option value="Name Descending">Sort By: Name: Z-A</option>
-        <option value="Unit Ascending">Sort By: Content Area Ascending</option>
-        <option value="Unit Descending">Sort By: Content Area Descending</option>
-        <option value="Date Ascending">Sort By: Date Ascending</option>
-        <option value="Date Descending">Sort By: Date Descending</option>
-        <option value="Korus Sort">Sort By: Korus Sort</option>
-      </select>
-
-      {/* Custom arrow icon */}
-      <span
-        className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600"
-        aria-hidden="true"
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent
+        className="bg-[var(--background-color)] border-[var(--accent-color)]/40
+                   text-[var(--text-color)] shadow-xl shadow-black/40"
       >
-        &#x25BC;
-      </span>
-    </div>
+        {SORT_OPTIONS.map(({ value, label }) => (
+          <SelectItem
+            key={value}
+            value={value}
+            className="text-[var(--text-color)] focus:bg-[var(--accent-color)]/30
+                       focus:text-[var(--text-color)] cursor-pointer"
+          >
+            {label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 

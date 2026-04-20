@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { X } from "lucide-react";
 
 function ActiveFiltersComponent({
   unitFilters,
@@ -65,11 +66,11 @@ function ActiveFiltersComponent({
               {getContentAreaName(filter)}
               <button
                 onClick={() => handleRemoveFilter(filter)}
-                className="ml-1 text-[var(--accent-color)] hover:text-red-600 transition-colors
+                className="ml-1 text-[var(--accent-color)] hover:text-red-400 transition-colors
                            focus:outline-none focus:ring-1 focus:ring-red-400 rounded-full"
                 aria-label={`Remove ${getContentAreaName(filter)} filter`}
               >
-                &#x2715;
+                <X className="w-3 h-3" />
               </button>
             </span>
           ))}
