@@ -85,8 +85,15 @@ export const filterByKorusOrder = (cardIds) => {
   return korusOrder.filter((id) => cardIdsSet.has(id));
 };
 
-// Build a deck from artwork data based on filters
-export const buildDeck = (artworks, options = {}) => {
+interface BuildDeckOptions {
+  dueDatesMap?: Map<number, Date>;
+  dueByDate?: Date;
+  selectedUnits?: number[];
+  shouldShuffle?: boolean;
+  useAllCards?: boolean;
+}
+
+export const buildDeck = (artworks: unknown[], options: BuildDeckOptions = {}) => {
   const {
     dueDatesMap,
     dueByDate = new Date(),
@@ -107,7 +114,7 @@ export const buildDeck = (artworks, options = {}) => {
   }
 
   // Create artwork lookup map
-  const artworksById = new Map(artworks.map((a) => [a.id, a]));
+  const artworksById = new Map(artworks.map((a: any) => [a.id, a]));
 
   // Build deck in Korus order, filtered by units
   let deck = [];

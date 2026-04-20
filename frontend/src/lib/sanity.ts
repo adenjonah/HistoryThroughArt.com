@@ -1,5 +1,6 @@
 import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
+import type { ImageFormat, FitMode } from '@sanity/image-url/lib/types/types';
 
 // Sanity client configuration
 export const client = createClient({
@@ -27,7 +28,15 @@ export function urlFor(source) {
  * @param {Object} options - Optional size/format options
  * @returns {string} - Optimized image URL
  */
-export function getImageUrl(source, options = {}) {
+interface ImageOptions {
+  width?: number;
+  height?: number;
+  format?: ImageFormat;
+  quality?: number;
+  fit?: FitMode;
+}
+
+export function getImageUrl(source: unknown, options: ImageOptions = {}): string {
   if (!source) return '';
 
   const { width = 800, height, format = 'webp', quality = 80, fit = 'max' } = options;

@@ -15,7 +15,16 @@ const GLOBE_SPIN_SPEED = 0.5; // degrees per frame (lower = slower)
 const GLOBE_INITIAL_ZOOM = 1.5; // zoomed out to show full globe
 // =============================================================================
 
-const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMapType }) => {
+interface MapBoxProps {
+  center?: [number, number] | null;
+  zoom?: number;
+  style?: string;
+  size?: { width: string; height: string };
+  onMapTypeChange?: (mapType: string) => void;
+  mapType?: string;
+}
+
+const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMapType }: MapBoxProps) => {
   const navigate = useNavigate();
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -271,7 +280,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
 
             map.addSource("points", {
               type: "geojson",
-              data: geojsonData,
+              data: geojsonData as any,
               cluster: true,
               clusterMaxZoom: 14,
               clusterRadius: isMobile ? 40 : 25,
@@ -345,9 +354,9 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
                 layers: ["clusters"],
               });
               const clusterId = features[0].properties.cluster_id;
-              map.getSource("points").getClusterExpansionZoom(clusterId).then((expandZoom) => {
+              (map.getSource("points") as any).getClusterExpansionZoom(clusterId).then((expandZoom: number) => {
                 map.easeTo({
-                  center: features[0].geometry.coordinates,
+                  center: (features[0].geometry as any).coordinates,
                   zoom: expandZoom,
                   duration: 500,
                 });
@@ -356,7 +365,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
 
             // Point click - show popup and navigate
             map.on("click", "unclustered-point", (e) => {
-              const coordinates = e.features[0].geometry.coordinates.slice();
+              const coordinates = (e.features[0].geometry as any).coordinates.slice();
               const properties = e.features[0].properties;
 
               while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
@@ -383,7 +392,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
             if (!isMobile) {
               map.on("mouseenter", "unclustered-point", (e) => {
                 map.getCanvas().style.cursor = "pointer";
-                const coordinates = e.features[0].geometry.coordinates.slice();
+                const coordinates = (e.features[0].geometry as any).coordinates.slice();
                 const properties = e.features[0].properties;
 
                 while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {

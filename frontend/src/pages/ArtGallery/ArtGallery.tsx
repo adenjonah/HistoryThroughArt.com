@@ -61,7 +61,6 @@ function Museum() {
 
         {/* Catalog */}
         <Catalog
-          artPiecesArray={artPiecesArray}
           search={search}
           setArtPiecesArray={setArtPiecesArray}
           layout={layout}

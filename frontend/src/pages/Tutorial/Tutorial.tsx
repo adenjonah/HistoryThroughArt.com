@@ -55,7 +55,7 @@ const KeyboardKey = ({ children }) => (
 const ALL_SECTIONS = ["intro", "gallery", "exhibit", "flashcards", "map", "calendar", "tips", "technical"];
 
 function Tutorial() {
-  const [openSections, setOpenSections] = useState({});
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [videoExpanded, setVideoExpanded] = useState(false);
 
   const toggleSection = (section) => {

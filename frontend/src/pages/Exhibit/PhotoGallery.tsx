@@ -253,7 +253,7 @@ function PhotoGallery({ id }) {
                 key={index}
                 className="w-full"
                 style={{ display: index === slideIndex - 1 ? "block" : "none" }}
-                ref={(el) => (slideRefs.current[index] = el)}
+                ref={(el: HTMLDivElement | null) => { slideRefs.current[index] = el; }}
                 role="group"
                 aria-roledescription="slide"
                 aria-label={`Image ${index + 1} of ${artImages.length}`}

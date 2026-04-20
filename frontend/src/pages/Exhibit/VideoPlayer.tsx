@@ -4,6 +4,13 @@ import { useTranscriptPreferences } from "../../hooks/useTranscriptPreferences";
 import TranscriptControls from "./TranscriptControls";
 import { logger } from "../../lib/logger";
 
+declare global {
+  interface Window {
+    onYouTubeIframeAPIReady: () => void;
+    YT: { Player: new (...args: unknown[]) => { getCurrentTime: () => number; destroy: () => void } };
+  }
+}
+
 // Font size class mapping for transcript entries
 const fontSizeClasses = {
   small: "text-xs",
@@ -309,7 +316,7 @@ function VideoPlayer({ id }) {
                   return (
                     <button
                       key={entry.originalIndex}
-                      ref={(el) => (entryRefs.current[entry.originalIndex] = el)}
+                      ref={(el: HTMLButtonElement | null) => { entryRefs.current[entry.originalIndex] = el; }}
                       role="listitem"
                       aria-label={`${ConvertToMins(entry.start)}: ${entry.text}`}
                       className={`transcript-entry w-full text-left p-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
