@@ -45,14 +45,18 @@ function ControlBar({
         sort={sort}
         setSort={setSort}
       />
-      {areFiltersActive && (
+      <div
+        className={`overflow-hidden transition-all duration-200 ${
+          areFiltersActive ? "max-h-40 opacity-100 mt-4" : "max-h-0 opacity-0 mt-0"
+        }`}
+      >
         <ActiveFiltersComponent
           unitFilters={unitFilters}
           handleClearFilters={handleClearFilters}
           clearFilters={clearFilters}
           setUnitFilters={setUnitFilters}
         />
-      )}
+      </div>
     </div>
   );
 }

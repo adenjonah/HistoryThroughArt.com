@@ -7,32 +7,45 @@ import {
 } from '../lib/sanity';
 import { logger } from '../lib/logger';
 
+// Module-level cache — survives component remounts, cleared on page reload
+let artworksCache: ReturnType<typeof transformArtwork>[] | null = null;
+let artworksFetchPromise: Promise<ReturnType<typeof transformArtwork>[]> | null = null;
+
 /**
- * Hook to fetch all artworks from Sanity
- * Returns data in the same format as the legacy artworks.json
+ * Hook to fetch all artworks from Sanity.
+ * Results are cached in-memory for the browser session so navigating between
+ * pages doesn't trigger a new network request.
  */
 export function useArtworks() {
-  const [data, setData] = useState({ artworks: [], loading: true, error: null });
+  const [data, setData] = useState({
+    artworks: artworksCache ?? [],
+    loading: artworksCache === null,
+    error: null as unknown,
+  });
 
   useEffect(() => {
+    if (artworksCache !== null) return;
+
     let cancelled = false;
 
-    async function fetchArtworks() {
-      try {
-        const result = await client.fetch(queries.allArtworks);
-        if (!cancelled) {
-          const transformedArtworks = result.map(transformArtwork);
-          setData({ artworks: transformedArtworks, loading: false, error: null });
-        }
-      } catch (err) {
+    if (!artworksFetchPromise) {
+      artworksFetchPromise = client
+        .fetch(queries.allArtworks)
+        .then((result) => result.map(transformArtwork));
+    }
+
+    artworksFetchPromise
+      .then((artworks) => {
+        artworksCache = artworks;
+        if (!cancelled) setData({ artworks, loading: false, error: null });
+      })
+      .catch((err) => {
+        artworksFetchPromise = null;
         if (!cancelled) {
           logger.error('Error fetching artworks:', err);
           setData({ artworks: [], loading: false, error: err });
         }
-      }
-    }
-
-    fetchArtworks();
+      });
 
     return () => {
       cancelled = true;
