@@ -7,6 +7,7 @@ import Identifiers from "./Identifiers";
 import { korusOrder } from "../../data/korusOrder";
 import { useArtwork } from "../../hooks/useSanityData";
 import { Button } from "@/components/ui/button";
+import { Volume2 } from "lucide-react";
 
 function Exhibit() {
   const [searchParams] = useSearchParams();
@@ -79,12 +80,12 @@ function Exhibit() {
           <Button
             variant="outline"
             size="icon"
-            className="rounded-full bg-[var(--accent-color)] border-transparent hover:bg-[var(--button-color)] text-xl"
+            className="rounded-full bg-[var(--accent-color)] border-transparent hover:bg-[var(--button-color)]"
             onClick={pronounceTitle}
             aria-label={`Pronounce ${artPiece.name}`}
             title="Pronounce artwork name"
           >
-            🔊
+            <Volume2 className="w-5 h-5 text-[var(--text-color)]" />
           </Button>
         </div>
       </header>

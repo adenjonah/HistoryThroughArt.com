@@ -9,35 +9,37 @@ function Home() {
   return (
     <div className="relative flex flex-col justify-center items-center text-center min-h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] w-full overflow-x-hidden">
       <div className="z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl text-white mb-4 sm:mb-6 font-bold">
-          Welcome to HistoryThroughArt
-        </h1>
-        <p className="text-base sm:text-lg text-white mb-6 sm:mb-8 px-2 max-w-2xl mx-auto">
-          Your interactive learning companion for exploring the AP Art History curriculum.
-        </p>
+        <div className="backdrop-blur-sm bg-black/30 rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl text-white mb-4 sm:mb-6 font-bold">
+            Welcome to HistoryThroughArt
+          </h1>
+          <p className="text-base sm:text-lg text-white/90 mb-6 sm:mb-8 px-2 max-w-2xl mx-auto">
+            Your interactive learning companion for exploring the AP Art History curriculum.
+          </p>
 
-        <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4 sm:px-0">
-          <Button
-            onClick={() => navigate("/flashcards")}
-            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-white text-gray-900 hover:bg-gray-100 border-0"
-            size="lg"
-          >
-            Flashcards
-          </Button>
-          <Button
-            onClick={() => navigate("/artgallery")}
-            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-white text-gray-900 hover:bg-gray-100 border-0"
-            size="lg"
-          >
-            Gallery
-          </Button>
-          <Button
-            onClick={() => navigate("/map")}
-            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-white text-gray-900 hover:bg-gray-100 border-0"
-            size="lg"
-          >
-            Map
-          </Button>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4 sm:px-0">
+            <Button
+              onClick={() => navigate("/flashcards")}
+              className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-white text-gray-900 hover:bg-gray-100 border-0"
+              size="lg"
+            >
+              Flashcards
+            </Button>
+            <Button
+              onClick={() => navigate("/artgallery")}
+              className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-[var(--accent-color)] text-[var(--text-color)] hover:opacity-90 border-0"
+              size="lg"
+            >
+              Gallery
+            </Button>
+            <Button
+              onClick={() => navigate("/map")}
+              className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-[var(--accent-color)] text-[var(--text-color)] hover:opacity-90 border-0"
+              size="lg"
+            >
+              Map
+            </Button>
+          </div>
         </div>
       </div>
 

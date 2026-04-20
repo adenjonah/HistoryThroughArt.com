@@ -339,18 +339,18 @@
 }
 
 .bad-button {
-  background-color: #ff6b6b;
-  color: var(--accent-color);
+  background-color: #dc2626;
+  color: #ffffff;
 }
 
 .good-button {
-  background-color: #ffcc00;
-  color: var(--accent-color);
+  background-color: #ca8a04;
+  color: #ffffff;
 }
 
 .great-button {
-  background-color: #4caf50;
-  color: var(--accent-color);
+  background-color: #16a34a;
+  color: #ffffff;
 }
 
 .key-hint {

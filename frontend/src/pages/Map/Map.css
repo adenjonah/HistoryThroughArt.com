@@ -51,9 +51,10 @@
 .mapboxgl-popup-content {
   padding: 0 !important;
   border-radius: 12px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
   overflow: hidden;
-  background: white !important;
+  background: #210b2c !important;
+  border: 1px solid rgba(188, 150, 230, 0.25) !important;
 }
 
 .mapboxgl-popup-close-button {
@@ -64,18 +65,18 @@
   align-items: center !important;
   justify-content: center !important;
   padding: 0 !important;
-  color: #666 !important;
+  color: #bc96e6 !important;
   right: 4px !important;
   top: 4px !important;
   border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(85, 40, 111, 0.5) !important;
   transition: background 0.15s ease !important;
 }
 
 .mapboxgl-popup-close-button:hover,
 .mapboxgl-popup-close-button:active {
-  color: #333 !important;
-  background: rgba(0, 0, 0, 0.1) !important;
+  color: #d8b4e2 !important;
+  background: rgba(85, 40, 111, 0.8) !important;
 }
 
 /* Mobile-friendly close button */
@@ -95,7 +96,7 @@
 
 /* Popup tip/arrow styling */
 .mapboxgl-popup-tip {
-  border-top-color: white !important;
+  border-top-color: #210b2c !important;
 }
 
 /* Custom popup content styling */
@@ -116,7 +117,7 @@
 .map-popup-title {
   font-weight: 600;
   font-size: 14px;
-  color: #1a1a1a;
+  color: #d8b4e2;
   margin: 0 0 4px 0;
   line-height: 1.4;
   padding-right: 28px;
@@ -124,14 +125,14 @@
 
 .map-popup-location {
   font-size: 12px;
-  color: #666;
+  color: rgba(188, 150, 230, 0.7);
   margin: 0 0 8px 0;
   line-height: 1.4;
 }
 
 .map-popup-hint {
   font-size: 12px;
-  color: #7047A3;
+  color: #ae759f;
   font-weight: 500;
   margin: 0;
 }
@@ -299,9 +300,9 @@
 }
 
 .map-mode-toggle button.active {
-  background: #7047A3;
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(112, 71, 163, 0.4);
+  background: #55286f;
+  color: #d8b4e2;
+  box-shadow: 0 2px 8px rgba(85, 40, 111, 0.5);
 }
 
 @media (max-width: 768px) {

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
@@ -26,7 +26,7 @@ function NavBar({ menuOpened, setMenuOpened }) {
   return (
     <div className="relative navbar-container">
       {/* Fixed Navbar */}
-      <nav className="fixed top-0 left-0 right-0 h-[60px] bg-[var(--accent-color)] shadow-lg z-50">
+      <nav className="fixed top-0 left-0 right-0 h-[60px] bg-[var(--accent-color)] shadow-lg z-50 border-b border-[var(--border-color)]">
         <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-full">
             {/* Logo */}
@@ -40,13 +40,20 @@ function NavBar({ menuOpened, setMenuOpened }) {
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">
               {NAV_LINKS.map(({ to, label }) => (
-                <Link
+                <NavLink
                   key={to}
                   to={to}
-                  className="text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors duration-200"
+                  end={to === "/"}
+                  className={({ isActive }) =>
+                    `text-[var(--text-color)] transition-all duration-200 pb-0.5 ${
+                      isActive
+                        ? "border-b-2 border-[var(--text-color)] opacity-100"
+                        : "opacity-70 hover:opacity-100"
+                    }`
+                  }
                 >
                   {label}
-                </Link>
+                </NavLink>
               ))}
             </div>
 
@@ -71,14 +78,21 @@ function NavBar({ menuOpened, setMenuOpened }) {
       >
         <div className="flex flex-col py-2">
           {NAV_LINKS.map(({ to, label }) => (
-            <Link
+            <NavLink
               key={to}
               to={to}
+              end={to === "/"}
               onClick={() => setMenuOpened(false)}
-              className="px-4 py-2 text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-colors duration-200"
+              className={({ isActive }) =>
+                `min-h-[44px] flex items-center px-4 py-3 transition-colors duration-200 ${
+                  isActive
+                    ? "text-[var(--text-color)] bg-[var(--background-color)]/20 font-semibold"
+                    : "text-[var(--text-color)] opacity-70 hover:opacity-100 hover:bg-[var(--background-color)]/10"
+                }`
+              }
             >
               {label}
-            </Link>
+            </NavLink>
           ))}
         </div>
       </div>

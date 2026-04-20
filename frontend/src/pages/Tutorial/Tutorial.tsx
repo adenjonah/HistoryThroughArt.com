@@ -16,7 +16,7 @@ const ChevronIcon = ({ isOpen }) => (
 );
 
 const AccordionSection = ({ title, icon, children, isOpen, onToggle }) => (
-  <div className="border border-[var(--accent-color)] rounded-xl overflow-hidden bg-[var(--accent-color)]">
+  <div className="border border-[var(--border-color)] rounded-xl overflow-hidden bg-[var(--surface-color)]">
     <button
       onClick={onToggle}
       className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-[var(--background-color)]/20 transition-colors duration-200"

@@ -117,12 +117,15 @@ function CalendarPage() {
               <li key={`${assignment.id}-${index}`}>
                 <Link
                   to={`/exhibit?id=${assignment.id}`}
-                  className="flex items-center py-2.5 px-3 rounded text-sm
+                  className="flex items-center justify-between py-2.5 px-3 rounded text-sm
                     text-[var(--background-color)] hover:bg-[var(--background-color)]/10
-                    transition-colors duration-150"
+                    transition-colors duration-150 group"
                 >
-                  <span className="font-bold mr-3 min-w-[1.75rem]">{assignment.id}</span>
-                  <span className="font-medium">{artPiece.name}</span>
+                  <span className="flex items-center">
+                    <span className="font-bold mr-3 min-w-[1.75rem]">{assignment.id}</span>
+                    <span className="font-medium">{artPiece.name}</span>
+                  </span>
+                  <span className="opacity-0 group-hover:opacity-60 transition-opacity duration-150 ml-2 text-xs">→</span>
                 </Link>
               </li>
             );
@@ -180,7 +183,7 @@ function CalendarPage() {
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-color)] opacity-60">
           {academicYearStart}–{academicYearStart + 1}
         </p>
-        <h1 className="text-2xl font-bold text-[var(--text-color)] mt-1">Study Calendar</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-[var(--text-color)] mt-1">Study Calendar</h1>
       </div>
 
       <div className="w-full bg-[var(--foreground-color)] rounded-lg overflow-hidden">

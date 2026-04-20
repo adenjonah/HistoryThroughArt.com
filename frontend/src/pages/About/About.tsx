@@ -37,7 +37,7 @@ function FlipCard({ person, isFlipped, onFlip }) {
   return (
     <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
       <div
-        className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer ${
+        className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer overflow-hidden rounded-xl ${
           isFlipped ? "[transform:rotateY(180deg)]" : ""
         } lg:group-hover:[transform:rotateY(180deg)]`}
         onClick={handleClick}
@@ -95,8 +95,8 @@ function About() {
         ))}
       </div>
 
-      <h1 className="text-3xl sm:text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">Our Story</h1>
-      <p className="text-base sm:text-lg text-[var(--text-color)] max-w-[90%] sm:max-w-[80%] mx-auto mb-8 leading-relaxed lg:max-w-[40%]">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">Our Story</h2>
+      <p className="text-base sm:text-lg text-[var(--text-color)] max-w-[90%] sm:max-w-2xl mx-auto mb-8 leading-relaxed">
         This project began in the summer of 2024 with the initial goal of creating a platform to
         centralize the educational content that Mrs. Korus had produced for her AP Art History
         classes. Jonah took AP Art History his senior year of high school and really enjoyed the
@@ -108,7 +108,7 @@ function About() {
         year.
       </p>
 
-      <p className="text-[var(--text-color)] mb-4 max-w-[90%] sm:max-w-[80%] lg:max-w-[40%] text-sm sm:text-base">
+      <p className="text-[var(--text-color)] mb-4 max-w-[90%] sm:max-w-2xl text-sm sm:text-base">
         Reach out to us at: <br />
         <strong>
           <a href="mailto:HistoryThroughArt@gmail.com" className="ml-2 break-all">

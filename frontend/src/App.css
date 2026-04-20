@@ -37,6 +37,11 @@
   --fc-great-color: #22c55e;
   --fc-great-bg: rgba(34, 197, 94, 0.9);
 
+  /* Surface tokens — use these for panel/card backgrounds */
+  --surface-color: #2d1040;
+  --border-color: rgba(188, 150, 230, 0.18);
+  --page-header-gap: 1.5rem;
+
   /* Z-index scale */
   --z-base: 1;
   --z-card: 10;
@@ -45,6 +50,14 @@
   --z-modal-backdrop: 40;
   --z-modal: 50;
   --z-toast: 60;
+}
+
+.page-header {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: var(--page-header-gap);
+  letter-spacing: -0.01em;
 }
 
 body,
