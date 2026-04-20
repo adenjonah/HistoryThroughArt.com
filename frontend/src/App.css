@@ -1,4 +1,27 @@
 :root {
+  /* shadcn/ui HSL variables — mapped to dark purple brand palette */
+  --background: 278 57% 11%;
+  --foreground: 289 55% 75%;
+  --card: 278 46% 23%;
+  --card-foreground: 289 55% 75%;
+  --popover: 278 46% 23%;
+  --popover-foreground: 289 55% 75%;
+  --primary: 285 44% 38%;
+  --primary-foreground: 289 55% 75%;
+  --secondary: 291 33% 56%;
+  --secondary-foreground: 278 57% 11%;
+  --muted: 278 46% 23%;
+  --muted-foreground: 289 38% 68%;
+  --accent: 285 44% 38%;
+  --accent-foreground: 289 55% 75%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 285 44% 38%;
+  --input: 285 44% 28%;
+  --ring: 291 33% 56%;
+  --radius: 0.5rem;
+
+  /* Brand tokens (keep for existing components) */
   --background-color: #210b2c;
   --accent-color: #55286f;
   --foreground-color: #bc96e6;
