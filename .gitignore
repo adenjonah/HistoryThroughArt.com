@@ -130,3 +130,4 @@ scripts/node_modules/
 *.ps1
 /frontend/src/data/venv
 scripts/.env
+.vercel
