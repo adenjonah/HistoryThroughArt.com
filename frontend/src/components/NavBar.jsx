@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { to: "/", label: "Home" },
@@ -12,37 +13,29 @@ const NAV_LINKS = [
 ];
 
 function NavBar({ menuOpened, setMenuOpened }) {
-  const navigate = useNavigate();
-
-  const toggleMenu = (event) => {
-    event.stopPropagation();
-    setMenuOpened(!menuOpened);
-  };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuOpened && !event.target.closest('.navbar-container')) {
+      if (menuOpened && !event.target.closest(".navbar-container")) {
         setMenuOpened(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [menuOpened, setMenuOpened]);
 
   return (
-    <div className="relative">
+    <div className="relative navbar-container">
       {/* Fixed Navbar */}
       <nav className="fixed top-0 left-0 right-0 h-[60px] bg-[var(--accent-color)] shadow-lg z-50">
         <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-full">
-            {/* Logo/Title */}
-            <div
-              onClick={() => navigate("/")}
-              className="text-[var(--text-color)] text-2xl font-bold cursor-pointer hover:text-[var(--foreground-color)] transition-colors duration-200"
+            {/* Logo */}
+            <Link
+              to="/"
+              className="text-[var(--text-color)] text-2xl font-bold hover:text-[var(--foreground-color)] transition-colors duration-200"
             >
               History Through Art
-            </div>
+            </Link>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">
@@ -58,17 +51,14 @@ function NavBar({ menuOpened, setMenuOpened }) {
             </div>
 
             {/* Mobile Menu Button */}
-            <div
-              onClick={toggleMenu}
+            <button
+              onClick={(e) => { e.stopPropagation(); setMenuOpened((o) => !o); }}
               aria-label="Toggle menu"
-              className="lg:hidden p-2 rounded-lg text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-all duration-200 cursor-pointer"
+              aria-expanded={menuOpened}
+              className="lg:hidden p-2 rounded-lg text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-all duration-200"
             >
-              {menuOpened ? (
-                <div className="text-2xl">✖</div>
-              ) : (
-                <div className="text-2xl">☰</div>
-              )}
-            </div>
+              {menuOpened ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
       </nav>
@@ -76,7 +66,7 @@ function NavBar({ menuOpened, setMenuOpened }) {
       {/* Mobile Menu Dropdown */}
       <div
         className={`fixed top-[60px] left-0 right-0 bg-[var(--accent-color)] shadow-lg lg:hidden transition-all duration-300 ease-in-out z-40 ${
-          menuOpened ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+          menuOpened ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
         }`}
       >
         <div className="flex flex-col py-2">
@@ -93,8 +83,8 @@ function NavBar({ menuOpened, setMenuOpened }) {
         </div>
       </div>
 
-      {/* Spacer for content below navbar */}
-      <div className="h-[60px]"></div>
+      {/* Spacer */}
+      <div className="h-[60px]" />
     </div>
   );
 }

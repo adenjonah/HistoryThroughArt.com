@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ChevronRight } from "lucide-react";
 
 const ChevronIcon = ({ isOpen }) => (
   <svg
@@ -48,28 +52,19 @@ const KeyboardKey = ({ children }) => (
   </kbd>
 );
 
+const ALL_SECTIONS = ["intro", "gallery", "exhibit", "flashcards", "map", "calendar", "tips", "technical"];
+
 function Tutorial() {
   const [openSections, setOpenSections] = useState({});
   const [videoExpanded, setVideoExpanded] = useState(false);
 
   const toggleSection = (section) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
   const expandAll = () => {
-    setOpenSections({
-      intro: true,
-      gallery: true,
-      exhibit: true,
-      flashcards: true,
-      map: true,
-      calendar: true,
-      tips: true,
-      technical: true,
-    });
+    setOpenSections(Object.fromEntries(ALL_SECTIONS.map((s) => [s, true])));
+    setVideoExpanded(true);
   };
 
   const collapseAll = () => {
@@ -92,21 +87,11 @@ function Tutorial() {
 
         {/* Quick Actions */}
         <div className="flex flex-wrap justify-center gap-3 mb-8">
-          <button
-            onClick={expandAll}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--button-color)] text-[var(--background-color)] hover:opacity-90 transition-opacity"
-          >
-            Expand All
-          </button>
-          <button
-            onClick={collapseAll}
-            className="px-4 py-2 text-sm font-medium rounded-lg border border-[var(--button-color)] text-[var(--text-color)] hover:bg-[var(--accent-color)] transition-colors"
-          >
-            Collapse All
-          </button>
+          <Button onClick={expandAll} size="sm">Expand All</Button>
+          <Button onClick={collapseAll} variant="outline" size="sm">Collapse All</Button>
         </div>
 
-        {/* Video Section - Special Card */}
+        {/* Video Section */}
         <div className="mb-6 border border-[var(--accent-color)] rounded-xl overflow-hidden bg-[var(--accent-color)]">
           <button
             onClick={() => setVideoExpanded(!videoExpanded)}
@@ -135,7 +120,7 @@ function Tutorial() {
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                ></iframe>
+                />
               </div>
             </div>
           </div>
@@ -143,7 +128,6 @@ function Tutorial() {
 
         {/* Accordion Sections */}
         <div className="space-y-3">
-          {/* Introduction */}
           <AccordionSection
             title="What is History Through Art?"
             icon="📚"
@@ -161,23 +145,20 @@ function Tutorial() {
             </p>
             <div className="flex flex-wrap gap-2 mt-4">
               {["250 Artworks", "Video Lessons", "Flashcards", "Interactive Map", "Study Calendar"].map((tag) => (
-                <span key={tag} className="px-3 py-1 rounded-full text-sm bg-[var(--accent-color)] text-[var(--text-color)] border border-[var(--foreground-color)]">
+                <Badge key={tag} variant="outline" className="border-[var(--foreground-color)] text-[var(--text-color)]">
                   {tag}
-                </span>
+                </Badge>
               ))}
             </div>
           </AccordionSection>
 
-          {/* Gallery */}
           <AccordionSection
             title="Art Gallery"
             icon="🖼️"
             isOpen={openSections.gallery}
             onToggle={() => toggleSection("gallery")}
           >
-            <p className="mb-4">
-              Browse all 250 AP Art History artworks in one searchable, filterable catalog.
-            </p>
+            <p className="mb-4">Browse all 250 AP Art History artworks in one searchable, filterable catalog.</p>
 
             <SubSection title="Search">
               <p>
@@ -188,8 +169,8 @@ function Tutorial() {
 
             <SubSection title="Filter by Content Area">
               <p>
-                Use the <strong className="text-[var(--foreground-color)]">Filters</strong> dropdown to show only specific units (1-10).
-                Select multiple units to combine filters. Active filters appear as removable tags.
+                Use the <strong className="text-[var(--foreground-color)]">Filters</strong> dropdown to show only specific units (1–10).
+                Select multiple units to combine filters.
               </p>
             </SubSection>
 
@@ -208,16 +189,13 @@ function Tutorial() {
             </p>
           </AccordionSection>
 
-          {/* Exhibit */}
           <AccordionSection
             title="Exhibit Page"
             icon="🎨"
             isOpen={openSections.exhibit}
             onToggle={() => toggleSection("exhibit")}
           >
-            <p className="mb-4">
-              Each artwork has a dedicated page packed with study materials.
-            </p>
+            <p className="mb-4">Each artwork has a dedicated page packed with study materials.</p>
 
             <SubSection title="Video Lessons">
               <p>
@@ -233,15 +211,12 @@ function Tutorial() {
             </SubSection>
 
             <SubSection title="Key Identifiers">
-              <p>
-                Quick reference for the essential facts: Artist/Culture, Location, Date, Materials, and Content Area.
-              </p>
+              <p>Quick reference for the essential facts: Artist/Culture, Location, Date, Materials, and Content Area.</p>
             </SubSection>
 
             <SubSection title="Photo Gallery & Map">
               <p>
-                Browse multiple images of each artwork. The mini map shows where it was created
-                and where it's displayed today.
+                Browse multiple images of each artwork. The mini map shows where it was created and where it's displayed today.
               </p>
             </SubSection>
 
@@ -250,7 +225,6 @@ function Tutorial() {
             </p>
           </AccordionSection>
 
-          {/* Flashcards */}
           <AccordionSection
             title="Flashcards"
             icon="🃏"
@@ -289,28 +263,20 @@ function Tutorial() {
 
             <SubSection title="Keyboard Shortcuts">
               <div className="flex flex-wrap gap-4 mt-2">
-                <div className="flex items-center gap-2">
-                  <KeyboardKey>Space</KeyboardKey>
-                  <span className="text-sm">Flip</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <KeyboardKey>1</KeyboardKey>
-                  <span className="text-sm">Bad</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <KeyboardKey>2</KeyboardKey>
-                  <span className="text-sm">Good</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <KeyboardKey>3</KeyboardKey>
-                  <span className="text-sm">Great</span>
-                </div>
+                {[["Space", "Flip"], ["1", "Bad"], ["2", "Good"], ["3", "Great"]].map(([key, label]) => (
+                  <div key={key} className="flex items-center gap-2">
+                    <KeyboardKey>{key}</KeyboardKey>
+                    <span className="text-sm">{label}</span>
+                  </div>
+                ))}
               </div>
             </SubSection>
 
             <SubSection title="Mobile">
               <p>
-                Swipe cards: <strong className="text-[var(--foreground-color)]">left</strong> for Bad, <strong className="text-[var(--foreground-color)]">up</strong> for Good, <strong className="text-[var(--foreground-color)]">right</strong> for Great.
+                Swipe cards: <strong className="text-[var(--foreground-color)]">left</strong> for Bad,{" "}
+                <strong className="text-[var(--foreground-color)]">up</strong> for Good,{" "}
+                <strong className="text-[var(--foreground-color)]">right</strong> for Great.
               </p>
             </SubSection>
 
@@ -327,16 +293,13 @@ function Tutorial() {
             </p>
           </AccordionSection>
 
-          {/* Map */}
           <AccordionSection
             title="Art Origins Map"
             icon="🗺️"
             isOpen={openSections.map}
             onToggle={() => toggleSection("map")}
           >
-            <p className="mb-4">
-              Explore where each artwork originated on an interactive world map.
-            </p>
+            <p className="mb-4">Explore where each artwork originated on an interactive world map.</p>
 
             <SubSection title="Controls">
               <ul className="list-disc list-inside space-y-1 ml-2">
@@ -351,16 +314,13 @@ function Tutorial() {
             </p>
           </AccordionSection>
 
-          {/* Calendar */}
           <AccordionSection
             title="Study Calendar"
             icon="📅"
             isOpen={openSections.calendar}
             onToggle={() => toggleSection("calendar")}
           >
-            <p className="mb-4">
-              View Mrs. Korus's assignment schedule and plan your studying.
-            </p>
+            <p className="mb-4">View Mrs. Korus's assignment schedule and plan your studying.</p>
 
             <SubSection title="How to Use">
               <ul className="list-disc list-inside space-y-1 ml-2">
@@ -376,7 +336,6 @@ function Tutorial() {
             </p>
           </AccordionSection>
 
-          {/* Tips */}
           <AccordionSection
             title="Study Tips"
             icon="💡"
@@ -384,45 +343,24 @@ function Tutorial() {
             onToggle={() => toggleSection("tips")}
           >
             <div className="space-y-3">
-              <div className="flex gap-3 p-3 bg-[var(--accent-color)] rounded-lg">
-                <span className="text-xl">⏱️</span>
-                <div>
-                  <strong className="text-[var(--foreground-color)]">Daily practice</strong>
-                  <p className="text-sm text-[var(--text-color)]">10-15 min daily beats long cramming sessions</p>
+              {[
+                { icon: "⏱️", title: "Daily practice", tip: "10-15 min daily beats long cramming sessions" },
+                { icon: "🎯", title: "Focus weak areas", tip: "Filter flashcards to challenging content areas" },
+                { icon: "🎥", title: "Watch the videos", tip: "Context makes artworks easier to remember" },
+                { icon: "🗣️", title: "Practice pronunciation", tip: "Use the speaker icon to learn correct names" },
+                { icon: "📍", title: "Use the map", tip: "Geographic context helps group artworks mentally" },
+              ].map(({ icon, title, tip }) => (
+                <div key={title} className="flex gap-3 p-3 bg-[var(--accent-color)] rounded-lg">
+                  <span className="text-xl">{icon}</span>
+                  <div>
+                    <strong className="text-[var(--foreground-color)]">{title}</strong>
+                    <p className="text-sm text-[var(--text-color)]">{tip}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-3 p-3 bg-[var(--accent-color)] rounded-lg">
-                <span className="text-xl">🎯</span>
-                <div>
-                  <strong className="text-[var(--foreground-color)]">Focus weak areas</strong>
-                  <p className="text-sm text-[var(--text-color)]">Filter flashcards to challenging content areas</p>
-                </div>
-              </div>
-              <div className="flex gap-3 p-3 bg-[var(--accent-color)] rounded-lg">
-                <span className="text-xl">🎥</span>
-                <div>
-                  <strong className="text-[var(--foreground-color)]">Watch the videos</strong>
-                  <p className="text-sm text-[var(--text-color)]">Context makes artworks easier to remember</p>
-                </div>
-              </div>
-              <div className="flex gap-3 p-3 bg-[var(--accent-color)] rounded-lg">
-                <span className="text-xl">🗣️</span>
-                <div>
-                  <strong className="text-[var(--foreground-color)]">Practice pronunciation</strong>
-                  <p className="text-sm text-[var(--text-color)]">Use the speaker icon to learn correct names</p>
-                </div>
-              </div>
-              <div className="flex gap-3 p-3 bg-[var(--accent-color)] rounded-lg">
-                <span className="text-xl">📍</span>
-                <div>
-                  <strong className="text-[var(--foreground-color)]">Use the map</strong>
-                  <p className="text-sm text-[var(--text-color)]">Geographic context helps group artworks mentally</p>
-                </div>
-              </div>
+              ))}
             </div>
           </AccordionSection>
 
-          {/* Technical */}
           <AccordionSection
             title="Technical Notes"
             icon="⚙️"
@@ -430,36 +368,29 @@ function Tutorial() {
             onToggle={() => toggleSection("technical")}
           >
             <div className="space-y-3">
-              <div className="flex items-start gap-3">
-                <span className="text-lg">💾</span>
-                <p><strong className="text-[var(--foreground-color)]">Auto-save</strong> — Preferences and flashcard progress save to your browser.</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-lg">📱</span>
-                <p><strong className="text-[var(--foreground-color)]">Mobile ready</strong> — Fully responsive on phones and tablets.</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <span className="text-lg">🔓</span>
-                <p><strong className="text-[var(--foreground-color)]">Free & open source</strong> — Code available on GitHub.</p>
-              </div>
+              {[
+                { icon: "💾", title: "Auto-save", note: "Preferences and flashcard progress save to your browser." },
+                { icon: "📱", title: "Mobile ready", note: "Fully responsive on phones and tablets." },
+                { icon: "🔓", title: "Free & open source", note: "Code available on GitHub." },
+              ].map(({ icon, title, note }) => (
+                <div key={title} className="flex items-start gap-3">
+                  <span className="text-lg">{icon}</span>
+                  <p><strong className="text-[var(--foreground-color)]">{title}</strong> — {note}</p>
+                </div>
+              ))}
             </div>
           </AccordionSection>
         </div>
 
         {/* Footer */}
         <div className="mt-10 text-center">
-          <p className="text-[var(--text-color)] mb-4">
-            Questions or feedback?
-          </p>
-          <a
-            href="/about"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--button-color)] text-[var(--background-color)] font-medium hover:opacity-90 transition-opacity"
-          >
-            Visit the About Page
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
+          <p className="text-[var(--text-color)] mb-4">Questions or feedback?</p>
+          <Button asChild size="lg">
+            <Link to="/about">
+              Visit the About Page
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Link>
+          </Button>
         </div>
       </div>
     </div>
