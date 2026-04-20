@@ -19,21 +19,21 @@ function Home() {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4 sm:px-0">
           <Button
             onClick={() => navigate("/flashcards")}
-            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation"
+            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-white text-gray-900 hover:bg-gray-100 border-0"
             size="lg"
           >
             Flashcards
           </Button>
           <Button
             onClick={() => navigate("/artgallery")}
-            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation"
+            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-white text-gray-900 hover:bg-gray-100 border-0"
             size="lg"
           >
             Gallery
           </Button>
           <Button
             onClick={() => navigate("/map")}
-            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation"
+            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-white text-gray-900 hover:bg-gray-100 border-0"
             size="lg"
           >
             Map
