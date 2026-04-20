@@ -10,8 +10,7 @@
     }
   ],
   "routes": [
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/(.*\\.(?:js|css|ico|png|webp|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|json|txt|map)$)", "dest": "/$1" },
+    { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
