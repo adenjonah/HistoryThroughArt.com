@@ -1,13 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "./homepageBackground.webp";
-
-const BTN_CLASS =
-  "w-full sm:w-auto min-w-[140px] sm:min-w-[160px] " +
-  "bg-[var(--button-color)] text-[var(--button-text-color)] " +
-  "py-3 px-6 sm:px-8 rounded-lg font-medium " +
-  "hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] " +
-  "active:scale-95 transition-all duration-300 border-none touch-manipulation";
+import { Button } from "@/components/ui/button";
 
 function Home() {
   const navigate = useNavigate();
@@ -23,15 +17,27 @@ function Home() {
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 px-4 sm:px-0">
-          <button onClick={() => navigate("/flashcards")} className={BTN_CLASS}>
+          <Button
+            onClick={() => navigate("/flashcards")}
+            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation"
+            size="lg"
+          >
             Flashcards
-          </button>
-          <button onClick={() => navigate("/artgallery")} className={BTN_CLASS}>
+          </Button>
+          <Button
+            onClick={() => navigate("/artgallery")}
+            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation"
+            size="lg"
+          >
             Gallery
-          </button>
-          <button onClick={() => navigate("/map")} className={BTN_CLASS}>
+          </Button>
+          <Button
+            onClick={() => navigate("/map")}
+            className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation"
+            size="lg"
+          >
             Map
-          </button>
+          </Button>
         </div>
       </div>
 

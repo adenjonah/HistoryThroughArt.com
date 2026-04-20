@@ -5,6 +5,17 @@ import FlashcardCard from "./FlashcardCard";
 import FlashcardControls from "./FlashcardControls";
 import FlashcardSettings from "./FlashcardSettings";
 import { hasSeenSwipeInstructions, markSwipeInstructionsSeen } from "./flashcardUtils";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Flashcards = () => {
   const {
@@ -33,7 +44,6 @@ const Flashcards = () => {
     getCardCountInfo,
   } = useFlashcards();
 
-  // UI state
   const [cardAnimation, setCardAnimation] = useState("");
   const [cardReady, setCardReady] = useState(true);
   const [showDuplicateMessage, setShowDuplicateMessage] = useState(false);
@@ -41,8 +51,9 @@ const Flashcards = () => {
   const [showSwipeInstructions, setShowSwipeInstructions] = useState(
     !hasSeenSwipeInstructions()
   );
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [pendingResetShuffle, setPendingResetShuffle] = useState(false);
 
-  // Auto-hide swipe instructions
   useEffect(() => {
     if (showSwipeInstructions) {
       const timer = setTimeout(() => {
@@ -53,7 +64,6 @@ const Flashcards = () => {
     }
   }, [showSwipeInstructions]);
 
-  // Show save indicator when deck changes
   useEffect(() => {
     if (deck.length > 0) {
       setShowSaveIndicator(true);
@@ -62,36 +72,26 @@ const Flashcards = () => {
     }
   }, [deck.length]);
 
-  // Handle action with animations
   const onAction = useCallback(
     (action) => {
       if (isTransitioning) return;
 
-      // Set animation
-      const animationMap = {
-        bad: "swipe-left",
-        good: "swipe-up",
-        great: "swipe-right",
-      };
+      const animationMap = { bad: "swipe-left", good: "swipe-up", great: "swipe-right" };
       setCardAnimation(animationMap[action]);
       setCardReady(false);
 
-      // Show duplicate message for "bad"
       if (action === "bad") {
         setShowDuplicateMessage(true);
         setTimeout(() => setShowDuplicateMessage(false), 2000);
       }
 
-      // Hide swipe instructions on first action
       if (showSwipeInstructions) {
         setShowSwipeInstructions(false);
         markSwipeInstructionsSeen();
       }
 
-      // Process the action
       handleAction(action);
 
-      // Reset animation state
       setTimeout(() => {
         setCardAnimation("");
         setCardReady(true);
@@ -100,48 +100,33 @@ const Flashcards = () => {
     [isTransitioning, handleAction, showSwipeInstructions]
   );
 
-  // Handle reset with confirmation
-  const onReset = useCallback(
-    (shuffle) => {
-      if (window.confirm("Reset the deck? Your progress will be cleared.")) {
-        resetDeck(shuffle);
-      }
-    },
-    [resetDeck]
-  );
+  const onReset = useCallback((shuffle) => {
+    setPendingResetShuffle(shuffle);
+    setResetDialogOpen(true);
+  }, []);
 
-  // Keyboard shortcuts
+  const confirmReset = useCallback(() => {
+    resetDeck(pendingResetShuffle);
+    setResetDialogOpen(false);
+  }, [resetDeck, pendingResetShuffle]);
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (isTransitioning || e.target.tagName === "INPUT") return;
-
       switch (e.key) {
-        case "1":
-          onAction("bad");
-          break;
-        case "2":
-          onAction("good");
-          break;
-        case "3":
-          onAction("great");
-          break;
-        case " ":
-          e.preventDefault();
-          flipCard();
-          break;
-        default:
-          break;
+        case "1": onAction("bad"); break;
+        case "2": onAction("good"); break;
+        case "3": onAction("great"); break;
+        case " ": e.preventDefault(); flipCard(); break;
+        default: break;
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isTransitioning, onAction, flipCard]);
 
-  // Get card count info for messaging
   const cardInfo = getCardCountInfo();
 
-  // Loading state
   if (dataLoading) {
     return (
       <div className="flashcards-container">
@@ -153,7 +138,6 @@ const Flashcards = () => {
     );
   }
 
-  // Empty deck state
   if (deck.length === 0) {
     const isFilteredEmpty = cardInfo.hasUnitFilter && cardInfo.filteredCards === 0 && cardInfo.totalCards > 0;
 
@@ -174,24 +158,17 @@ const Flashcards = () => {
           )}
         </div>
         <div className="reset-button-container">
-          <button
-            className="reset-button"
-            onClick={() => setShowSettings(true)}
-          >
+          <Button variant="outline" className="reset-button" onClick={() => setShowSettings(true)}>
             Open Settings
-          </button>
-          <button className="reset-button" onClick={() => resetDeck(false)}>
+          </Button>
+          <Button variant="outline" className="reset-button" onClick={() => resetDeck(false)}>
             Reset Deck (Ordered)
-          </button>
-          <button
-            className="reset-button shuffle-button"
-            onClick={() => resetDeck(true)}
-          >
+          </Button>
+          <Button variant="outline" className="reset-button shuffle-button" onClick={() => resetDeck(true)}>
             Reset Deck (Shuffled)
-          </button>
+          </Button>
         </div>
 
-        {/* Settings Panel - accessible even when deck is empty */}
         <FlashcardSettings
           isOpen={showSettings}
           onClose={() => setShowSettings(false)}
@@ -209,7 +186,6 @@ const Flashcards = () => {
     );
   }
 
-  // Error state
   if (!currentCardData) {
     return (
       <div className="flashcards-container">
@@ -218,9 +194,9 @@ const Flashcards = () => {
           <h2>Error loading cards</h2>
           <p>Please reset the deck.</p>
         </div>
-        <button className="reset-button" onClick={() => resetDeck(false)}>
+        <Button variant="outline" className="reset-button" onClick={() => resetDeck(false)}>
           Reset Deck
-        </button>
+        </Button>
       </div>
     );
   }
@@ -229,14 +205,12 @@ const Flashcards = () => {
     <div className="flashcards-container">
       <h1 className="title">Flashcards</h1>
 
-      {/* Consolidated Status Line */}
       <div className="status-line">
         <span>{deck.length} remaining</span>
         <span className="separator">•</span>
         <span>{isShuffled ? "shuffled" : "ordered"}</span>
       </div>
 
-      {/* Notifications */}
       <div className={`saving-indicator ${showSaveIndicator ? "show" : ""}`}>
         Progress saved
       </div>
@@ -249,7 +223,6 @@ const Flashcards = () => {
         </div>
       )}
 
-      {/* Card */}
       <FlashcardCard
         card={currentCardData}
         isFlipped={isFlipped}
@@ -260,7 +233,6 @@ const Flashcards = () => {
         isReady={cardReady}
       />
 
-      {/* Controls */}
       <FlashcardControls
         onAction={onAction}
         onUndo={undo}
@@ -273,7 +245,6 @@ const Flashcards = () => {
         isShuffled={isShuffled}
       />
 
-      {/* Settings Panel */}
       <FlashcardSettings
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
@@ -287,6 +258,26 @@ const Flashcards = () => {
         isTransitioning={isTransitioning}
         artworksData={artworksData}
       />
+
+      {/* Reset confirmation dialog */}
+      <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+        <AlertDialogContent className="bg-[var(--background-color)] border-[var(--accent-color)] text-[var(--text-color)]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-[var(--text-color)]">Reset the deck?</AlertDialogTitle>
+            <AlertDialogDescription className="text-[var(--text-color)] opacity-70">
+              Your progress will be cleared.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-transparent border-[var(--accent-color)] text-[var(--text-color)] hover:bg-[var(--accent-color)]/20">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmReset}>
+              Reset
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { Settings, RotateCcw } from "lucide-react";
 
 const FlashcardControls = ({
   onAction,
@@ -15,69 +17,78 @@ const FlashcardControls = ({
     <>
       {/* Action Buttons */}
       <div className="action-buttons">
-        <button
+        <Button
+          variant="destructive"
           className="bad-button"
           onClick={() => onAction("bad")}
           disabled={isTransitioning}
         >
           Bad
           <span className="key-hint">1</span>
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="secondary"
           className="good-button"
           onClick={() => onAction("good")}
           disabled={isTransitioning}
         >
           Good
           <span className="key-hint">2</span>
-        </button>
-        <button
+        </Button>
+        <Button
           className="great-button"
           onClick={() => onAction("great")}
           disabled={isTransitioning}
         >
           Great
           <span className="key-hint">3</span>
-        </button>
+        </Button>
       </div>
 
       {/* Undo Button */}
       <div className="undo-container">
-        <button
+        <Button
+          variant="outline"
           className="undo-button"
           onClick={onUndo}
           disabled={isTransitioning || !canUndo}
         >
+          <RotateCcw className="w-4 h-4 mr-1" />
           Undo ({undoCount}/{maxUndo})
-        </button>
+        </Button>
       </div>
 
       {/* Reset Buttons */}
       <div className="reset-button-container">
-        <button
+        <Button
+          variant="outline"
           className="reset-button"
           onClick={() => onReset(false)}
           disabled={isTransitioning}
         >
           Reset (Ordered)
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
           className="reset-button shuffle-button"
           onClick={() => onReset(true)}
           disabled={isTransitioning}
         >
           Reset (Shuffled)
-        </button>
+        </Button>
       </div>
 
       {/* Settings Button */}
-      <button
+      <Button
+        variant="ghost"
+        size="icon"
         className="settings-button"
         onClick={onToggleSettings}
         disabled={isTransitioning}
+        aria-label="Open settings"
       >
-        <i className="fas fa-cog"></i>
-      </button>
+        <Settings className="w-5 h-5" />
+      </Button>
     </>
   );
 };

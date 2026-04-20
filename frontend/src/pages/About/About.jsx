@@ -2,22 +2,82 @@ import React, { useState } from "react";
 import JonahHeadshot from "./jonah-headshot.webp";
 import CalebHeadshot from "./caleb-headshot.webp";
 import KorusHeadshot from "./korus-headshot.webp";
+import { Button } from "@/components/ui/button";
+
+const PEOPLE = [
+  {
+    id: "caleb",
+    name: "Caleb Stewart",
+    image: CalebHeadshot,
+    bio: "Caleb is a Senior at Eastern Washington University. A proud alum of Mrs. Korus' history classes, graduated in 2021 and brings his tech expertise to our team.",
+    link: { href: "https://www.linkedin.com/in/caleb-stewart-281594274/", label: "View LinkedIn" },
+  },
+  {
+    id: "korus",
+    name: "Mrs. Korus",
+    image: KorusHeadshot,
+    bio: "The passionate AP Art History teacher at North Central High School who inspires curiosity and a love for art in her students.",
+    link: { href: "https://www.spokesman.com/stories/2010/mar/11/teacher-of-year-honors-go-to-three/", label: "Read Article" },
+  },
+  {
+    id: "jonah",
+    name: "Jonah Aden",
+    image: JonahHeadshot,
+    bio: "Jonah is a Junior at Columbia University majoring in Computer Science, Political Science, and Statistics. He had Mrs. Korus as a history teacher in 7th, 8th, 10th, and 12th grade. Jonah graduated North Central in 2022.",
+    link: { href: "https://www.linkedin.com/in/jonah-aden/", label: "View LinkedIn" },
+  },
+];
+
+function FlipCard({ person, isFlipped, onFlip }) {
+  const handleClick = (e) => {
+    if (e.target.tagName === "A" || e.target.closest("a")) return;
+    onFlip(person.id);
+  };
+
+  return (
+    <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
+      <div
+        className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer ${
+          isFlipped ? "[transform:rotateY(180deg)]" : ""
+        } lg:group-hover:[transform:rotateY(180deg)]`}
+        onClick={handleClick}
+      >
+        {/* Front */}
+        <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg flex flex-col items-center justify-center text-center">
+          <img
+            src={person.image}
+            alt={person.name}
+            className="h-[200px] w-[160px] sm:h-[280px] sm:w-[200px] object-cover rounded-full mb-4"
+          />
+          <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">{person.name}</h2>
+        </div>
+
+        {/* Back */}
+        <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center">
+          <div className="flex flex-col h-full justify-between">
+            <p className="text-[var(--background-color)] italic mt-6 sm:mt-8 text-sm sm:text-base">
+              {person.bio}
+            </p>
+            <Button
+              asChild
+              className="mt-4 mb-4 touch-manipulation"
+            >
+              <a href={person.link.href} target="_blank" rel="noopener noreferrer">
+                {person.link.label}
+              </a>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function About() {
-  const [flippedCards, setFlippedCards] = useState({
-    caleb: false,
-    korus: false,
-    jonah: false
-  });
+  const [flippedCards, setFlippedCards] = useState({});
 
-  const handleCardClick = (cardId, e) => {
-    // Prevent flip when clicking links
-    if (e.target.tagName === 'A') return;
-    
-    setFlippedCards(prev => ({
-      ...prev,
-      [cardId]: !prev[cardId]
-    }));
+  const handleFlip = (id) => {
+    setFlippedCards((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
@@ -25,125 +85,27 @@ function About() {
       <h1 className="text-3xl sm:text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">About Us</h1>
 
       <div className="flex justify-center flex-wrap max-w-7xl mx-auto mb-8 gap-4 sm:gap-5 w-full">
-        {/* Caleb Card */}
-        <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
-          <div
-            className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer ${
-              flippedCards.caleb ? '[transform:rotateY(180deg)]' : ''
-            } lg:group-hover:[transform:rotateY(180deg)]`}
-            onClick={(e) => handleCardClick('caleb', e)}
-          >
-            {/* Front Side */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center flex flex-col items-center justify-center">
-              <img src={CalebHeadshot} alt="Caleb Stewart" className="h-[200px] w-[160px] sm:h-[280px] sm:w-[200px] object-cover rounded-full mb-4" />
-              <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">Caleb Stewart</h2>
-            </div>
-
-            {/* Back Side */}
-            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center">
-              <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--background-color)] italic mt-6 sm:mt-8 text-sm sm:text-base">
-                  Caleb is a Senior at Eastern Washington University. A proud alum of
-                  Mrs. Korus' history classes, graduated in 2021 and brings his tech
-                  expertise to our team.
-                </p>
-                <a
-                  href="https://www.linkedin.com/in/caleb-stewart-281594274/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2.5 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300 active:scale-95 touch-manipulation"
-                >
-                  View LinkedIn
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Mrs. Korus Card */}
-        <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
-          <div
-            className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer ${
-              flippedCards.korus ? '[transform:rotateY(180deg)]' : ''
-            } lg:group-hover:[transform:rotateY(180deg)]`}
-            onClick={(e) => handleCardClick('korus', e)}
-          >
-            {/* Front Side */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center flex flex-col items-center justify-center">
-              <img src={KorusHeadshot} alt="Mrs. Korus" className="h-[200px] w-[160px] sm:h-[280px] sm:w-[200px] object-cover rounded-full mb-4" />
-              <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">Mrs. Korus</h2>
-            </div>
-
-            {/* Back Side */}
-            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center">
-              <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--background-color)] italic mt-6 sm:mt-8 text-sm sm:text-base">
-                  The passionate AP Art History teacher at North Central High School
-                  who inspires curiosity and a love for art in her students.
-                </p>
-                <a
-                  href="https://www.spokesman.com/stories/2010/mar/11/teacher-of-year-honors-go-to-three/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2.5 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300 active:scale-95 touch-manipulation"
-                >
-                  Read Article
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Jonah Card */}
-        <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
-          <div
-            className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer ${
-              flippedCards.jonah ? '[transform:rotateY(180deg)]' : ''
-            } lg:group-hover:[transform:rotateY(180deg)]`}
-            onClick={(e) => handleCardClick('jonah', e)}
-          >
-            {/* Front Side */}
-            <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center flex flex-col items-center justify-center">
-              <img src={JonahHeadshot} alt="Jonah Aden" className="h-[200px] w-[160px] sm:h-[280px] sm:w-[200px] object-cover rounded-full mb-4" />
-              <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">Jonah Aden</h2>
-            </div>
-
-            {/* Back Side */}
-            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center">
-              <div className="flex flex-col h-full justify-between">
-                <p className="text-[var(--background-color)] italic mt-6 sm:mt-8 text-sm sm:text-base">
-                  Jonah is a Junior at Columbia University majoring in Computer
-                  Science, Political Science, and Statistics. He had Mrs. Korus as a
-                  history teacher in 7th, 8th, 10th, and 12th grade. Jonah graduated
-                  North Central in 2022.
-                </p>
-                <a
-                  href="https://www.linkedin.com/in/jonah-aden/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[var(--accent-color)] text-[var(--text-color)] px-6 py-2.5 rounded-lg mt-4 mb-4 hover:bg-[var(--button-color)] hover:text-[var(--button-text-color)] transition-colors duration-300 active:scale-95 touch-manipulation"
-                >
-                  View LinkedIn
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+        {PEOPLE.map((person) => (
+          <FlipCard
+            key={person.id}
+            person={person}
+            isFlipped={!!flippedCards[person.id]}
+            onFlip={handleFlip}
+          />
+        ))}
       </div>
 
       <h1 className="text-3xl sm:text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">Our Story</h1>
       <p className="text-base sm:text-lg text-[var(--text-color)] max-w-[90%] sm:max-w-[80%] mx-auto mb-8 leading-relaxed lg:max-w-[40%]">
-        This project began in the summer of 2024 with the initial goal of
-        creating a platform to centralize the educational content that Mrs.
-        Korus had produced for her AP Art History classes. Jonah took AP Art
-        History his senior year of high school and really enjoyed the content
-        and teaching style that Mrs. Korus provided. He had the idea for this
-        site as an aid for in-class instruction. Jonah shared the idea with
-        Caleb, a fellow Computer Science major, and Caleb was immediately on
-        board with the mission. The two began planning and creating design
-        mockups and pitched the idea to Mrs. Korus, who loved it. Over the
-        summer they developed a basic site, and they plan on adding a plethora
-        of features over the school year.
+        This project began in the summer of 2024 with the initial goal of creating a platform to
+        centralize the educational content that Mrs. Korus had produced for her AP Art History
+        classes. Jonah took AP Art History his senior year of high school and really enjoyed the
+        content and teaching style that Mrs. Korus provided. He had the idea for this site as an
+        aid for in-class instruction. Jonah shared the idea with Caleb, a fellow Computer Science
+        major, and Caleb was immediately on board with the mission. The two began planning and
+        creating design mockups and pitched the idea to Mrs. Korus, who loved it. Over the summer
+        they developed a basic site, and they plan on adding a plethora of features over the school
+        year.
       </p>
 
       <p className="text-[var(--text-color)] mb-4 max-w-[90%] sm:max-w-[80%] lg:max-w-[40%] text-sm sm:text-base">
@@ -155,16 +117,11 @@ function About() {
         </strong>
       </p>
 
-      <a
-        href="https://github.com/adenjonah/APAH"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mb-16 sm:mb-24"
-      >
-        <button className="bg-[var(--button-color)] text-[var(--button-text-color)] px-5 sm:px-6 py-2.5 sm:py-3 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 hover:bg-[var(--accent-color)] hover:text-[var(--text-color)] hover:-translate-y-1 active:scale-95 border-none touch-manipulation">
+      <Button asChild size="lg" className="mb-16 sm:mb-24 rounded-full touch-manipulation">
+        <a href="https://github.com/adenjonah/APAH" target="_blank" rel="noopener noreferrer">
           View on GitHub
-        </button>
-      </a>
+        </a>
+      </Button>
     </div>
   );
 }

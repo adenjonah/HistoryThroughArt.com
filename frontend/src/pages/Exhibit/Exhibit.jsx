@@ -6,6 +6,7 @@ import MiniMap from "./MiniMap";
 import Identifiers from "./Identifiers";
 import { korusOrder } from "../../data/korusOrder";
 import { useArtwork } from "../../hooks/useSanityData";
+import { Button } from "@/components/ui/button";
 
 function Exhibit() {
   const [searchParams] = useSearchParams();
@@ -16,7 +17,6 @@ function Exhibit() {
     searchParams.get("mapType") || "currentlyDisplayed"
   );
 
-  // Fetch artwork from Sanity CMS
   const { artwork: artPiece, loading, error } = useArtwork(exhibitID);
 
   const pronounceTitle = () => {
@@ -48,10 +48,8 @@ function Exhibit() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-center">
-          <div className="animate-pulse text-lg text-[var(--text-color)]">
-            Loading artwork...
-          </div>
+        <div className="animate-pulse text-lg text-[var(--text-color)]">
+          Loading artwork...
         </div>
       </div>
     );
@@ -60,10 +58,8 @@ function Exhibit() {
   if (error || !artPiece) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-center">
-          <div className="text-lg text-red-500">
-            {error ? "Failed to load artwork" : "Artwork not found"}
-          </div>
+        <div className="text-lg text-red-500">
+          {error ? "Failed to load artwork" : "Artwork not found"}
         </div>
       </div>
     );
@@ -71,7 +67,7 @@ function Exhibit() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* Header Section */}
+      {/* Header */}
       <header className="mb-8">
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--text-color)] text-center">
@@ -80,27 +76,27 @@ function Exhibit() {
             </span>{" "}
             {artPiece.name}
           </h1>
-          <button
-            className="h-10 w-10 flex items-center justify-center rounded-full
-                       bg-[var(--accent-color)] hover:bg-[var(--button-color)]
-                       transition-colors duration-200 text-xl"
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full bg-[var(--accent-color)] border-transparent hover:bg-[var(--button-color)] text-xl"
             onClick={pronounceTitle}
             aria-label={`Pronounce ${artPiece.name}`}
             title="Pronounce artwork name"
           >
             🔊
-          </button>
+          </Button>
         </div>
       </header>
 
-      {/* Video Section */}
+      {/* Video */}
       <section className="mb-10">
         <div className="bg-[var(--accent-color)]/30 rounded-xl p-4 sm:p-6">
           <VideoPlayer id={exhibitID.toString()} />
         </div>
       </section>
 
-      {/* Main Content Grid - Identifiers and Photo Gallery */}
+      {/* Identifiers + Photo Gallery */}
       <section className="mb-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           <div className="order-2 lg:order-1">
@@ -112,7 +108,7 @@ function Exhibit() {
         </div>
       </section>
 
-      {/* Map Section */}
+      {/* Map */}
       <section className="mb-10">
         <div className="bg-[var(--accent-color)]/20 rounded-xl p-4 sm:p-6">
           <MiniMap
@@ -123,46 +119,35 @@ function Exhibit() {
         </div>
       </section>
 
-      {/* Navigation Section */}
+      {/* Navigation */}
       <nav className="mt-8 sm:mt-12 mb-8">
         <div className="bg-[var(--background-color)] rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
           <div className="flex justify-center items-center gap-3 sm:gap-6 md:gap-8">
-            <button
-              className="flex-1 max-w-[160px] sm:max-w-[200px] min-h-[48px] px-3 py-3 sm:px-6 sm:py-4
-                         bg-[var(--button-color)] text-[var(--button-text-color)]
-                         font-semibold rounded-lg
-                         hover:brightness-110 active:scale-95
-                         transition-all duration-200
-                         flex items-center justify-center gap-1 sm:gap-2
-                         touch-manipulation"
+            <Button
               onClick={() => handleNavigation(getPreviousID())}
+              className="flex-1 max-w-[160px] sm:max-w-[200px] min-h-[48px] px-3 sm:px-6 touch-manipulation"
+              size="lg"
             >
-              <span className="text-lg sm:text-xl">←</span>
+              <span className="text-lg sm:text-xl mr-1">←</span>
               <span className="hidden sm:inline">Previous</span>
               <span className="sm:hidden text-sm">Prev</span>
-            </button>
+            </Button>
 
             <div className="text-sm sm:text-base text-[var(--text-color)] opacity-70 hidden md:block">
               {korusOrder.indexOf(exhibitID) + 1} / {korusOrder.length}
             </div>
 
-            <button
-              className="flex-1 max-w-[160px] sm:max-w-[200px] min-h-[48px] px-3 py-3 sm:px-6 sm:py-4
-                         bg-[var(--button-color)] text-[var(--button-text-color)]
-                         font-semibold rounded-lg
-                         hover:brightness-110 active:scale-95
-                         transition-all duration-200
-                         flex items-center justify-center gap-1 sm:gap-2
-                         touch-manipulation"
+            <Button
               onClick={() => handleNavigation(getNextID())}
+              className="flex-1 max-w-[160px] sm:max-w-[200px] min-h-[48px] px-3 sm:px-6 touch-manipulation"
+              size="lg"
             >
               <span className="hidden sm:inline">Next</span>
               <span className="sm:hidden text-sm">Next</span>
-              <span className="text-lg sm:text-xl">→</span>
-            </button>
+              <span className="text-lg sm:text-xl ml-1">→</span>
+            </Button>
           </div>
 
-          {/* Mobile position indicator */}
           <div className="mt-3 sm:mt-4 text-center text-xs sm:text-sm text-[var(--text-color)] opacity-70 md:hidden">
             Artwork {korusOrder.indexOf(exhibitID) + 1} of {korusOrder.length}
           </div>
