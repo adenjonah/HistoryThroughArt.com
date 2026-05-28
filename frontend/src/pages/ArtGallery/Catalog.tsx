@@ -16,6 +16,21 @@ const extractAllYears = (dateString) => {
   return matches ? matches.map((y) => Math.abs(parseInt(y))) : [];
 };
 
+// Compare two artworks by their starting year for the Date sort. Artworks with
+// a missing/unparseable date (extractYear -> NaN, e.g. when Sanity omits the
+// dateRange) always sort to the end regardless of direction, instead of feeding
+// NaN into the comparator and producing a non-deterministic order.
+const compareByYear = (aDate, bDate, descending) => {
+  const aYear = extractYear(aDate);
+  const bYear = extractYear(bDate);
+  const aMissing = Number.isNaN(aYear);
+  const bMissing = Number.isNaN(bYear);
+  if (aMissing && bMissing) return 0;
+  if (aMissing) return 1;
+  if (bMissing) return -1;
+  return descending ? bYear - aYear : aYear - bYear;
+};
+
 // Calculate relevance score for smart search ranking
 const calculateRelevanceScore = (item, searchTerm) => {
   if (!searchTerm) return 0;
@@ -185,9 +200,9 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
           case "ID Ascending":
             return a.id - b.id;
           case "Date Descending":
-            return extractYear(b.date) - extractYear(a.date);
+            return compareByYear(a.date, b.date, true);
           case "Date Ascending":
-            return extractYear(a.date) - extractYear(b.date);
+            return compareByYear(a.date, b.date, false);
           case "Korus Sort": {
             // IDs not present in korusOrder (e.g. new Sanity artworks) sort to
             // the end deterministically instead of producing a NaN comparator.
