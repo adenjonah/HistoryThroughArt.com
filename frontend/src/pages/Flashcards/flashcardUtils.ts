@@ -51,9 +51,14 @@ export const getCurrentAcademicYear = () => {
 // Convert month-day string to full date with correct academic year
 // Format: "M-D" (e.g., "9-3" for September 3)
 export const getAcademicDate = (monthDayStr) => {
+  if (typeof monthDayStr !== "string") return null;
   const parts = monthDayStr.split("-");
   const month = parseInt(parts[0], 10);
   const day = parseInt(parts[1], 10);
+  // transformDueDates emits "" for malformed Sanity dates; bail before those
+  // become an Invalid Date that silently drops the card from the due deck
+  // (Invalid Date <= date is always false in getCardsDueByDate).
+  if (Number.isNaN(month) || Number.isNaN(day)) return null;
 
   const academicYearStart = getCurrentAcademicYear();
 
@@ -71,7 +76,8 @@ export const createDueDatesMap = (dueDatesData) => {
   dueDatesData.assignments.forEach((assignment) => {
     const id = parseInt(assignment.id, 10);
     if (!isNaN(id)) {
-      map.set(id, getAcademicDate(assignment.dueDate));
+      const date = getAcademicDate(assignment.dueDate);
+      if (date) map.set(id, date);
     }
   });
   return map;
