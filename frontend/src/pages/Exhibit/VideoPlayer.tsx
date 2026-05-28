@@ -103,7 +103,16 @@ function VideoPlayer({ id }) {
         transcript: safeParseTranscript(foundArtPiece.transcript[index]),
       }));
       setArtVideos(combinedVideos);
+    } else {
+      // This component is not remounted between artworks, so an artwork with no
+      // video must explicitly clear the previous one's videos — otherwise the
+      // stale player keeps rendering.
+      setArtVideos([]);
     }
+    // Reset selection on every artwork change so it can't point past a shorter
+    // new video list, which would make artVideos[selectedVideo] undefined and
+    // crash the render at the iframe src.
+    setSelectedVideo(0);
   }, [foundArtPiece, loading]);
 
   const handleVideoSelection = (index) => {
