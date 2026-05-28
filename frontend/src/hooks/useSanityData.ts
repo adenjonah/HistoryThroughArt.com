@@ -36,7 +36,14 @@ export function useArtworks() {
 
     artworksFetchPromise
       .then((artworks) => {
-        artworksCache = artworks;
+        // Only cache a populated result. A transient empty response must not be
+        // cached, or line 27's short-circuit would serve [] for the rest of the
+        // session; nulling the promise lets a later mount/navigation retry.
+        if (artworks.length > 0) {
+          artworksCache = artworks;
+        } else {
+          artworksFetchPromise = null;
+        }
         if (!cancelled) setData({ artworks, loading: false, error: null });
       })
       .catch((err) => {
