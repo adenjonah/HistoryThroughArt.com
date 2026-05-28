@@ -54,7 +54,7 @@ const calculateRelevanceScore = (item, searchTerm) => {
   }
 
   // Priority 4: Name starts with search term (case insensitive)
-  const nameLower = item.name.toLowerCase();
+  const nameLower = (item.name || "").toLowerCase();
   if (nameLower.startsWith(term)) {
     score += 1500;
   }
