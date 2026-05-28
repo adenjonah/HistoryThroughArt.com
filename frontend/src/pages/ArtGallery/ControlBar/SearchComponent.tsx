@@ -2,23 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import SortComponent from "./SortComponent";
 import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
-
-const CONTENT_AREAS = {
-  unit1: "Global Prehistory",
-  unit2: "Ancient Mediterranean",
-  unit3: "Early Europe and Colonial Americas",
-  unit4: "Later Europe and Americas",
-  unit5: "Indigenous Americas",
-  unit6: "Africa",
-  unit7: "West and Central Asia",
-  unit8: "South, East, and Southeast Asia",
-  unit9: "The Pacific",
-  unit10: "Global Contemporary",
-};
-
-function getContentAreaName(unitKey) {
-  return CONTENT_AREAS[unitKey] || unitKey.replace("unit", "Unit ");
-}
+import { getContentAreaNameByKey } from "../../../data/contentAreas";
 
 function SearchComponent({
   search,
@@ -166,7 +150,7 @@ function SearchComponent({
                         </svg>
                       )}
                     </span>
-                    <span className="flex-1">{getContentAreaName(unit)}</span>
+                    <span className="flex-1">{getContentAreaNameByKey(unit)}</span>
                   </span>
                 </li>
               );

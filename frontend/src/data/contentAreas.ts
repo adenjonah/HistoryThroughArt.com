@@ -15,3 +15,10 @@ export const contentAreas = {
 export const getContentAreaName = (unitNumber) => {
   return contentAreas[unitNumber] || `Unit ${unitNumber}`;
 };
+
+// Resolve a unit filter key ("unit3") to its label using the canonical map
+// above, so the gallery filter UI never drifts from the rest of the app.
+export const getContentAreaNameByKey = (unitKey: string): string => {
+  const unitNumber = Number(unitKey.replace("unit", ""));
+  return contentAreas[unitNumber] || unitKey.replace("unit", "Unit ");
+};

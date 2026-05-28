@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { X } from "lucide-react";
+import { getContentAreaNameByKey } from "../../../data/contentAreas";
 
 function ActiveFiltersComponent({
   unitFilters,
@@ -10,23 +11,6 @@ function ActiveFiltersComponent({
   const activeFilters = Object.keys(unitFilters).filter(
     (unit) => unitFilters[unit]
   );
-
-  const getContentAreaName = (unitKey) => {
-    const contentAreas = {
-      unit1: "Global Prehistory",
-      unit2: "Ancient Mediterranean",
-      unit3: "Early Europe and Colonial Americas",
-      unit4: "Later Europe and Americas",
-      unit5: "Indigenous Americas",
-      unit6: "Africa",
-      unit7: "West and Central Asia",
-      unit8: "South, East, and Southeast Asia",
-      unit9: "The Pacific",
-      unit10: "Global Contemporary",
-    };
-
-    return contentAreas[unitKey] || unitKey.replace("unit", "Unit ");
-  };
 
   // Remove a single filter
   const handleRemoveFilter = (unit) => {
@@ -69,12 +53,12 @@ function ActiveFiltersComponent({
                          text-xs sm:text-sm font-medium
                          bg-[var(--foreground-color)] text-[var(--background-color)]"
             >
-              {getContentAreaName(filter)}
+              {getContentAreaNameByKey(filter)}
               <button
                 onClick={() => handleRemoveFilter(filter)}
                 className="ml-1 text-[var(--accent-color)] hover:text-red-400 transition-colors
                            focus:outline-none focus:ring-1 focus:ring-red-400 rounded-full"
-                aria-label={`Remove ${getContentAreaName(filter)} filter`}
+                aria-label={`Remove ${getContentAreaNameByKey(filter)} filter`}
               >
                 <X className="w-3 h-3" />
               </button>
