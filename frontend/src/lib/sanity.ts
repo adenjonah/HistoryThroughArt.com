@@ -62,6 +62,25 @@ export function getImageUrl(source: unknown, options: ImageOptions = {}): string
 }
 
 /**
+ * Derive a clean download filename from a Sanity image URL.
+ * getImageUrl() returns full CDN URLs with a query string
+ * (e.g. ".../abc-1200x800.png?w=1200&fmt=webp"), which are unusable as a
+ * download filename or ZIP entry name: the path separators turn into nested
+ * folders and the query string contains characters that are invalid in
+ * filenames on Windows. This strips the query and path, leaving just the asset
+ * filename, and falls back when no usable segment is present.
+ * @param {string} url - Full image URL (or empty/undefined)
+ * @param {string} fallback - Name to use when no filename can be extracted
+ * @returns {string} - Clean filename safe for downloads/ZIP entries
+ */
+export function getImageFileName(url: string | null | undefined, fallback: string): string {
+  if (!url) return fallback;
+  const pathPart = url.split('?')[0];
+  const segment = pathPart.substring(pathPart.lastIndexOf('/') + 1);
+  return segment || fallback;
+}
+
+/**
  * Get CSS object-position value from Sanity image hotspot
  * Use this when displaying images with object-fit: cover to ensure
  * the hotspot (focal point) stays visible

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import JSZip from "jszip";
 import { useArtwork } from "../../hooks/useSanityData";
+import { getImageFileName } from "../../lib/sanity";
 import { logger } from "../../lib/logger";
 
 function PhotoGallery({ id }) {
@@ -149,7 +150,10 @@ function PhotoGallery({ id }) {
 
     const link = document.createElement("a");
     link.href = imagePath;
-    link.download = currentImageName;
+    link.download = getImageFileName(
+      currentImageName,
+      `artwork_${foundArtPiece?.id ?? id}_${slideIndex}.jpg`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -163,7 +167,7 @@ function PhotoGallery({ id }) {
       ? `${foundArtPiece.id}_${(foundArtPiece.name || "").replace(/[^\w\s]/gi, "")}`
       : `artwork_${id}`;
 
-    const imagePromises = artImages.map(async (imageName) => {
+    const imagePromises = artImages.map(async (imageName, index) => {
       if (!imageName) return null;
 
       const imagePath = getImagePath(imageName);
@@ -172,7 +176,10 @@ function PhotoGallery({ id }) {
       try {
         const response = await fetch(imagePath);
         const blob = await response.blob();
-        return { name: imageName, blob };
+        return {
+          name: getImageFileName(imageName, `image_${index + 1}.jpg`),
+          blob,
+        };
       } catch (error) {
         return null;
       }

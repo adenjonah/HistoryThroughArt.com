@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Card from "./ArtCard";
 import JSZip from "jszip";
 import { useArtworks } from "../../hooks/useSanityData";
+import { getImageFileName } from "../../lib/sanity";
 import { logger } from "../../lib/logger";
 import { korusOrder } from "../../data/korusOrder";
 
@@ -298,7 +299,11 @@ function Catalog({ search, layout, sort, unitFilters }) {
           try {
             const response = await fetch(imagePath);
             const blob = await response.blob();
-            zip.file(`${folderName}/${imageName}`, blob);
+            const fileName = getImageFileName(
+              imageName,
+              `image_${processedImages + 1}.jpg`
+            );
+            zip.file(`${folderName}/${fileName}`, blob);
 
             processedImages++;
             statusElement.innerHTML = `<p class="text-[var(--text-color)]">Downloaded ${processedImages} of ${totalImages} images...</p>`;
