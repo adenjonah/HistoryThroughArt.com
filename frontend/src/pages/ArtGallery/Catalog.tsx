@@ -231,7 +231,12 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     if (currPageNumber > Math.ceil(filteredArtPieces.length / itemsPerPage)) {
       setCurrPageNumber(1);
     }
-  }, [search, sort, unitFilters, fullArtPiecesArray, currPageNumber, setArtPiecesArray]);
+    // currPageNumber is deliberately omitted from the deps: the sorted/filtered
+    // list does not depend on the page (pagination slices artPiecesArray at
+    // render time), and the clamp above reads the live value via closure. Adding
+    // it re-ran the relevance scorer + transcript parsing across the whole
+    // catalog on every page click for an identical result.
+  }, [search, sort, unitFilters, fullArtPiecesArray, setArtPiecesArray]);
 
   // Changes the page number
   const handlePageClick = (pageNum) => {
