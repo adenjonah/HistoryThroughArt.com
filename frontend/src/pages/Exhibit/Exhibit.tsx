@@ -30,14 +30,16 @@ function Exhibit() {
 
   const getNextID = () => {
     const currentIndex = korusOrder.indexOf(exhibitID);
-    return currentIndex === korusOrder.length - 1
+    // Unknown IDs (e.g. a new artwork absent from korusOrder) index to -1;
+    // fall back to the first entry so navigation never lands on undefined.
+    return currentIndex === -1 || currentIndex === korusOrder.length - 1
       ? korusOrder[0]
       : korusOrder[currentIndex + 1];
   };
 
   const getPreviousID = () => {
     const currentIndex = korusOrder.indexOf(exhibitID);
-    return currentIndex === 0
+    return currentIndex <= 0
       ? korusOrder[korusOrder.length - 1]
       : korusOrder[currentIndex - 1];
   };
