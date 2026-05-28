@@ -14,6 +14,11 @@ export const formatDateForInput = (date) => {
 
 // Convert date string to BCE/CE format
 export const formatDateDisplay = (dateStr) => {
+  // Guard against missing/non-string dates. Flashcard decks are rehydrated from
+  // localStorage (loadState), so a corrupt or legacy card can have a null/absent
+  // date; calling .split() on it throws and crashes the card render. An empty
+  // string would also format to a stray " CE", so treat all falsy input the same.
+  if (!dateStr || typeof dateStr !== "string") return "—";
   const parts = dateStr.split("/");
   if (parts.length === 2) {
     const start = parts[0].startsWith("-")
