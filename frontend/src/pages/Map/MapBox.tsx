@@ -353,6 +353,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
               const features = map.queryRenderedFeatures(e.point, {
                 layers: ["clusters"],
               });
+              if (!features.length) return;
               const clusterId = features[0].properties.cluster_id;
               (map.getSource("points") as any).getClusterExpansionZoom(clusterId).then((expandZoom: number) => {
                 map.easeTo({
@@ -365,6 +366,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
 
             // Point click - show popup and navigate
             map.on("click", "unclustered-point", (e) => {
+              if (!e.features?.length) return;
               const coordinates = (e.features[0].geometry as any).coordinates.slice();
               const properties = e.features[0].properties;
 
@@ -392,6 +394,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
             if (!isMobile) {
               map.on("mouseenter", "unclustered-point", (e) => {
                 map.getCanvas().style.cursor = "pointer";
+                if (!e.features?.length) return;
                 const coordinates = (e.features[0].geometry as any).coordinates.slice();
                 const properties = e.features[0].properties;
 
