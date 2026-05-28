@@ -208,12 +208,17 @@ function VideoPlayer({ id }) {
     const query = searchQuery.toLowerCase();
     return transcript
       .map((entry, index) => ({ ...entry, originalIndex: index }))
-      .filter((entry) => entry.text.toLowerCase().includes(query));
+      // Guard against entries missing a string `text` (malformed Sanity
+      // transcript JSON); .toLowerCase() on a non-string would throw and crash
+      // the transcript panel during search. Such entries simply don't match.
+      .filter((entry) => typeof entry.text === "string" && entry.text.toLowerCase().includes(query));
   }, [artVideos, selectedVideo, searchQuery]);
 
   // Highlight matching search text in transcript entries
   const highlightSearchText = (text) => {
-    if (!searchQuery.trim()) return text;
+    // Same malformed-transcript guard as the filter above: a non-string `text`
+    // would throw on .toLowerCase()/.slice(). Render it untouched instead.
+    if (typeof text !== "string" || !searchQuery.trim()) return text;
     const query = searchQuery.toLowerCase();
     const index = text.toLowerCase().indexOf(query);
     if (index === -1) return text;
