@@ -32,7 +32,7 @@ function Identifiers({ artPiece }) {
     {
       label: "Date Created",
       value: formatDate(artPiece.date),
-      show: artPiece.date !== "None",
+      show: Boolean(artPiece.date) && artPiece.date !== "None",
     },
     {
       label: "Materials",

@@ -106,7 +106,7 @@ function ArtCard({ item, layout, image, search }) {
                 <span className="font-medium">Location:</span> {item.location}
               </p>
             )}
-            {item.date !== "None" && (
+            {Boolean(item.date) && item.date !== "None" && (
               <p className={dateMatches ? highlightClass : ""}>
                 <span className="font-medium">Date:</span> {formatDate()}
               </p>
