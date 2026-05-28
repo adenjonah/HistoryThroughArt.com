@@ -3,7 +3,11 @@ import { logger } from "../../lib/logger";
 
 // Format date to YYYY-MM-DD for input elements
 export const formatDateForInput = (date) => {
-  const d = new Date(date);
+  const parsed = new Date(date);
+  // Guard against invalid dates (e.g. a corrupt localStorage due-date value):
+  // toISOString() throws RangeError on an Invalid Date, which would crash the
+  // entire Flashcards page. Fall back to today, matching loadState's default.
+  const d = isNaN(parsed.getTime()) ? new Date() : parsed;
   const localDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
   return localDate.toISOString().split("T")[0];
 };
