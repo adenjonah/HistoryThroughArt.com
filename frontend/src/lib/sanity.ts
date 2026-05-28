@@ -192,12 +192,21 @@ export function transformDueDates(sanityDueDates) {
   const assignments = [];
   const quizzes = [];
 
+  if (!Array.isArray(sanityDueDates)) {
+    return { assignments, quizzes };
+  }
+
   sanityDueDates.forEach((item) => {
     // Convert YYYY-MM-DD to M-D format
     const dateParts = item.dueDate?.split('-');
-    const formattedDate = dateParts
-      ? `${parseInt(dateParts[1], 10)}-${parseInt(dateParts[2], 10)}`
-      : '';
+    let formattedDate = '';
+    if (dateParts && dateParts.length >= 3) {
+      const month = parseInt(dateParts[1], 10);
+      const day = parseInt(dateParts[2], 10);
+      if (!Number.isNaN(month) && !Number.isNaN(day)) {
+        formattedDate = `${month}-${day}`;
+      }
+    }
 
     if (item.type === 'artwork' && item.artwork) {
       assignments.push({
