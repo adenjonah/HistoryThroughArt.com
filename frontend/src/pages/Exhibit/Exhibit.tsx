@@ -39,7 +39,13 @@ function Exhibit() {
 
   const getPreviousID = () => {
     const currentIndex = korusOrder.indexOf(exhibitID);
-    return currentIndex <= 0
+    // Unknown IDs (e.g. a new artwork absent from korusOrder) index to -1;
+    // fall back to the first entry so Previous stays consistent with Next
+    // instead of jumping to the opposite end of the list.
+    if (currentIndex === -1) {
+      return korusOrder[0];
+    }
+    return currentIndex === 0
       ? korusOrder[korusOrder.length - 1]
       : korusOrder[currentIndex - 1];
   };
