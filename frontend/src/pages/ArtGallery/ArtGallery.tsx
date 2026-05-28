@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ControlBar from "./ControlBar/ControlBar";
 import Catalog from "./Catalog";
+import PageHeading from "../../components/PageHeading";
 
 function Museum() {
   const [search, setSearch] = useState("");
@@ -44,9 +45,7 @@ function Museum() {
     <div className="min-h-screen bg-[var(--background-color)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Page Title */}
-        <h1 className="text-3xl sm:text-4xl font-bold text-[var(--text-color)] text-center mb-6">
-          Art Gallery
-        </h1>
+        <PageHeading title="Art Gallery" className="mb-6" />
 
         {/* Control Bar */}
         <div className="mb-6">

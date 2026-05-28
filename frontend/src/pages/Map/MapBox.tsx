@@ -4,6 +4,7 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useArtworks } from "../../hooks/useSanityData";
 import { getImageHotspot } from "../../lib/sanity";
+import { MapPinned } from "lucide-react";
 
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
@@ -493,15 +494,16 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
   if (mapError) {
     return (
       <div
-        className="flex items-center justify-center bg-[var(--foreground-color)]
-          rounded-2xl p-5 text-center min-h-[300px] md:min-h-[400px]"
+        className="flex flex-col items-center justify-center gap-3 bg-[var(--surface-2)]
+          ring-1 ring-[var(--border-color)] rounded-2xl p-6 text-center min-h-[300px] md:min-h-[400px]"
         style={{
           width: size?.width || "100%",
           height: size?.height || "100%",
         }}
       >
-        <p className="text-[var(--text-color)] opacity-70 text-sm md:text-base px-4">
-          Map could not be loaded: {mapError}
+        <MapPinned className="w-8 h-8 text-[var(--text-muted)]" aria-hidden="true" />
+        <p className="text-[var(--text-default)] text-sm md:text-base max-w-xs">
+          Map preview is unavailable right now.
         </p>
       </div>
     );

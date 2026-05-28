@@ -215,7 +215,7 @@ const Flashcards = () => {
         <div className="w-full max-w-[500px] mb-3">
           <div className="h-1.5 rounded-full bg-[var(--accent-color)]/30 overflow-hidden">
             <div
-              className="h-full rounded-full bg-[var(--foreground-color)] transition-all duration-300"
+              className="h-full rounded-full bg-[var(--gold-color)] transition-all duration-300"
               style={{
                 width: `${((cardInfo.totalCards - deck.length) / cardInfo.totalCards) * 100}%`,
               }}

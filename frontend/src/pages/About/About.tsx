@@ -3,6 +3,7 @@ import JonahHeadshot from "./jonah-headshot.webp";
 import CalebHeadshot from "./caleb-headshot.webp";
 import KorusHeadshot from "./korus-headshot.webp";
 import { Button } from "@/components/ui/button";
+import PageHeading from "../../components/PageHeading";
 
 const PEOPLE = [
   {
@@ -82,7 +83,7 @@ function About() {
 
   return (
     <div className="flex flex-col items-center justify-start text-center h-full w-full bg-[var(--background-color)] pt-6 sm:pt-10 px-4">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">About Us</h1>
+      <PageHeading title="About Us" className="mb-8" />
 
       <div className="flex justify-center flex-wrap max-w-7xl mx-auto mb-8 gap-4 sm:gap-5 w-full">
         {PEOPLE.map((person) => (
