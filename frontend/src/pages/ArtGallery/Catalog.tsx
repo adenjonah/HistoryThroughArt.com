@@ -186,9 +186,9 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
 
         switch (sort) {
           case "Name Descending":
-            return b.name.localeCompare(a.name);
+            return (b.name || "").localeCompare(a.name || "");
           case "Name Ascending":
-            return a.name.localeCompare(b.name);
+            return (a.name || "").localeCompare(b.name || "");
           case "Unit Descending":
           case "Content Area Descending":
             return b.unit - a.unit;
