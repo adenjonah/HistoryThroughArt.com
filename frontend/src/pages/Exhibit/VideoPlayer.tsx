@@ -177,8 +177,12 @@ function VideoPlayer({ id }) {
   };
 
   const ConvertToMins = (time) => {
-    let minutes = Math.floor(time / 60);
-    let seconds = time - minutes * 60;
+    // Guard against missing/non-numeric transcript timestamps (e.g. malformed
+    // Sanity transcript JSON), which would otherwise render "NaN:NaN" in the
+    // visible label and the screen-reader aria-label.
+    const safeTime = Number.isFinite(time) && time > 0 ? time : 0;
+    let minutes = Math.floor(safeTime / 60);
+    let seconds = safeTime - minutes * 60;
     return `${minutes}:${seconds < 10 ? "0" : ""}${Math.floor(seconds)}`;
   };
 
