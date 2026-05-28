@@ -160,7 +160,7 @@ function PhotoGallery({ id }) {
 
     const zip = new JSZip();
     const folderName = foundArtPiece
-      ? `${foundArtPiece.id}_${foundArtPiece.name.replace(/[^\w\s]/gi, "")}`
+      ? `${foundArtPiece.id}_${(foundArtPiece.name || "").replace(/[^\w\s]/gi, "")}`
       : `artwork_${id}`;
 
     const imagePromises = artImages.map(async (imageName) => {

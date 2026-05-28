@@ -279,7 +279,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
         }
 
         // Create a folder for each artwork
-        const folderName = `${artPiece.id}_${artPiece.name.replace(
+        const folderName = `${artPiece.id}_${(artPiece.name || "").replace(
           /[^\w\s]/gi,
           ""
         )}`;
