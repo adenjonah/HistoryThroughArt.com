@@ -132,7 +132,7 @@ const calculateRelevanceScore = (item, searchTerm) => {
   return score;
 };
 
-function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
+function Catalog({ search, layout, sort, unitFilters }) {
   const [currPageNumber, setCurrPageNumber] = useState(1);
   const [fullArtPiecesArray, setFullArtPiecesArray] = useState([]);
   const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
@@ -226,7 +226,6 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     }
 
     setLocalArtPiecesArray(filteredArtPieces);
-    setArtPiecesArray(filteredArtPieces);
 
     if (currPageNumber > Math.ceil(filteredArtPieces.length / itemsPerPage)) {
       setCurrPageNumber(1);
@@ -236,7 +235,7 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
     // render time), and the clamp above reads the live value via closure. Adding
     // it re-ran the relevance scorer + transcript parsing across the whole
     // catalog on every page click for an identical result.
-  }, [search, sort, unitFilters, fullArtPiecesArray, setArtPiecesArray]);
+  }, [search, sort, unitFilters, fullArtPiecesArray]);
 
   // Changes the page number
   const handlePageClick = (pageNum) => {

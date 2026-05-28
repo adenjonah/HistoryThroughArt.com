@@ -4,7 +4,6 @@ import Catalog from "./Catalog";
 
 function Museum() {
   const [search, setSearch] = useState("");
-  const [artPiecesArray, setArtPiecesArray] = useState([]);
   const [layout, setLayout] = useState("table");
   const [sort, setSort] = useState(
     () => localStorage.getItem("sort") || "ID Ascending"
@@ -66,7 +65,6 @@ function Museum() {
         {/* Catalog */}
         <Catalog
           search={search}
-          setArtPiecesArray={setArtPiecesArray}
           layout={layout}
           sort={sort}
           unitFilters={unitFilters}
