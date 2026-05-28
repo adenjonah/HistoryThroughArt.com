@@ -1,6 +1,7 @@
 import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
 import type { ImageFormat, FitMode } from '@sanity/image-url/lib/types/types';
+import { logger } from './logger';
 
 // Sanity client configuration
 export const client = createClient({
@@ -41,14 +42,23 @@ export function getImageUrl(source: unknown, options: ImageOptions = {}): string
 
   const { width = 800, height, format = 'webp', quality = 80, fit = 'max' } = options;
 
-  let url = builder.image(source).format(format).quality(quality);
+  try {
+    let url = builder.image(source).format(format).quality(quality);
 
-  // When using fit='crop', the builder automatically uses hotspot data
-  if (fit) url = url.fit(fit);
-  if (width) url = url.width(width);
-  if (height) url = url.height(height);
+    // When using fit='crop', the builder automatically uses hotspot data
+    if (fit) url = url.fit(fit);
+    if (width) url = url.width(width);
+    if (height) url = url.height(height);
 
-  return url.url();
+    return url.url();
+  } catch (err) {
+    // An unresolvable image ref (e.g. a deleted asset still referenced in Sanity)
+    // makes the URL builder throw. Returning '' isolates the failure to this one
+    // image so a single bad reference can't break the whole artwork catalog,
+    // since getImageUrl runs inside transformArtwork across every artwork.
+    logger.warn('Failed to build image URL from Sanity source:', err);
+    return '';
+  }
 }
 
 /**
