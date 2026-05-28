@@ -47,7 +47,7 @@ function FlipCard({ person, isFlipped, onFlip }) {
           <img
             src={person.image}
             alt={person.name}
-            className="h-[200px] w-[160px] sm:h-[280px] sm:w-[200px] object-cover rounded-full mb-4"
+            className="h-44 w-44 sm:h-52 sm:w-52 object-cover object-top rounded-full mb-4 ring-2 ring-[var(--accent-color)]"
           />
           <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">{person.name}</h2>
         </div>

@@ -86,7 +86,7 @@ function CalendarPage() {
     const key = formatDateKey(date);
     if (dueDatesWithYear.allDatesWithItems.has(key)) {
       return (
-        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--background-color)] opacity-60" />
+        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--background-color)]" />
       );
     }
     return null;

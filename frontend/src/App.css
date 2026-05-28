@@ -29,13 +29,17 @@
   --button-color: #ae759f;
   --button-text-color: #55286f;
 
-  /* Flashcard feedback colors - semantic tokens */
-  --fc-bad-color: #ef4444;
-  --fc-bad-bg: rgba(239, 68, 68, 0.9);
-  --fc-good-color: #eab308;
-  --fc-good-bg: rgba(234, 179, 8, 0.9);
-  --fc-great-color: #22c55e;
-  --fc-great-bg: rgba(34, 197, 94, 0.9);
+  /* Flashcard feedback colors - semantic tokens.
+     Jewel tones (garnet / antique-gold / emerald) keep the bad/good/great
+     recall semantics while harmonizing with the deep-purple palette instead of
+     clashing traffic-light primaries. Used by the flashcard buttons, the swipe
+     overlays, and the tutorial's rating-system legend, so they stay in sync. */
+  --fc-bad-color: #a23a5b;
+  --fc-bad-bg: rgba(162, 58, 91, 0.9);
+  --fc-good-color: #9c7531;
+  --fc-good-bg: rgba(156, 117, 49, 0.9);
+  --fc-great-color: #2f8662;
+  --fc-great-bg: rgba(47, 134, 98, 0.9);
 
   /* Surface tokens — use these for panel/card backgrounds */
   --surface-color: #2d1040;

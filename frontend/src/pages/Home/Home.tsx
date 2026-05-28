@@ -9,9 +9,9 @@ function Home() {
   return (
     <div className="relative flex flex-col justify-center items-center text-center min-h-[calc(100vh-60px)] max-h-[calc(100vh-60px)] w-full overflow-x-hidden">
       <div className="z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="backdrop-blur-sm bg-black/30 rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
+        <div className="backdrop-blur-md bg-black/45 ring-1 ring-white/10 shadow-2xl rounded-2xl px-6 py-8 sm:px-10 sm:py-10">
           <h1 className="text-3xl sm:text-4xl md:text-5xl text-white mb-4 sm:mb-6 font-bold">
-            Welcome to HistoryThroughArt
+            Welcome to History Through Art
           </h1>
           <p className="text-base sm:text-lg text-white/90 mb-6 sm:mb-8 px-2 max-w-2xl mx-auto">
             Your interactive learning companion for exploring the AP Art History curriculum.
@@ -27,14 +27,14 @@ function Home() {
             </Button>
             <Button
               onClick={() => navigate("/artgallery")}
-              className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-[var(--accent-color)] text-[var(--text-color)] hover:opacity-90 border-0"
+              className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-[var(--accent-color)] text-white hover:bg-[var(--accent-color)]/80 border border-white/25"
               size="lg"
             >
               Gallery
             </Button>
             <Button
               onClick={() => navigate("/map")}
-              className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-[var(--accent-color)] text-[var(--text-color)] hover:opacity-90 border-0"
+              className="w-full sm:w-auto min-w-[140px] sm:min-w-[160px] py-3 px-6 sm:px-8 touch-manipulation bg-[var(--accent-color)] text-white hover:bg-[var(--accent-color)]/80 border border-white/25"
               size="lg"
             >
               Map

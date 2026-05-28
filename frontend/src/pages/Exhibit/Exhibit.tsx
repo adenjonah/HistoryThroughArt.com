@@ -100,7 +100,7 @@ function Exhibit() {
 
       {/* Video */}
       <section className="mb-10">
-        <div className="bg-[var(--accent-color)]/30 rounded-xl p-4 sm:p-6">
+        <div className="bg-[var(--accent-color)]/20 rounded-xl p-4 sm:p-6">
           <VideoPlayer id={exhibitID.toString()} />
         </div>
       </section>

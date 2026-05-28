@@ -151,6 +151,9 @@
   justify-content: center;
   overflow: hidden;
   border-radius: 16px;
+  /* Dark "mat" so the typically black-background artwork photos blend into the
+     frame instead of floating on light purple with hard letterbox edges. */
+  background-color: var(--background-color);
 }
 
 /* Blurred background for letterboxing effect */
@@ -348,18 +351,20 @@
   cursor: not-allowed;
 }
 
+/* Rating colors come from the shared --fc-*-color tokens (App.css) so the
+   buttons, swipe overlays, and tutorial legend never drift apart. */
 .bad-button {
-  background-color: #dc2626;
+  background-color: var(--fc-bad-color);
   color: #ffffff;
 }
 
 .good-button {
-  background-color: #ca8a04;
+  background-color: var(--fc-good-color);
   color: #ffffff;
 }
 
 .great-button {
-  background-color: #16a34a;
+  background-color: var(--fc-great-color);
   color: #ffffff;
 }
 

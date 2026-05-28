@@ -62,11 +62,11 @@
 
 /* Weekday headers */
 .react-calendar__month-view__weekdays {
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.6875rem;
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
 }
 
 .react-calendar__month-view__weekdays__weekday {
@@ -77,21 +77,24 @@
   text-decoration: none;
   cursor: default;
   color: var(--background-color);
-  opacity: 0.6;
+  opacity: 0.78;
 }
 
-/* Day tiles - dark text on light background */
+/* Day tiles - dark text on light background.
+   A compact min-height (instead of a square aspect-ratio) keeps the desktop
+   grid dense: square tiles on the ~672px card were ~92px tall and made the
+   month feel sparse with tiny numbers floating in empty cells. */
 .react-calendar__tile {
   background: transparent;
   color: var(--background-color);
-  aspect-ratio: 1;
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  padding: 0;
-  font-weight: 500;
-  font-size: 0.875rem;
+  border-radius: 8px;
+  padding: 6px 0;
+  font-weight: 600;
+  font-size: 1rem;
   border: none;
   transition: background-color 0.15s ease;
   position: relative;
