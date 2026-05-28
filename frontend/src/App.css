@@ -41,10 +41,41 @@
   --fc-great-color: #2f8662;
   --fc-great-bg: rgba(47, 134, 98, 0.9);
 
-  /* Surface tokens — use these for panel/card backgrounds */
-  --surface-color: #2d1040;
+  /* Surface tokens — use these for panel/card backgrounds.
+     Elevation ramp: higher number = closer to the viewer / lighter tint. */
+  --surface-color: #2d1040; /* legacy alias == surface-1 */
+  --surface-1: #2a0f3b;
+  --surface-2: #371552;
+  --surface-3: #432069;
   --border-color: rgba(188, 150, 230, 0.18);
   --page-header-gap: 1.5rem;
+
+  /* Warm gold secondary accent — gilded-frame feel; pairs with jewel tones */
+  --gold-color: #c9a24b;
+  --gold-strong: #b88a2e;
+
+  /* Text contrast tiers (AA on the dark purple surfaces) */
+  --text-strong: #efe2f6;
+  --text-default: #d8b4e2;
+  --text-muted: #b491c9;
+
+  /* Typography system */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Modular type scale (1.25 ratio) */
+  --text-xs: 0.8rem;
+  --text-sm: 0.9rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-4xl: 3.052rem;
+  --text-5xl: 3.815rem;
+  --leading-tight: 1.15;
+  --leading-normal: 1.6;
+  --tracking-display: -0.018em;
 
   /* Z-index scale */
   --z-base: 1;
@@ -71,6 +102,17 @@ html {
   width: 100%;
   margin: 0;
   scrollbar-gutter: stable;
+  font-family: var(--font-body);
+}
+
+/* Display serif on headings site-wide. No heading currently sets a font-family,
+   so this applies cleanly; opt out with a font-sans utility where needed. */
+h1,
+h2,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-tight);
 }
 
 body {

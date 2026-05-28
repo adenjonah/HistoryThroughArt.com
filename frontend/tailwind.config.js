@@ -8,6 +8,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        display: ['Fraunces', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
       colors: {
         background: 'var(--background-color)',
         accent: 'var(--accent-color)',
@@ -15,6 +19,7 @@ export default {
         text: 'var(--text-color)',
         button: 'var(--button-color)',
         'button-text': 'var(--button-text-color)',
+        gold: 'var(--gold-color)',
       },
       keyframes: {
         scroll1: {
