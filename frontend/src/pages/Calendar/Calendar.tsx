@@ -4,6 +4,7 @@ import "react-calendar/dist/Calendar.css";
 import "./Calendar.css";
 import { Link } from "react-router-dom";
 import { useDueDates, useArtworks } from "../../hooks/useSanityData";
+import PageHeading from "../../components/PageHeading";
 
 const getCurrentAcademicYear = () => {
   const now = new Date();
@@ -185,12 +186,11 @@ function CalendarPage() {
 
   return (
     <div className="flex flex-col items-center px-4 py-8 max-w-2xl mx-auto">
-      <div className="text-center mb-6 w-full">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-color)] opacity-60">
-          {academicYearStart}–{academicYearStart + 1}
-        </p>
-        <h1 className="text-3xl sm:text-4xl font-bold text-[var(--text-color)] mt-1">Study Calendar</h1>
-      </div>
+      <PageHeading
+        eyebrow={`${academicYearStart}–${academicYearStart + 1}`}
+        title="Study Calendar"
+        className="mb-8 w-full"
+      />
 
       <div className="w-full bg-[var(--foreground-color)] rounded-lg overflow-hidden">
         <Calendar

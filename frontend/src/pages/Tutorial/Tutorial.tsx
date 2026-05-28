@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronRight } from "lucide-react";
+import PageHeading from "../../components/PageHeading";
 
 const ChevronIcon = ({ isOpen }) => (
   <svg
@@ -76,14 +77,11 @@ function Tutorial() {
     <div className="min-h-screen bg-[var(--background-color)] px-4 py-10 md:py-16">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-3">
-            How to Use This Site
-          </h1>
-          <p className="text-[var(--foreground-color)] text-lg">
-            Everything you need to know about History Through Art
-          </p>
-        </div>
+        <PageHeading
+          title="How to Use This Site"
+          subtitle="Everything you need to know about History Through Art"
+          className="mb-10"
+        />
 
         {/* Quick Actions */}
         <div className="flex flex-wrap justify-center gap-3 mb-8">
