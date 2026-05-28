@@ -112,10 +112,10 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
 
     if (mapType === "originated") {
       const withCoords = artPiecesData.filter(
-        (piece) => piece.originatedLatitude && piece.originatedLongitude
+        (piece) => piece.originatedLatitude != null && piece.originatedLongitude != null
       );
       const withoutCoords = artPiecesData.filter(
-        (piece) => !piece.originatedLatitude || !piece.originatedLongitude
+        (piece) => piece.originatedLatitude == null || piece.originatedLongitude == null
       );
       const overlayData = withCoords.map((piece) => ({
         id: piece.id,
@@ -134,10 +134,10 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
       })));
     } else {
       const withCoords = artPiecesData.filter(
-        (piece) => piece.displayedLatitude && piece.displayedLongitude
+        (piece) => piece.displayedLatitude != null && piece.displayedLongitude != null
       );
       const withoutCoords = artPiecesData.filter(
-        (piece) => !piece.displayedLatitude || !piece.displayedLongitude
+        (piece) => piece.displayedLatitude == null || piece.displayedLongitude == null
       );
       const overlayData = withCoords.map((piece) => ({
         id: piece.id,
@@ -253,7 +253,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
           const geojsonData = {
             type: "FeatureCollection",
             features: overlayData
-              .filter(overlay => overlay.longitude && overlay.latitude)
+              .filter(overlay => overlay.longitude != null && overlay.latitude != null)
               .map((overlay) => ({
                 type: "Feature",
                 geometry: {
