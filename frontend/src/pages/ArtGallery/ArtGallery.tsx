@@ -10,21 +10,25 @@ function Museum() {
     () => localStorage.getItem("sort") || "ID Ascending"
   );
   const [unitFilters, setUnitFilters] = useState(() => {
+    const defaultFilters = {
+      unit1: false,
+      unit2: false,
+      unit3: false,
+      unit4: false,
+      unit5: false,
+      unit6: false,
+      unit7: false,
+      unit8: false,
+      unit9: false,
+      unit10: false,
+    };
     const savedFilters = localStorage.getItem("unitFilters");
-    return savedFilters
-      ? JSON.parse(savedFilters)
-      : {
-          unit1: false,
-          unit2: false,
-          unit3: false,
-          unit4: false,
-          unit5: false,
-          unit6: false,
-          unit7: false,
-          unit8: false,
-          unit9: false,
-          unit10: false,
-        };
+    if (!savedFilters) return defaultFilters;
+    try {
+      return JSON.parse(savedFilters);
+    } catch {
+      return defaultFilters;
+    }
   });
 
   // Save sort to localStorage whenever it changes

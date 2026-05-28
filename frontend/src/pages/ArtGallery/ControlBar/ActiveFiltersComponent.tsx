@@ -43,9 +43,15 @@ function ActiveFiltersComponent({
 
   // Load unitFilters from localStorage on mount
   useEffect(() => {
-    const savedFilters = JSON.parse(localStorage.getItem("unitFilters"));
-    if (savedFilters) {
-      setUnitFilters(savedFilters);
+    const stored = localStorage.getItem("unitFilters");
+    if (!stored) return;
+    try {
+      const savedFilters = JSON.parse(stored);
+      if (savedFilters) {
+        setUnitFilters(savedFilters);
+      }
+    } catch {
+      // Ignore corrupt stored filters and keep current state
     }
   }, [setUnitFilters]);
 
