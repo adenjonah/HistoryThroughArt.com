@@ -13,9 +13,13 @@ const getCurrentAcademicYear = () => {
 };
 
 const getAcademicDate = (monthDayStr) => {
+  if (typeof monthDayStr !== "string") return null;
   const parts = monthDayStr.split("-");
   const month = parseInt(parts[0], 10);
   const day = parseInt(parts[1], 10);
+  // transformDueDates emits "" for malformed Sanity dates; bail before those
+  // turn into an Invalid Date and pollute the calendar with a "NaN-NaN-NaN" key.
+  if (Number.isNaN(month) || Number.isNaN(day)) return null;
   const academicYearStart = getCurrentAcademicYear();
   const year = month >= 9 ? academicYearStart : academicYearStart + 1;
   return new Date(year, month - 1, day);
@@ -46,6 +50,7 @@ function CalendarPage() {
 
     dueDatesData.assignments.forEach((assignment) => {
       const date = getAcademicDate(assignment.dueDate);
+      if (!date) return;
       const key = formatDateKey(date);
       if (!assignmentsByDate[key]) assignmentsByDate[key] = [];
       assignmentsByDate[key].push(assignment);
@@ -54,6 +59,7 @@ function CalendarPage() {
 
     dueDatesData.quizzes?.forEach((quiz) => {
       const date = getAcademicDate(quiz.dueDate);
+      if (!date) return;
       const key = formatDateKey(date);
       if (!quizzesByDate[key]) quizzesByDate[key] = [];
       quizzesByDate[key].push(quiz);
