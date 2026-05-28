@@ -18,29 +18,38 @@ const DEFAULT_PREFS = {
 };
 
 /**
+ * Safely read a boolean preference from localStorage.
+ * A missing, corrupt, or non-boolean stored value falls back to the
+ * provided default without discarding the user's other preferences.
+ */
+const loadBooleanPref = (key, fallback) => {
+  try {
+    const stored = localStorage.getItem(key);
+    if (stored === null) return fallback;
+    const parsed = JSON.parse(stored);
+    return typeof parsed === 'boolean' ? parsed : fallback;
+  } catch (error) {
+    logger.warn(`Invalid stored value for ${key}, using default`, error);
+    return fallback;
+  }
+};
+
+/**
  * Load saved preferences from localStorage
- * Falls back to defaults for missing/invalid values
+ * Falls back to defaults for missing/invalid values, per-field so one
+ * corrupt value cannot reset every other preference.
  */
 const loadPreferences = () => {
   try {
     const fontSize = localStorage.getItem(STORAGE_KEYS.fontSize);
-    const autoScroll = localStorage.getItem(STORAGE_KEYS.autoScroll);
-    const highlightActive = localStorage.getItem(STORAGE_KEYS.highlightActive);
-    const highContrast = localStorage.getItem(STORAGE_KEYS.highContrast);
 
     return {
       fontSize: ['small', 'medium', 'large'].includes(fontSize)
         ? fontSize
         : DEFAULT_PREFS.fontSize,
-      autoScroll: autoScroll !== null
-        ? JSON.parse(autoScroll)
-        : DEFAULT_PREFS.autoScroll,
-      highlightActive: highlightActive !== null
-        ? JSON.parse(highlightActive)
-        : DEFAULT_PREFS.highlightActive,
-      highContrast: highContrast !== null
-        ? JSON.parse(highContrast)
-        : DEFAULT_PREFS.highContrast,
+      autoScroll: loadBooleanPref(STORAGE_KEYS.autoScroll, DEFAULT_PREFS.autoScroll),
+      highlightActive: loadBooleanPref(STORAGE_KEYS.highlightActive, DEFAULT_PREFS.highlightActive),
+      highContrast: loadBooleanPref(STORAGE_KEYS.highContrast, DEFAULT_PREFS.highContrast),
     };
   } catch (error) {
     logger.error('Error loading transcript preferences:', error);
