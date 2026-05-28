@@ -15,6 +15,17 @@ const GLOBE_SPIN_SPEED = 0.5; // degrees per frame (lower = slower)
 const GLOBE_INITIAL_ZOOM = 1.5; // zoomed out to show full globe
 // =============================================================================
 
+// Escape CMS-provided values before interpolating them into popup innerHTML,
+// so an artwork name/location containing markup can't break out of the markup.
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 interface MapBoxProps {
   center?: [number, number] | null;
   zoom?: number;
@@ -80,16 +91,18 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
     closePopup();
 
     const { id, name, location, imageUrl, imageHotspot } = properties;
-    const nameText = name || 'Unknown';
-    const locationText = location || 'Unknown location';
-    const hotspotStyle = imageHotspot || 'center center';
+    const idText = escapeHtml(id);
+    const nameText = escapeHtml(name || 'Unknown');
+    const locationText = escapeHtml(location || 'Unknown location');
+    const hotspotStyle = escapeHtml(imageHotspot || 'center center');
+    const safeImageUrl = imageUrl ? escapeHtml(imageUrl) : '';
 
     const popupContent = `
       <div class="map-popup-content">
         ${imageUrl ? `
-          <img src="${imageUrl}" class="map-popup-image" style="object-position: ${hotspotStyle};" alt="${nameText}" />
+          <img src="${safeImageUrl}" class="map-popup-image" style="object-position: ${hotspotStyle};" alt="${nameText}" />
         ` : ''}
-        <p class="map-popup-title">${id}. ${nameText}</p>
+        <p class="map-popup-title">${idText}. ${nameText}</p>
         <p class="map-popup-location">${locationText}</p>
         <p class="map-popup-hint">Tap to view details</p>
       </div>
