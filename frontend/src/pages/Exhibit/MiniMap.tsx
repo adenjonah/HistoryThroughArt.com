@@ -23,17 +23,17 @@ function MiniMap({ artPiece, mapType: initialMapType, setMapType: parentSetMapTy
     parentSetMapType?.(newMapType);
   };
 
-  const displayMessage =
-    mapType === "currentlyDisplayed"
-      ? artPiece.displayedLongitude == null
-        ? "Art piece is not currently displayed"
-        : "Currently Displayed"
-      : artPiece.originatedLongitude == null
-      ? "Origin location unknown"
-      : "Origin Location";
-
   const hasOrigin = artPiece.originatedLongitude != null && artPiece.originatedLatitude != null;
   const hasDisplayed = artPiece.displayedLongitude != null && artPiece.displayedLatitude != null;
+
+  const displayMessage =
+    mapType === "currentlyDisplayed"
+      ? !hasDisplayed
+        ? "Art piece is not currently displayed"
+        : "Currently Displayed"
+      : !hasOrigin
+      ? "Origin location unknown"
+      : "Origin Location";
 
   return (
     <div className="w-full">
