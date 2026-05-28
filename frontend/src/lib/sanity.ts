@@ -174,11 +174,17 @@ export function transformArtwork(sanityArtwork) {
   // Also keep raw image data with hotspot info for components that need it
   const imageData = images || [];
 
-  // Convert videos array to legacy format
-  const videoLink = videos?.map((v) => v.url).filter(Boolean) || null;
-  const transcript = videos?.map((v) =>
-    v.transcript ? JSON.stringify(v.transcript) : null
-  ).filter(Boolean) || null;
+  // Convert videos array to legacy format. videoLink and transcript are
+  // parallel arrays paired by index (VideoPlayer zips them via transcript[i]),
+  // so both must be derived from the SAME filtered set of videos. Filtering
+  // each independently let a video with a URL but no transcript shift every
+  // later transcript onto the wrong video. Videos lacking a transcript get an
+  // empty-transcript placeholder ("[]") instead of being dropped.
+  const usableVideos = videos?.filter((v) => v.url) || [];
+  const videoLink = usableVideos.map((v) => v.url);
+  const transcript = usableVideos.map((v) =>
+    v.transcript ? JSON.stringify(v.transcript) : "[]"
+  );
 
   return {
     ...rest,
