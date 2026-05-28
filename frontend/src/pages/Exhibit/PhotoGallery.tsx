@@ -138,7 +138,7 @@ function PhotoGallery({ id }) {
     }
   }, [modalOpen]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!hasImages || artImages.length === 0 || !artImages[slideIndex - 1]) {
       return;
     }
@@ -148,15 +148,31 @@ function PhotoGallery({ id }) {
 
     if (!imagePath) return;
 
-    const link = document.createElement("a");
-    link.href = imagePath;
-    link.download = getImageFileName(
+    const fileName = getImageFileName(
       currentImageName,
       `artwork_${foundArtPiece?.id ?? id}_${slideIndex}.jpg`
     );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+    try {
+      // Fetch as a blob and download via an object URL. Pointing link.href at
+      // the cross-origin Sanity CDN URL makes the browser ignore the `download`
+      // attribute and open the image instead of saving it; handleDownloadZip
+      // already uses this fetch-blob pattern for the same reason.
+      const response = await fetch(imagePath);
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      logger.error("Failed to download image:", error);
+    }
   };
 
   const handleDownloadZip = async () => {
