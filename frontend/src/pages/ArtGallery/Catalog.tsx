@@ -185,9 +185,9 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
           case "ID Ascending":
             return a.id - b.id;
           case "Date Descending":
-            return extractYear(b.date) - Math.abs(extractYear(a.date));
+            return extractYear(b.date) - extractYear(a.date);
           case "Date Ascending":
-            return Math.abs(extractYear(a.date)) - extractYear(b.date);
+            return extractYear(a.date) - extractYear(b.date);
           case "Korus Sort":
             return korusMap.get(a.id) - korusMap.get(b.id);
           case "Relevance":
