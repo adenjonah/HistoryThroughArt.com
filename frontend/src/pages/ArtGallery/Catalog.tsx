@@ -188,8 +188,14 @@ function Catalog({ search, setArtPiecesArray, layout, sort, unitFilters }) {
             return extractYear(b.date) - extractYear(a.date);
           case "Date Ascending":
             return extractYear(a.date) - extractYear(b.date);
-          case "Korus Sort":
-            return korusMap.get(a.id) - korusMap.get(b.id);
+          case "Korus Sort": {
+            // IDs not present in korusOrder (e.g. new Sanity artworks) sort to
+            // the end deterministically instead of producing a NaN comparator.
+            const fallback = korusOrder.length;
+            return (
+              (korusMap.get(a.id) ?? fallback) - (korusMap.get(b.id) ?? fallback)
+            );
+          }
           case "Relevance":
             // When no search, relevance sort falls back to ID
             return a.id - b.id;
