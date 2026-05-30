@@ -97,7 +97,7 @@ function FlipCard({ person, isFlipped, onFlip }: FlipCardProps) {
   return (
     <div className="w-full max-w-[320px] sm:w-[280px] h-[380px] sm:h-[400px] group [perspective:1000px]">
       <div
-        className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer overflow-hidden rounded-xl ${
+        className={`relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] cursor-pointer rounded-xl ${
           isFlipped ? "[transform:rotateY(180deg)]" : ""
         } lg:group-hover:[transform:rotateY(180deg)]`}
         onClick={handleClick}
