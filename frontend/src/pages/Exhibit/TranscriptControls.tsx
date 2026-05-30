@@ -8,7 +8,7 @@ const FONT_SIZES = [
 
 function TranscriptControls({ prefs, updatePref, searchQuery, setSearchQuery }) {
   return (
-    <div className="flex items-center gap-3 p-2 rounded-lg bg-[var(--accent-color)]/20">
+    <div className="flex items-center gap-3 p-2 rounded-lg bg-[var(--surface-2)] border border-[var(--border-soft)]">
       {/* Font Size Buttons */}
       <div className="flex items-center gap-1" role="group" aria-label="Font size">
         {FONT_SIZES.map(({ key, label }) => (
@@ -18,8 +18,8 @@ function TranscriptControls({ prefs, updatePref, searchQuery, setSearchQuery }) 
             aria-pressed={prefs.fontSize === key}
             className={`w-7 h-7 rounded text-sm font-medium transition-colors ${
               prefs.fontSize === key
-                ? "bg-[var(--button-color)] text-[var(--button-text-color)]"
-                : "bg-[var(--accent-color)]/30 text-[var(--text-color)] hover:bg-[var(--accent-color)]/50"
+                ? "bg-[var(--gold-color)] text-[var(--ink-on-gold)]"
+                : "bg-[var(--surface-3)] text-[var(--text-default)] hover:text-[var(--text-strong)]"
             }`}
           >
             {label}
@@ -27,7 +27,7 @@ function TranscriptControls({ prefs, updatePref, searchQuery, setSearchQuery }) 
         ))}
       </div>
 
-      <div className="w-px h-5 bg-[var(--text-color)]/30" aria-hidden="true" />
+      <div className="w-px h-5 bg-[var(--border-soft)]" aria-hidden="true" />
 
       {/* Auto-scroll Toggle */}
       <button
@@ -37,8 +37,8 @@ function TranscriptControls({ prefs, updatePref, searchQuery, setSearchQuery }) 
         title="Auto-scroll"
         className={`p-1.5 rounded transition-colors ${
           prefs.autoScroll
-            ? "bg-[var(--button-color)] text-[var(--button-text-color)]"
-            : "bg-[var(--accent-color)]/30 text-[var(--text-color)] hover:bg-[var(--accent-color)]/50"
+            ? "bg-[var(--gold-color)] text-[var(--ink-on-gold)]"
+            : "bg-[var(--surface-3)] text-[var(--text-muted)] hover:text-[var(--text-default)]"
         }`}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -54,8 +54,8 @@ function TranscriptControls({ prefs, updatePref, searchQuery, setSearchQuery }) 
         title="High contrast"
         className={`p-1.5 rounded transition-colors ${
           prefs.highContrast
-            ? "bg-[var(--button-color)] text-[var(--button-text-color)]"
-            : "bg-[var(--accent-color)]/30 text-[var(--text-color)] hover:bg-[var(--accent-color)]/50"
+            ? "bg-[var(--gold-color)] text-[var(--ink-on-gold)]"
+            : "bg-[var(--surface-3)] text-[var(--text-muted)] hover:text-[var(--text-default)]"
         }`}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -63,11 +63,11 @@ function TranscriptControls({ prefs, updatePref, searchQuery, setSearchQuery }) 
         </svg>
       </button>
 
-      <div className="w-px h-5 bg-[var(--text-color)]/30" aria-hidden="true" />
+      <div className="w-px h-5 bg-[var(--border-soft)]" aria-hidden="true" />
 
       {/* Search Input */}
       <div className="relative flex-1 min-w-[120px] max-w-[200px]">
-        <svg className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-color)]/50" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <svg className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <input
@@ -76,7 +76,7 @@ function TranscriptControls({ prefs, updatePref, searchQuery, setSearchQuery }) 
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search..."
           aria-label="Search transcript"
-          className="w-full pl-7 pr-2 py-1 text-sm rounded bg-[var(--accent-color)]/30 text-[var(--text-color)] placeholder-[var(--text-color)]/50 border-none outline-none focus:ring-1 focus:ring-[var(--foreground-color)]"
+          className="w-full pl-7 pr-2 py-1 text-sm rounded bg-[var(--surface-1)] text-[var(--text-default)] placeholder-[var(--text-muted)] border border-[var(--border-soft)] outline-none focus:ring-1 focus:ring-[var(--gold-color)]"
         />
       </div>
     </div>

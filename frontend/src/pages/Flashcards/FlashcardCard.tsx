@@ -134,7 +134,10 @@ const FlashcardCard = ({
       )}
 
       <div className="cards-container">
-        <div className="card-deck-shadow"></div>
+        {/* Nocturne shadow stack — two offset rotated ghost cards behind the main card */}
+        <div className="card-shadow-1" aria-hidden="true" />
+        <div className="card-shadow-2" aria-hidden="true" />
+
         <div
           ref={cardRef}
           className={cardClasses}
@@ -143,9 +146,6 @@ const FlashcardCard = ({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {showFlipHint && (
-            <span className="flip-hint">Press SPACE to flip</span>
-          )}
           <div className="flashcard-inner">
             {/* Front - Image Only */}
             <div className="flashcard-front">
@@ -164,6 +164,10 @@ const FlashcardCard = ({
                   alt={card.name}
                   className="flashcard-image"
                 />
+                {/* Flip hint: mono pill overlay at bottom of card (desktop only) */}
+                {showFlipHint && (
+                  <span className="flip-hint">Press SPACE to flip</span>
+                )}
               </div>
             </div>
 
@@ -203,7 +207,7 @@ const FlashcardCard = ({
                   className="view-details-link"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  View Full Details
+                  View Full Details →
                 </Link>
               </div>
             </div>

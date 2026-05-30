@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import { getContentAreaName } from "../../data/contentAreas";
 import { formatDateForInput } from "./flashcardUtils";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check } from "lucide-react";
 
@@ -33,33 +32,59 @@ const FlashcardSettings = ({
     <Sheet open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
       <SheetContent
         side="right"
-        className="w-[320px] sm:w-[380px] bg-[var(--background-color)] border-[var(--accent-color)] text-[var(--text-color)] overflow-y-auto"
+        className="w-[320px] sm:w-[380px] overflow-y-auto"
+        style={{
+          background: "var(--background-color)",
+          borderLeft: "1px solid var(--border-gold)",
+          boxShadow: "-20px 0 60px rgba(0,0,0,0.5)",
+          color: "var(--text-default)",
+        }}
       >
-        <SheetHeader>
-          <SheetTitle className="text-[var(--text-color)]">Settings</SheetTitle>
+        <SheetHeader className="mb-6">
+          <SheetTitle
+            style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 400, color: "var(--text-strong)" }}
+          >
+            Settings
+          </SheetTitle>
         </SheetHeader>
 
-        <div className="mt-6 space-y-6">
-          {/* Deck Mode Toggle */}
+        <div className="space-y-6">
+          {/* Deck Mode Toggle — segmented control */}
           <div>
-            <h4 className="text-sm font-semibold mb-2 text-[var(--foreground-color)]">Card Selection</h4>
-            <div className="flex rounded-lg overflow-hidden border border-[var(--accent-color)]">
-              <Button
-                variant={deckMode === "korus" ? "default" : "ghost"}
-                className="flex-1 rounded-none"
+            <h4
+              className="text-sm font-semibold mb-2"
+              style={{ color: "var(--gold-soft)" }}
+            >
+              Card Selection
+            </h4>
+            <div
+              className="flex rounded-lg overflow-hidden"
+              style={{ border: "1px solid var(--border-gold)" }}
+            >
+              <button
+                className="flex-1 py-[11px] text-center text-sm font-semibold transition-colors"
+                style={
+                  deckMode === "korus"
+                    ? { background: "var(--gold-color)", color: "var(--ink-on-gold)" }
+                    : { background: "transparent", color: "var(--text-default)" }
+                }
                 onClick={() => onDeckModeChange("korus")}
               >
                 Up to Date
-              </Button>
-              <Button
-                variant={deckMode === "all" ? "default" : "ghost"}
-                className="flex-1 rounded-none"
+              </button>
+              <button
+                className="flex-1 py-[11px] text-center text-sm font-semibold transition-colors"
+                style={
+                  deckMode === "all"
+                    ? { background: "var(--gold-color)", color: "var(--ink-on-gold)" }
+                    : { background: "transparent", color: "var(--text-default)" }
+                }
                 onClick={() => onDeckModeChange("all")}
               >
                 All Cards
-              </Button>
+              </button>
             </div>
-            <p className="text-xs text-[var(--text-color)] opacity-70 mt-1">
+            <p className="text-xs mt-2 leading-relaxed" style={{ color: "var(--text-muted)" }}>
               {deckMode === "korus"
                 ? "Shows cards due by selected date in Korus' teaching order"
                 : "Shows all 250 cards regardless of due date"}
@@ -69,14 +94,25 @@ const FlashcardSettings = ({
           {/* Due Date */}
           {deckMode === "korus" && (
             <div>
-              <h4 className="text-sm font-semibold mb-2 text-[var(--foreground-color)]">Show Cards Due By</h4>
-              <Input
-                type="date"
-                value={formatDateForInput(dueDate)}
-                onChange={handleDateChange}
-                className="bg-[var(--accent-color)]/20 border-[var(--accent-color)] text-[var(--text-color)]"
-              />
-              <p className="text-xs text-[var(--text-color)] opacity-70 mt-1">
+              <h4 className="text-sm font-semibold mb-2" style={{ color: "var(--gold-soft)" }}>
+                Show Cards Due By
+              </h4>
+              <div
+                className="flex items-center rounded-md px-3.5 py-[11px]"
+                style={{
+                  background: "rgba(85,40,111,0.2)",
+                  border: "1px solid var(--border-gold)",
+                }}
+              >
+                <Input
+                  type="date"
+                  value={formatDateForInput(dueDate)}
+                  onChange={handleDateChange}
+                  className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm w-full"
+                  style={{ color: "var(--text-strong)", fontFamily: "var(--font-body)" }}
+                />
+              </div>
+              <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>
                 {cardCountInfo.hasUnitFilter
                   ? `${cardCountInfo.filteredCards} of ${cardCountInfo.totalCards} cards (filtered by unit)`
                   : `${cardCountInfo.totalCards} cards (up to #${cardCountInfo.highestCard} in Korus' order)`}
@@ -85,7 +121,7 @@ const FlashcardSettings = ({
           )}
 
           {deckMode === "all" && (
-            <p className="text-xs text-[var(--text-color)] opacity-70">
+            <p className="text-xs" style={{ color: "var(--text-muted)" }}>
               {cardCountInfo.hasUnitFilter
                 ? `${cardCountInfo.filteredCards} of ${cardCountInfo.totalCards} cards (filtered by unit)`
                 : `${cardCountInfo.totalCards} cards total`}
@@ -94,15 +130,20 @@ const FlashcardSettings = ({
 
           {/* Unit Selection */}
           <div>
-            <h4 className="text-sm font-semibold mb-1 text-[var(--foreground-color)]">Filter by Unit / Content Area</h4>
-            <p className="text-xs text-[var(--text-color)] opacity-70 mb-3">No selection means all units</p>
-            <div className="space-y-2">
+            <h4 className="text-sm font-semibold mb-1" style={{ color: "var(--gold-soft)" }}>
+              Filter by Unit / Content Area
+            </h4>
+            <p className="text-xs mb-3.5" style={{ color: "var(--text-muted)" }}>
+              No selection means all units
+            </p>
+            <div className="flex flex-col gap-[11px]">
               {availableUnits.map((unit) => {
                 const isChecked = selectedUnits.includes(unit);
                 return (
                   <label
                     key={unit}
-                    className="flex items-center gap-2 cursor-pointer text-sm text-[var(--text-color)] hover:text-[var(--foreground-color)] transition-colors"
+                    className="flex items-center gap-2.5 cursor-pointer text-sm"
+                    style={{ color: "var(--text-default)" }}
                   >
                     <input
                       type="checkbox"
@@ -111,17 +152,26 @@ const FlashcardSettings = ({
                       checked={isChecked}
                       className="sr-only"
                     />
+                    {/* Custom Nocturne checkbox — gold fill + ink check when checked */}
                     <span
-                      className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
-                        isChecked
-                          ? "bg-[var(--button-color)] border-[var(--button-color)]"
-                          : "border-[var(--accent-color)] bg-transparent"
-                      }`}
+                      className="w-[17px] h-[17px] rounded flex-shrink-0 flex items-center justify-center transition-colors"
+                      style={{
+                        border: isChecked
+                          ? "2px solid var(--gold-color)"
+                          : "2px solid var(--border-gold)",
+                        background: isChecked ? "var(--gold-color)" : "transparent",
+                        color: "var(--ink-on-gold)",
+                      }}
                       aria-hidden="true"
                     >
-                      {isChecked && <Check className="w-2.5 h-2.5 text-white" />}
+                      {isChecked && <Check className="w-2.5 h-2.5" />}
                     </span>
-                    <span className="font-medium">Unit {unit}:</span> {getContentAreaName(unit)}
+                    <span>
+                      <span className="font-semibold" style={{ color: "var(--text-strong)" }}>
+                        Unit {unit}:
+                      </span>{" "}
+                      {getContentAreaName(unit)}
+                    </span>
                   </label>
                 );
               })}

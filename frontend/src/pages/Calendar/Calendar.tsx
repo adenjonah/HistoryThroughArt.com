@@ -87,7 +87,7 @@ function CalendarPage() {
     const key = formatDateKey(date);
     if (dueDatesWithYear.allDatesWithItems.has(key)) {
       return (
-        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--background-color)]" />
+        <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[var(--gold-soft)]" />
       );
     }
     return null;
@@ -98,17 +98,21 @@ function CalendarPage() {
 
     return (
       <div className="mb-5">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--background-color)] opacity-50 mb-3">
+        <h3
+          className="text-xs font-semibold uppercase tracking-widest mb-3"
+          style={{ letterSpacing: "0.08em", color: "var(--text-muted)" }}
+        >
           Homework Due
         </h3>
-        <ul className="space-y-0.5">
+        <ul className="flex flex-col gap-0.5">
           {assignments.map((assignment, index) => {
             if (isNaN(parseInt(assignment.id))) {
               return (
                 <li
                   key={`${assignment.id}-${index}`}
-                  className="py-2.5 px-3 rounded text-sm text-[var(--background-color)] font-medium
-                    hover:bg-[var(--background-color)]/10 transition-colors duration-150"
+                  className="flex items-center justify-between py-2.5 px-3 rounded-md text-sm
+                    text-[var(--text-strong)] font-medium transition-colors duration-150"
+                  style={{ background: "rgba(85,40,111,0.16)" }}
                 >
                   {assignment.id}
                 </li>
@@ -124,15 +128,20 @@ function CalendarPage() {
               <li key={`${assignment.id}-${index}`}>
                 <Link
                   to={`/exhibit?id=${assignment.id}`}
-                  className="flex items-center justify-between py-2.5 px-3 rounded text-sm
-                    text-[var(--background-color)] hover:bg-[var(--background-color)]/10
+                  className="flex items-center justify-between py-2.5 px-3 rounded-md text-sm
                     transition-colors duration-150 group"
+                  style={{ background: "rgba(85,40,111,0.16)" }}
                 >
-                  <span className="flex items-center">
-                    <span className="font-bold mr-3 min-w-[1.75rem]">{assignment.id}</span>
-                    <span className="font-medium">{artPiece.name}</span>
+                  <span className="flex items-center gap-3.5">
+                    <span
+                      className="font-semibold min-w-[1.75rem]"
+                      style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--gold-color)" }}
+                    >
+                      {assignment.id}
+                    </span>
+                    <span className="text-[var(--text-strong)]">{artPiece.name}</span>
                   </span>
-                  <span className="opacity-0 group-hover:opacity-60 transition-opacity duration-150 ml-2 text-xs">→</span>
+                  <span className="text-[var(--text-muted)] text-xs ml-2">→</span>
                 </Link>
               </li>
             );
@@ -147,15 +156,19 @@ function CalendarPage() {
 
     return (
       <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--background-color)] opacity-50 mb-3">
+        <h3
+          className="text-xs font-semibold uppercase mb-3"
+          style={{ letterSpacing: "0.08em", color: "var(--text-muted)" }}
+        >
           Quizzes
         </h3>
-        <ul className="space-y-0.5">
+        <ul className="flex flex-col gap-0.5">
           {quizzes.map((quiz, index) => (
             <li
               key={index}
-              className="py-2.5 px-3 rounded text-sm text-[var(--background-color)] font-medium
-                hover:bg-[var(--background-color)]/10 transition-colors duration-150"
+              className="py-2.5 px-3 rounded-md text-sm text-[var(--text-strong)] font-medium
+                transition-colors duration-150"
+              style={{ background: "rgba(85,40,111,0.16)" }}
             >
               {quiz.title}
             </li>
@@ -185,14 +198,14 @@ function CalendarPage() {
   }
 
   return (
-    <div className="flex flex-col items-center px-4 py-8 max-w-2xl mx-auto">
+    <div className="flex flex-col items-center px-4 py-10 max-w-2xl mx-auto">
       <PageHeading
         eyebrow={`${academicYearStart}–${academicYearStart + 1}`}
         title="Study Calendar"
-        className="mb-8 w-full"
+        className="mb-6 w-full"
       />
 
-      <div className="w-full bg-[var(--foreground-color)] rounded-lg overflow-hidden">
+      <div className="w-full bg-[var(--surface-1)] rounded-xl overflow-hidden border border-[var(--border-gold)]">
         <Calendar
           onClickDay={onDateClick}
           value={selectedDate}
@@ -205,16 +218,16 @@ function CalendarPage() {
           prev2Label={null}
         />
 
-        <div className="border-t border-[var(--background-color)]/15">
+        <div className="border-t border-[var(--border-soft)]">
           <div className="px-5 py-4">
-            <h2 className="text-base font-semibold text-[var(--background-color)]">
+            <h2 className="font-display text-lg text-[var(--text-strong)]">
               {formattedSelectedDate}
             </h2>
           </div>
           <div className="px-5 pb-5">
             {assignments.length === 0 && quizzes.length === 0 ? (
               <div className="py-6 text-center">
-                <p className="text-sm text-[var(--background-color)] opacity-50 font-medium">
+                <p className="text-sm text-[var(--text-muted)] font-medium">
                   No assignments due
                 </p>
               </div>

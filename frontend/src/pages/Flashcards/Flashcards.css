@@ -8,9 +8,11 @@
   min-height: calc(100vh - 80px);
   padding: 20px;
   padding-bottom: 40px;
+  background: var(--background-color);
 }
 
 .title {
+  font-family: var(--font-display);
   font-size: 2.25rem;
   font-weight: 600;
   letter-spacing: var(--tracking-display);
@@ -26,33 +28,14 @@
   align-items: center;
   gap: 8px;
   font-size: 0.9rem;
-  color: var(--text-color);
+  color: var(--text-muted);
   opacity: 0.8;
   margin-bottom: 16px;
 }
 
 .status-line .separator {
-  color: var(--text-color);
+  color: var(--text-muted);
   opacity: 0.5;
-}
-
-/* Legacy progress/order-info (kept for backwards compatibility) */
-.progress {
-  background-color: var(--foreground-color);
-  border-radius: 10px;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-}
-
-.order-info {
-  background-color: var(--accent-color);
-  color: var(--foreground-color);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  margin-bottom: 16px;
-  font-style: italic;
 }
 
 /* ==============================================
@@ -64,9 +47,35 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
+/* Shadow stack: two offset rotated cards behind the main card */
+.card-shadow-1 {
+  position: absolute;
+  width: clamp(320px, 70vw, 500px);
+  height: clamp(380px, 55vh, 540px);
+  border-radius: 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  transform: translate(10px, 12px) rotate(2deg);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card-shadow-2 {
+  position: absolute;
+  width: clamp(320px, 70vw, 500px);
+  height: clamp(380px, 55vh, 540px);
+  border-radius: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  transform: translate(5px, 6px) rotate(1deg);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Legacy drop shadow beneath deck */
 .card-deck-shadow {
   position: absolute;
   width: 60%;
@@ -75,8 +84,8 @@
   left: 50%;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.15);
-  filter: blur(4px);
+  background: rgba(0, 0, 0, 0.3);
+  filter: blur(8px);
   z-index: 0;
 }
 
@@ -84,9 +93,8 @@
    FLASHCARD - Main card with fixed dimensions
    ============================================== */
 .flashcard {
-  /* Fixed dimensions using clamp for responsive bounds */
-  width: clamp(320px, 70vw, 880px);
-  height: clamp(380px, 55vh, 520px);
+  width: clamp(320px, 70vw, 500px);
+  height: clamp(380px, 55vh, 540px);
   perspective: 1000px;
   cursor: pointer;
   position: relative;
@@ -103,9 +111,9 @@
   transition: transform 0.4s ease;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.15),
-    0 8px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  border-radius: 16px;
+  border: 1px solid var(--border-gold);
 }
 
 .flashcard.flipped .flashcard-inner {
@@ -124,7 +132,7 @@
   -webkit-backface-visibility: hidden;
   border-radius: 16px;
   overflow: clip;
-  background-color: var(--foreground-color);
+  background-color: var(--surface-1);
 }
 
 .flashcard-back {
@@ -152,8 +160,6 @@
   justify-content: center;
   overflow: hidden;
   border-radius: 16px;
-  /* Dark "mat" so the typically black-background artwork photos blend into the
-     frame instead of floating on light purple with hard letterbox edges. */
   background-color: var(--background-color);
 }
 
@@ -180,7 +186,35 @@
 }
 
 /* ==============================================
-   BACK FACE - Scrollable metadata
+   FLIP HINT - Mono pill overlay on front face
+   ============================================== */
+.flip-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.82);
+  background: rgba(11, 4, 16, 0.55);
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  padding: 6px 14px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Hide flip hint on mobile */
+@media (max-width: 768px) {
+  .flip-hint {
+    display: none;
+  }
+}
+
+/* ==============================================
+   BACK FACE - Nocturne gradient surface + metadata
    ============================================== */
 .flashcard-back {
   display: flex;
@@ -191,10 +225,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 30px 30px 26px;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface-1));
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--accent-color) transparent;
+  scrollbar-color: var(--border-gold) transparent;
 }
 
 .back-content::-webkit-scrollbar {
@@ -206,124 +241,96 @@
 }
 
 .back-content::-webkit-scrollbar-thumb {
-  background-color: var(--accent-color);
+  background-color: var(--border-gold);
   border-radius: 3px;
-  opacity: 0.5;
 }
 
-/* Title on back */
+/* Title on back: serif "ID. Name" header */
 .flashcard-title {
-  font-size: 1.25rem;
-  line-height: 1.4;
-  margin: 0 0 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--background-color);
-  border-opacity: 0.2;
+  font-size: 1.5rem;
+  line-height: 1.1;
+  margin: 0 0 18px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  color: var(--background-color);
   align-items: baseline;
 }
 
 .card-number {
-  font-weight: normal;
-  color: var(--accent-color);
-  opacity: 0.7;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--gold-color);
 }
 
 .card-name {
-  font-weight: bold;
-  color: var(--background-color);
+  font-family: var(--font-display);
+  font-size: 1.625rem;
+  font-weight: 400;
+  color: var(--text-strong);
+  line-height: 1.1;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* Metadata rows */
+/* Metadata rows with hairline dividers */
 .flashcard-metadata {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 .metadata-row {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .metadata-label {
-  font-size: 0.75rem;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--background-color);
-  opacity: 0.6;
-  font-weight: 600;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
 }
 
 .metadata-value {
-  font-size: 0.95rem;
-  color: var(--background-color);
+  font-size: 14.5px;
+  color: var(--text-strong);
+  text-align: right;
+  font-weight: 500;
   line-height: 1.4;
 }
 
 /* View Details link at bottom of back */
 .view-details-link {
   display: block;
-  margin-top: auto;
+  margin-top: 14px;
   padding-top: 16px;
   text-align: center;
-  background-color: var(--accent-color);
-  color: var(--foreground-color);
-  padding: 12px 20px;
-  border-radius: 8px;
+  border-top: 1px solid var(--border-gold);
+  color: var(--gold-soft);
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
 }
 
 .view-details-link:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  opacity: 0.8;
 }
 
 /* ==============================================
-   FLIP HINT - Shows on desktop until first flip
-   ============================================== */
-.flip-hint {
-  position: absolute;
-  top: -36px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.8rem;
-  color: var(--text-color);
-  opacity: 0.7;
-  padding: 6px 12px;
-  background-color: var(--foreground-color);
-  border-radius: 6px;
-  pointer-events: none;
-  z-index: 5;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Hide flip hint on mobile */
-@media (max-width: 768px) {
-  .flip-hint {
-    display: none;
-  }
-}
-
-/* ==============================================
-   ACTION BUTTONS - Bad / Good / Great
+   ACTION BUTTONS - Bad / Good / Great (Nocturne)
    ============================================== */
 .action-buttons {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   margin-bottom: 16px;
   justify-content: center;
   width: 100%;
@@ -332,19 +339,21 @@
 
 .action-buttons button {
   flex: 1;
-  min-width: 90px;
-  padding: 14px 20px;
+  min-width: 120px;
+  padding: 14px 24px;
   border: none;
-  border-radius: 10px;
+  border-radius: 6px;
   font-size: 1rem;
   font-weight: 600;
+  color: #ffffff;
   cursor: pointer;
+  position: relative;
   transition: all 0.2s ease;
 }
 
 .action-buttons button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .action-buttons button:disabled {
@@ -352,28 +361,35 @@
   cursor: not-allowed;
 }
 
-/* Rating colors come from the shared --fc-*-color tokens (App.css) so the
-   buttons, swipe overlays, and tutorial legend never drift apart. */
+/* Semantic colors from shared tokens */
 .bad-button {
-  background-color: var(--fc-bad-color);
-  color: #ffffff;
+  background-color: var(--fc-bad-bg) !important;
+  color: #ffffff !important;
 }
 
 .good-button {
-  background-color: var(--fc-good-color);
-  color: #ffffff;
+  background-color: var(--fc-good-bg) !important;
+  color: #ffffff !important;
 }
 
 .great-button {
-  background-color: var(--fc-great-color);
-  color: #ffffff;
+  background-color: var(--fc-great-bg) !important;
+  color: #ffffff !important;
 }
 
+/* Mono key badge — top-right corner of each rating button */
 .key-hint {
-  font-size: 0.7rem;
+  position: absolute;
+  top: 6px;
+  right: 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  opacity: 0.85;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-weight: 400;
   display: block;
-  margin-top: 4px;
-  opacity: 0.7;
 }
 
 /* Hide key hints on mobile */
@@ -390,27 +406,30 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
-.undo-button {
-  background-color: var(--accent-color);
-  color: var(--foreground-color);
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
+/* Ghost button base for secondary controls */
+.undo-button,
+.reset-button {
+  background: transparent !important;
+  color: var(--text-strong) !important;
+  border: 1px solid var(--border-gold) !important;
+  padding: 9px 18px !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
   transition: all 0.2s ease;
 }
 
-.undo-button:hover:not(:disabled) {
-  opacity: 0.9;
-  transform: translateY(-1px);
+.undo-button:hover:not(:disabled),
+.reset-button:hover:not(:disabled) {
+  background: rgba(205, 161, 78, 0.08) !important;
 }
 
-.undo-button:disabled {
+.undo-button:disabled,
+.reset-button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
@@ -426,56 +445,35 @@
   margin-bottom: 20px;
 }
 
-.reset-button {
-  background-color: var(--button-color);
-  color: var(--accent-color);
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  min-width: 140px;
-  transition: all 0.2s ease;
-}
-
-.reset-button:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.reset-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .shuffle-button {
-  background-color: var(--foreground-color);
+  /* inherits ghost styling from .reset-button */
 }
 
 /* ==============================================
-   SETTINGS BUTTON - Fixed position
+   SETTINGS BUTTON - Fixed position, Nocturne circle
    ============================================== */
 .settings-button {
   position: fixed;
-  top: 70px;
-  right: 10px;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: none;
-  background-color: var(--accent-color);
-  color: var(--text-color);
-  border-radius: 8px;
+  top: 80px;
+  right: 16px;
+  width: 42px !important;
+  height: 42px !important;
+  padding: 0 !important;
+  background: var(--surface-2) !important;
+  border: 1px solid var(--border-gold) !important;
+  color: var(--text-default) !important;
+  border-radius: 50% !important;
   cursor: pointer;
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 17px;
   transition: all 0.2s ease;
 }
 
 .settings-button:hover:not(:disabled) {
-  opacity: 0.9;
+  background: var(--surface-3) !important;
 }
 
 .settings-button:disabled {
@@ -484,184 +482,11 @@
 }
 
 /* ==============================================
-   SETTINGS MODAL - Slide-in panel
-   ============================================== */
-.settings-modal {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  height: 100%;
-  width: 300px;
-  background-color: var(--foreground-color);
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
-  transition: right 0.3s ease;
-  overflow-y: auto;
-  z-index: 1001;
-  padding: 24px;
-  color: var(--background-color);
-}
-
-.settings-modal.show {
-  right: 0;
-}
-
-.settings-modal h3 {
-  margin: 0 0 20px;
-  font-weight: bold;
-  color: var(--background-color);
-}
-
-.settings-modal h4 {
-  margin: 20px 0 8px;
-  font-weight: bold;
-  color: var(--background-color);
-}
-
-/* Deck Mode Toggle */
-.deck-mode-setting {
-  margin-bottom: 24px;
-}
-
-.deck-mode-setting h4 {
-  margin: 0 0 12px;
-  font-weight: 600;
-  color: var(--background-color);
-}
-
-.deck-mode-toggle {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.mode-button {
-  flex: 1;
-  padding: 10px 16px;
-  border: 2px solid var(--background-color);
-  border-radius: 8px;
-  background: transparent;
-  color: var(--background-color);
-  font-weight: 500;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.mode-button:hover {
-  background: rgba(33, 11, 44, 0.1);
-}
-
-.mode-button.active {
-  background: var(--background-color);
-  color: var(--foreground-color);
-}
-
-.mode-hint {
-  font-size: 0.8rem;
-  color: var(--background-color);
-  opacity: 0.7;
-  font-style: italic;
-  margin: 0;
-}
-
-.unit-selection,
-.due-date-setting {
-  margin-bottom: 24px;
-}
-
-.unit-selection label,
-.due-date-setting label {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--background-color);
-}
-
-.unit-selection label .unit-number {
-  font-weight: 600;
-  opacity: 0.9;
-}
-
-.unit-hint {
-  font-size: 0.85rem;
-  color: var(--background-color);
-  font-style: italic;
-  padding: 8px;
-  background-color: rgba(33, 11, 44, 0.1);
-  border-radius: 6px;
-  text-align: center;
-  margin-bottom: 12px;
-}
-
-.date-selector {
-  padding: 12px;
-  background-color: rgba(33, 11, 44, 0.1);
-  border-radius: 8px;
-}
-
-.date-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--background-color);
-  border-radius: 6px;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  font-size: 1rem;
-}
-
-.today-button,
-.current-class-button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  margin-top: 8px;
-  transition: opacity 0.2s ease;
-}
-
-.today-button {
-  background-color: var(--button-color);
-  color: white;
-}
-
-.current-class-button {
-  background-color: var(--background-color);
-  color: var(--foreground-color);
-  font-weight: bold;
-  border: 1px solid var(--foreground-color);
-}
-
-.card-count-info {
-  padding: 10px;
-  background-color: rgba(33, 11, 44, 0.1);
-  color: var(--background-color);
-  border-radius: 6px;
-  font-size: 0.9rem;
-  text-align: center;
-  font-weight: 600;
-  margin: 12px 0;
-}
-
-.close-settings {
-  width: 100%;
-  padding: 12px;
-  background-color: var(--background-color);
-  color: var(--foreground-color);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 24px;
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-/* ==============================================
    NOTIFICATIONS - Save indicator, duplicate msg
    ============================================== */
 .saving-indicator {
   font-size: 0.8rem;
-  color: var(--accent-color);
+  color: var(--gold-soft);
   opacity: 0;
   transition: opacity 0.3s ease;
   margin-bottom: 8px;
@@ -676,15 +501,15 @@
   top: 100px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(255, 107, 107, 0.95);
-  color: var(--accent-color);
+  background-color: var(--fc-bad-bg);
+  color: #ffffff;
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
   z-index: 100;
   animation: fadeInOut 2s ease-in-out;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 @keyframes fadeInOut {
@@ -713,18 +538,15 @@
 }
 
 .swipe-indicator.left {
-  background-color: rgba(255, 107, 107, 0.95);
-  color: var(--accent-color);
+  background-color: var(--fc-bad-bg);
 }
 
 .swipe-indicator.up {
-  background-color: rgba(255, 204, 0, 0.95);
-  color: var(--accent-color);
+  background-color: var(--fc-good-bg);
 }
 
 .swipe-indicator.right {
-  background-color: rgba(76, 175, 80, 0.95);
-  color: var(--accent-color);
+  background-color: var(--fc-great-bg);
 }
 
 /* ==============================================
@@ -736,11 +558,12 @@
   bottom: 180px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.1);
+  background: rgba(11, 4, 16, 0.55);
+  border: 1px solid var(--border-gold);
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 20px;
   font-size: 0.85rem;
-  color: var(--text-color);
+  color: var(--text-default);
   text-align: center;
   pointer-events: none;
   z-index: 5;
@@ -761,24 +584,28 @@
    END OF DECK - Empty state
    ============================================== */
 .end-of-deck-message {
-  background-color: var(--foreground-color);
-  color: var(--accent-color);
+  background: var(--surface-2);
+  border: 1px solid var(--border-gold);
+  color: var(--text-strong);
   padding: 32px 40px;
   border-radius: 16px;
   text-align: center;
   margin: 40px 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
   max-width: 90%;
 }
 
 .end-of-deck-message h2 {
+  font-family: var(--font-display);
   margin: 0 0 12px;
   font-size: 1.5rem;
+  color: var(--text-strong);
 }
 
 .end-of-deck-message p {
   margin: 0;
-  opacity: 0.8;
+  color: var(--text-muted);
+  opacity: 0.85;
 }
 
 /* ==============================================
@@ -848,11 +675,17 @@
   }
 
   .title {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     margin-bottom: 8px;
   }
 
   .flashcard {
+    width: 95%;
+    height: clamp(280px, 50vh, 420px);
+  }
+
+  .card-shadow-1,
+  .card-shadow-2 {
     width: 95%;
     height: clamp(280px, 50vh, 420px);
   }
@@ -868,23 +701,31 @@
   .flashcard-title {
     font-size: 1.1rem;
     margin-bottom: 16px;
-    padding-bottom: 12px;
+  }
+
+  .card-number {
+    font-size: 1rem;
+  }
+
+  .card-name {
+    font-size: 1.25rem;
   }
 
   .metadata-row {
-    gap: 1px;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .metadata-value {
+    text-align: left;
+    font-size: 0.9rem;
   }
 
   .metadata-label {
     font-size: 0.7rem;
   }
 
-  .metadata-value {
-    font-size: 0.9rem;
-  }
-
   .view-details-link {
-    padding: 10px 16px;
     font-size: 0.85rem;
   }
 
@@ -897,16 +738,6 @@
     padding: 12px 16px;
     font-size: 0.95rem;
     min-width: 80px;
-  }
-
-  .progress {
-    font-size: 0.8rem;
-    padding: 6px 12px;
-  }
-
-  .order-info {
-    font-size: 0.75rem;
-    padding: 3px 10px;
   }
 
   .swipe-instructions {
@@ -934,17 +765,18 @@
     width: 80%;
     max-width: 280px;
   }
-
-  .settings-modal {
-    width: 85%;
-    max-width: 300px;
-  }
 }
 
 /* iPad adjustments */
 @media only screen and (min-width: 768px) and (max-width: 1024px) {
   .flashcard {
-    width: clamp(400px, 60vw, 700px);
+    width: clamp(400px, 60vw, 500px);
+    height: clamp(350px, 50vh, 480px);
+  }
+
+  .card-shadow-1,
+  .card-shadow-2 {
+    width: clamp(400px, 60vw, 500px);
     height: clamp(350px, 50vh, 480px);
   }
 }

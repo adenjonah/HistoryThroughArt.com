@@ -1,4 +1,8 @@
-/* Map page styles */
+/* Map page styles — Nocturne theme */
+
+/* ========================================
+   Legacy .map-container (kept for back-compat)
+   ======================================== */
 .map-container {
   width: 100%;
   max-width: 1400px;
@@ -7,10 +11,9 @@
   min-height: 600px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
 }
 
-/* Responsive map container */
 @media (min-width: 1600px) {
   .map-container {
     height: 80vh;
@@ -42,7 +45,9 @@
   }
 }
 
-/* Mapbox popup styling */
+/* ========================================
+   Mapbox popup — Nocturne dark surface
+   ======================================== */
 .mapboxgl-popup {
   animation: popupFadeIn 0.2s ease-out;
   z-index: 10;
@@ -51,10 +56,10 @@
 .mapboxgl-popup-content {
   padding: 0 !important;
   border-radius: 12px !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
   overflow: hidden;
-  background: #210b2c !important;
-  border: 1px solid rgba(188, 150, 230, 0.25) !important;
+  background: var(--surface-1) !important;
+  border: 1px solid var(--border-gold) !important;
 }
 
 .mapboxgl-popup-close-button {
@@ -65,21 +70,20 @@
   align-items: center !important;
   justify-content: center !important;
   padding: 0 !important;
-  color: #bc96e6 !important;
+  color: var(--gold-color) !important;
   right: 4px !important;
   top: 4px !important;
   border-radius: 50% !important;
-  background: rgba(85, 40, 111, 0.5) !important;
+  background: rgba(61, 24, 87, 0.6) !important;
   transition: background 0.15s ease !important;
 }
 
 .mapboxgl-popup-close-button:hover,
 .mapboxgl-popup-close-button:active {
-  color: #d8b4e2 !important;
-  background: rgba(85, 40, 111, 0.8) !important;
+  color: var(--gold-soft) !important;
+  background: rgba(61, 24, 87, 0.9) !important;
 }
 
-/* Mobile-friendly close button */
 @media (max-width: 768px) {
   .mapboxgl-popup-close-button {
     width: 36px !important;
@@ -94,12 +98,14 @@
   }
 }
 
-/* Popup tip/arrow styling */
+/* Popup tip/arrow — match surface-1 */
 .mapboxgl-popup-tip {
-  border-top-color: #210b2c !important;
+  border-top-color: var(--surface-1) !important;
 }
 
-/* Custom popup content styling */
+/* ========================================
+   Custom popup content
+   ======================================== */
 .map-popup-content {
   padding: 12px;
   min-width: 180px;
@@ -117,7 +123,7 @@
 .map-popup-title {
   font-weight: 600;
   font-size: 14px;
-  color: #d8b4e2;
+  color: var(--text-strong);
   margin: 0 0 4px 0;
   line-height: 1.4;
   padding-right: 28px;
@@ -125,19 +131,18 @@
 
 .map-popup-location {
   font-size: 12px;
-  color: rgba(188, 150, 230, 0.7);
+  color: var(--text-muted);
   margin: 0 0 8px 0;
   line-height: 1.4;
 }
 
 .map-popup-hint {
   font-size: 12px;
-  color: #ae759f;
+  color: var(--gold-color);
   font-weight: 500;
   margin: 0;
 }
 
-/* Mobile popup adjustments */
 @media (max-width: 768px) {
   .map-popup-content {
     padding: 14px;
@@ -165,7 +170,6 @@
   }
 }
 
-/* Small phone adjustments */
 @media (max-width: 380px) {
   .map-popup-content {
     min-width: 180px;
@@ -194,16 +198,42 @@
   }
 }
 
-/* Mapbox navigation controls - responsive sizing */
+/* ========================================
+   Mapbox navigation controls — Nocturne glassy dark
+   ======================================== */
 .mapboxgl-ctrl-group {
   border-radius: 8px !important;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  background: rgba(11, 4, 16, 0.6) !important;
+  border: 1px solid var(--border-gold) !important;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 .mapboxgl-ctrl-group button {
   width: 36px !important;
   height: 36px !important;
+  background: transparent !important;
+  border-color: var(--border-soft) !important;
+}
+
+.mapboxgl-ctrl-group button + button {
+  border-top-color: var(--border-soft) !important;
+}
+
+.mapboxgl-ctrl-group button:hover {
+  background: rgba(205, 161, 78, 0.1) !important;
+}
+
+/* Tint the icons to cream/white */
+.mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+
+.mapboxgl-ctrl-group button:hover .mapboxgl-ctrl-icon {
+  opacity: 1;
 }
 
 @media (max-width: 768px) {
@@ -216,7 +246,6 @@
     transform: scale(1.1);
   }
 
-  /* More spacing between controls on mobile */
   .mapboxgl-ctrl-top-right {
     top: 56px !important;
     right: 8px !important;
@@ -227,7 +256,9 @@
   }
 }
 
-/* Ensure map canvas handles touch properly */
+/* ========================================
+   Map canvas / base
+   ======================================== */
 .mapboxgl-canvas {
   touch-action: pan-x pan-y;
 }
@@ -236,12 +267,11 @@
   transition: filter 0.3s ease;
 }
 
-/* Smooth map transitions */
 .mapboxgl-map {
   font-family: inherit;
 }
 
-/* Attribution - smaller on mobile */
+/* Attribution — smaller on mobile */
 .mapboxgl-ctrl-attrib {
   font-size: 10px !important;
 }
@@ -267,18 +297,19 @@
 }
 
 /* ========================================
-   Map UI Controls
+   Map UI Controls — Nocturne glassy panels
    ======================================== */
 
 /* Segmented Mode Toggle */
 .map-mode-toggle {
   display: flex;
-  background: rgba(26, 26, 26, 0.9);
+  background: rgba(11, 4, 16, 0.6);
   border-radius: 8px;
   padding: 4px;
   gap: 4px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--border-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .map-mode-toggle button {
@@ -290,19 +321,20 @@
   cursor: pointer;
   transition: all 0.2s ease;
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-default);
   touch-action: manipulation;
   user-select: none;
 }
 
 .map-mode-toggle button:hover {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-strong);
+  background: rgba(205, 161, 78, 0.08);
 }
 
 .map-mode-toggle button.active {
-  background: #55286f;
-  color: #d8b4e2;
-  box-shadow: 0 2px 8px rgba(85, 40, 111, 0.5);
+  background: var(--surface-3);
+  color: var(--gold-soft);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 768px) {
@@ -313,22 +345,34 @@
   }
 }
 
-/* Status Bar */
+/* Status Bar (legend chip) — gold dot + count/label */
 .map-status-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: rgba(26, 26, 26, 0.9);
+  gap: 9px;
+  background: rgba(11, 4, 16, 0.6);
   border-radius: 8px;
-  padding: 8px 14px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 13px;
+  padding: 9px 14px;
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--border-gold);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  color: var(--text-default);
+  font-size: 12.5px;
+}
+
+/* Gold dot before the count text */
+.map-status-bar::before {
+  content: "";
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--gold-color);
+  flex-shrink: 0;
 }
 
 .map-status-bar strong {
-  color: #fff;
+  color: var(--gold-soft);
   font-weight: 600;
 }
 
@@ -337,10 +381,10 @@
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  border: none;
+  border: 1px solid rgba(205, 161, 78, 0.3);
   border-radius: 4px;
-  background: rgba(245, 158, 11, 0.2);
-  color: #fbbf24;
+  background: rgba(205, 161, 78, 0.12);
+  color: var(--gold-soft);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -350,7 +394,7 @@
 }
 
 .map-status-warning:hover {
-  background: rgba(245, 158, 11, 0.35);
+  background: rgba(205, 161, 78, 0.22);
 }
 
 @media (max-width: 768px) {
@@ -368,13 +412,13 @@
 
 /* Missing Locations Panel */
 .map-missing-panel {
-  background: rgba(26, 26, 26, 0.95);
+  background: rgba(11, 4, 16, 0.85);
   backdrop-filter: blur(12px);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  border: 1px solid var(--border-gold);
+  color: var(--text-strong);
 }
 
 .map-missing-panel-header {
@@ -382,26 +426,26 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .map-missing-panel-header h3 {
   font-size: 14px;
   font-weight: 600;
   margin: 0;
-  color: #fff;
+  color: var(--text-strong);
 }
 
 .map-missing-panel-header p {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   margin: 4px 0 0 0;
 }
 
 .map-missing-panel-close {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   font-size: 20px;
   line-height: 1;
   padding: 4px;
@@ -411,7 +455,7 @@
 }
 
 .map-missing-panel-close:hover {
-  color: #fff;
+  color: var(--gold-color);
 }
 
 .map-missing-panel-list {
@@ -423,7 +467,7 @@
 }
 
 .map-missing-panel-list li {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-soft);
 }
 
 .map-missing-panel-list li:last-child {
@@ -438,14 +482,14 @@
 }
 
 .map-missing-panel-list a:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(205, 161, 78, 0.06);
 }
 
 .map-missing-panel-list .artwork-name {
   display: block;
   font-size: 13px;
   font-weight: 500;
-  color: #fff;
+  color: var(--text-strong);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -454,7 +498,7 @@
 .map-missing-panel-list .artwork-location {
   display: block;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-muted);
   margin-top: 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -474,36 +518,4 @@
     padding: 14px 16px;
     min-height: 44px;
   }
-}
-
-/* Mapbox zoom controls - dark theme override */
-.mapboxgl-ctrl-group {
-  background: rgba(26, 26, 26, 0.9) !important;
-  border-radius: 8px !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  backdrop-filter: blur(8px);
-}
-
-.mapboxgl-ctrl-group button {
-  background: transparent !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.mapboxgl-ctrl-group button + button {
-  border-top-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.mapboxgl-ctrl-group button:hover {
-  background: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Tint the icons purple/white */
-.mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
-  filter: brightness(0) invert(1);
-  opacity: 0.75;
-  transition: opacity 0.15s ease;
-}
-
-.mapboxgl-ctrl-group button:hover .mapboxgl-ctrl-icon {
-  opacity: 1;
 }

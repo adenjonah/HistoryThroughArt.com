@@ -5,7 +5,6 @@ import FlashcardCard from "./FlashcardCard";
 import FlashcardControls from "./FlashcardControls";
 import FlashcardSettings from "./FlashcardSettings";
 import { hasSeenSwipeInstructions, markSwipeInstructionsSeen } from "./flashcardUtils";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -158,15 +157,15 @@ const Flashcards = () => {
           )}
         </div>
         <div className="reset-button-container">
-          <Button variant="outline" className="reset-button" onClick={() => setShowSettings(true)}>
+          <button className="reset-button" onClick={() => setShowSettings(true)}>
             Open Settings
-          </Button>
-          <Button variant="outline" className="reset-button" onClick={() => resetDeck(false)}>
+          </button>
+          <button className="reset-button" onClick={() => resetDeck(false)}>
             Reset Deck (Ordered)
-          </Button>
-          <Button variant="outline" className="reset-button shuffle-button" onClick={() => resetDeck(true)}>
+          </button>
+          <button className="reset-button shuffle-button" onClick={() => resetDeck(true)}>
             Reset Deck (Shuffled)
-          </Button>
+          </button>
         </div>
 
         <FlashcardSettings
@@ -194,9 +193,9 @@ const Flashcards = () => {
           <h2>Error loading cards</h2>
           <p>Please reset the deck.</p>
         </div>
-        <Button variant="outline" className="reset-button" onClick={() => resetDeck(false)}>
+        <button className="reset-button" onClick={() => resetDeck(false)}>
           Reset Deck
-        </Button>
+        </button>
       </div>
     );
   }
@@ -213,11 +212,12 @@ const Flashcards = () => {
 
       {cardInfo.totalCards > 0 && (
         <div className="w-full max-w-[500px] mb-3">
-          <div className="h-1.5 rounded-full bg-[var(--accent-color)]/30 overflow-hidden">
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border-soft)" }}>
             <div
-              className="h-full rounded-full bg-[var(--gold-color)] transition-all duration-300"
+              className="h-full rounded-full transition-all duration-300"
               style={{
                 width: `${((cardInfo.totalCards - deck.length) / cardInfo.totalCards) * 100}%`,
+                background: "var(--gold-color)",
               }}
             />
           </div>
@@ -274,18 +274,43 @@ const Flashcards = () => {
 
       {/* Reset confirmation dialog */}
       <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-        <AlertDialogContent className="bg-[var(--background-color)] border-[var(--accent-color)] text-[var(--text-color)]">
+        <AlertDialogContent
+          className="border"
+          style={{
+            background: "var(--surface-2)",
+            borderColor: "var(--border-gold)",
+            color: "var(--text-default)",
+          }}
+        >
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[var(--text-color)]">Reset the deck?</AlertDialogTitle>
-            <AlertDialogDescription className="text-[var(--text-color)] opacity-70">
+            <AlertDialogTitle
+              style={{ fontFamily: "var(--font-display)", color: "var(--text-strong)" }}
+            >
+              Reset the deck?
+            </AlertDialogTitle>
+            <AlertDialogDescription style={{ color: "var(--text-muted)" }}>
               Your progress will be cleared.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-transparent border-[var(--accent-color)] text-[var(--text-color)] hover:bg-[var(--accent-color)]/20">
+            <AlertDialogCancel
+              className="border"
+              style={{
+                background: "transparent",
+                borderColor: "var(--border-gold)",
+                color: "var(--text-strong)",
+              }}
+            >
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmReset}>
+            <AlertDialogAction
+              onClick={confirmReset}
+              style={{
+                background: "var(--gold-color)",
+                color: "var(--ink-on-gold)",
+                border: "none",
+              }}
+            >
               Reset
             </AlertDialogAction>
           </AlertDialogFooter>

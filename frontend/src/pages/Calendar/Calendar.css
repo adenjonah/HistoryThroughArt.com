@@ -1,13 +1,17 @@
-/* Calendar Page - High Contrast Design */
+/* Calendar Page — Nocturne restyle
+   Deep-aubergine surfaces + gilded gold.
+   All color values reference the CSS custom properties set in App.css :root.
+   react-calendar's own stylesheet is still imported in Calendar.tsx for
+   structural layout; these rules override every visual property. */
 
-/* Calendar container - light card needs dark text */
+/* ── Outer container ────────────────────────────────────────────── */
 .react-calendar {
-  background-color: var(--foreground-color);
+  background-color: transparent;
   border: none;
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: 0;
+  padding: 0;
   width: 100%;
-  font-family: inherit;
+  font-family: var(--font-body);
 }
 
 .custom-calendar {
@@ -16,135 +20,149 @@
   background-color: transparent;
 }
 
-/* Navigation */
+/* ── Navigation row ─────────────────────────────────────────────── */
 .react-calendar__navigation {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  padding: 18px 22px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border-soft);
 }
 
+/* Prev / next arrow buttons */
 .react-calendar__navigation button {
   background: transparent;
-  color: var(--background-color);
-  border: none;
-  min-width: 36px;
-  height: 36px;
+  border: 1px solid var(--border-gold);
+  color: var(--text-default);
+  min-width: 34px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.15s ease;
-  opacity: 0.6;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
+  line-height: 1;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  padding: 0;
 }
 
-.react-calendar__navigation button:hover {
-  opacity: 1;
+.react-calendar__navigation button:hover:not(:disabled) {
+  background-color: var(--surface-2);
+  color: var(--text-strong);
 }
 
 .react-calendar__navigation button:disabled {
-  opacity: 0.25;
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
-/* Month label - bold, dark, prominent */
+/* Month / year label — serif, prominent */
 .react-calendar__navigation__label {
-  font-weight: 700;
-  font-size: 1.125rem;
-  color: var(--background-color);
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
   pointer-events: none;
+  background: transparent;
+  border: none;
+  flex: 1;
+  text-align: center;
 }
 
-/* Hide double arrows */
+/* Hide double-jump arrows (already removed via props but kept as safety) */
 .react-calendar__navigation__prev2-button,
 .react-calendar__navigation__next2-button {
   display: none;
 }
 
-/* Weekday headers */
+/* ── Weekday headers ─────────────────────────────────────────────── */
 .react-calendar__month-view__weekdays {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-size: 0.75rem;
+  padding: 12px 16px 4px;
+  font-size: 0.6875rem;
   letter-spacing: 0.06em;
-  margin-bottom: 6px;
+  text-transform: uppercase;
+  margin-bottom: 0;
 }
 
 .react-calendar__month-view__weekdays__weekday {
   padding: 8px 0;
+  text-align: center;
 }
 
 .react-calendar__month-view__weekdays abbr {
   text-decoration: none;
   cursor: default;
-  color: var(--background-color);
-  opacity: 0.78;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
-/* Day tiles - dark text on light background.
-   A compact min-height (instead of a square aspect-ratio) keeps the desktop
-   grid dense: square tiles on the ~672px card were ~92px tall and made the
-   month feel sparse with tiny numbers floating in empty cells. */
+/* ── Day grid wrapper ────────────────────────────────────────────── */
+.react-calendar__month-view__days {
+  padding: 4px 16px 18px;
+  gap: 2px;
+}
+
+/* ── Day tiles ───────────────────────────────────────────────────── */
 .react-calendar__tile {
   background: transparent;
-  color: var(--background-color);
-  min-height: 2.75rem;
+  color: var(--text-default);
+  min-height: 2.875rem;
+  height: 2.875rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
   padding: 6px 0;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 400;
+  font-size: 0.875rem;
   border: none;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   position: relative;
 }
 
 .react-calendar__tile abbr {
-  color: var(--background-color);
+  color: inherit;
 }
 
-.react-calendar__tile:hover {
-  background-color: rgba(33, 11, 44, 0.1);
+.react-calendar__tile:hover:not(:disabled):not(.react-calendar__tile--active) {
+  background-color: var(--surface-2);
+  color: var(--text-strong);
 }
 
-/* Today - ring outline */
+/* ── Today — subtle gold ring ────────────────────────────────────── */
 .react-calendar__tile--now {
   background: transparent;
-  font-weight: 600;
+  color: var(--text-default);
 }
 
 .react-calendar__tile--now::after {
   content: '';
   position: absolute;
   inset: 4px;
-  border: 2px solid var(--background-color);
+  border: 1.5px solid var(--border-gold);
   border-radius: 6px;
   pointer-events: none;
 }
 
-.react-calendar__tile--now abbr {
-  color: var(--background-color);
-}
-
-/* Selected date - filled dark */
-.react-calendar__tile--active {
-  background-color: var(--background-color);
-  font-weight: 600;
+/* ── Selected day — gold fill, ink text ──────────────────────────── */
+.react-calendar__tile--active,
+.react-calendar__tile--active:hover {
+  background-color: var(--gold-color);
+  color: var(--ink-on-gold);
+  font-weight: 700;
 }
 
 .react-calendar__tile--active abbr {
-  color: var(--foreground-color);
+  color: var(--ink-on-gold);
 }
 
-.react-calendar__tile--active:hover {
-  background-color: var(--background-color);
-  opacity: 0.9;
-}
-
-/* Today + selected */
+/* Selected + today: gold fill overrides the ring */
 .react-calendar__tile--now.react-calendar__tile--active {
-  background-color: var(--background-color);
+  background-color: var(--gold-color);
+  color: var(--ink-on-gold);
 }
 
 .react-calendar__tile--now.react-calendar__tile--active::after {
@@ -152,37 +170,47 @@
 }
 
 .react-calendar__tile--now.react-calendar__tile--active abbr {
-  color: var(--foreground-color);
+  color: var(--ink-on-gold);
 }
 
-/* Neighboring month days */
+/* ── Neighbouring-month days ─────────────────────────────────────── */
 .react-calendar__month-view__days__day--neighboringMonth {
   opacity: 0.3;
 }
 
-/* Disabled dates */
+/* ── Disabled ────────────────────────────────────────────────────── */
 .react-calendar__tile:disabled {
   opacity: 0.25;
   cursor: not-allowed;
 }
 
-/* Mobile */
+/* ── Mobile ──────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .react-calendar {
-    padding: 16px 12px;
+  .react-calendar__navigation {
+    padding: 14px 16px;
   }
 
   .react-calendar__navigation__label {
-    font-size: 1rem;
+    font-size: 1.125rem;
+  }
+
+  .react-calendar__month-view__days {
+    padding: 4px 10px 14px;
   }
 
   .react-calendar__tile {
     font-size: 0.8125rem;
+    min-height: 2.5rem;
+    height: 2.5rem;
   }
 }
 
 @media (max-width: 400px) {
-  .react-calendar {
-    padding: 12px 8px;
+  .react-calendar__navigation {
+    padding: 12px 10px;
+  }
+
+  .react-calendar__month-view__days {
+    padding: 4px 6px 12px;
   }
 }

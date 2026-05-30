@@ -133,7 +133,7 @@ const calculateRelevanceScore = (item, searchTerm) => {
   return score;
 };
 
-function Catalog({ search, layout, sort, unitFilters }) {
+function Catalog({ search, layout, setLayout, sort, unitFilters }) {
   const [currPageNumber, setCurrPageNumber] = useState(1);
   const [fullArtPiecesArray, setFullArtPiecesArray] = useState([]);
   const [artPiecesArray, setLocalArtPiecesArray] = useState([]);
@@ -361,7 +361,7 @@ function Catalog({ search, layout, sort, unitFilters }) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <div className="animate-pulse text-lg text-[var(--text-color)]">
+          <div className="animate-pulse text-lg text-[var(--text-muted)]">
             Loading artworks...
           </div>
         </div>
@@ -374,7 +374,7 @@ function Catalog({ search, layout, sort, unitFilters }) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
-          <div className="text-lg text-red-500">
+          <div className="text-lg text-[var(--fc-bad-text)]">
             Failed to load artworks. Please try again.
           </div>
         </div>
@@ -383,19 +383,57 @@ function Catalog({ search, layout, sort, unitFilters }) {
   }
 
   return (
-    <div className="px-4 py-6">
-      {/* Result count display - light text on dark bg for contrast */}
-      <div className="flex items-center justify-between mb-4 px-2">
-        <p className="text-sm text-[var(--text-color)]">
-          Showing {currentArtPieces.length} of {artPiecesArray.length} artworks
+    <div className="py-2">
+      {/* Count line + grid/table toggle */}
+      <div className="flex items-center justify-between mb-4 px-0.5">
+        <p className="text-sm text-[var(--text-muted)]">
+          Showing{" "}
+          <span className="text-[var(--gold-soft)]">{currentArtPieces.length}</span>
+          {" "}of{" "}
+          <span className="text-[var(--gold-soft)]">{artPiecesArray.length}</span>
+          {" "}artworks
           {artPiecesArray.length !== artPiecesData.length && (
-            <span> (filtered from {artPiecesData.length} total)</span>
+            <span className="text-[var(--text-muted)]"> (filtered from {artPiecesData.length} total)</span>
           )}
         </p>
+
+        {/* Grid / Table toggle */}
+        <div
+          className="flex border border-[var(--border-soft)] rounded overflow-hidden"
+          role="group"
+          aria-label="View layout"
+        >
+          <button
+            className={`px-3 py-2 text-[13px] transition-colors
+                       focus:outline-none focus:ring-2 focus:ring-[var(--gold-color)] focus:ring-inset
+                       ${layout === "grid"
+                         ? "bg-[var(--surface-2)] text-[var(--gold-soft)]"
+                         : "bg-transparent text-[var(--text-muted)] hover:bg-[var(--surface-1)]"
+                       }`}
+            onClick={() => setLayout("grid")}
+            aria-pressed={layout === "grid"}
+            aria-label="Grid view"
+          >
+            ▦ Grid
+          </button>
+          <button
+            className={`px-3 py-2 text-[13px] transition-colors
+                       focus:outline-none focus:ring-2 focus:ring-[var(--gold-color)] focus:ring-inset
+                       ${layout === "table"
+                         ? "bg-[var(--surface-2)] text-[var(--gold-soft)]"
+                         : "bg-transparent text-[var(--text-muted)] hover:bg-[var(--surface-1)]"
+                       }`}
+            onClick={() => setLayout("table")}
+            aria-pressed={layout === "table"}
+            aria-label="Table view"
+          >
+            ≣ Table
+          </button>
+        </div>
       </div>
 
       {/* Art cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[18px]">
         {currentArtPieces.map((item) => (
           <Card
             key={item.id}
@@ -407,11 +445,11 @@ function Catalog({ search, layout, sort, unitFilters }) {
         ))}
         {artPiecesArray.length === 0 && (
           <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
-            <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-[var(--text-color)] mb-2">
+            <div className="text-5xl mb-4 text-[var(--text-muted)]">—</div>
+            <h3 className="font-display text-xl text-[var(--text-strong)] mb-2">
               No artworks found
             </h3>
-            <p className="text-[var(--text-color)] max-w-md">
+            <p className="text-sm text-[var(--text-muted)] max-w-md">
               Try adjusting your search or filters.
             </p>
           </div>
@@ -429,12 +467,12 @@ function Catalog({ search, layout, sort, unitFilters }) {
             return (
               <button
                 key={pageNum}
-                className={`min-h-[44px] min-w-[44px] px-4 py-2 rounded-lg font-medium transition-colors
-                           focus:outline-none focus:ring-2 focus:ring-[var(--button-color)] focus:ring-offset-2
+                className={`min-h-[44px] min-w-[44px] px-4 py-2 rounded-lg text-sm font-medium transition-colors
+                           focus:outline-none focus:ring-2 focus:ring-[var(--gold-color)] focus:ring-offset-2 focus:ring-offset-[var(--background-color)]
                            ${
                              isActive
-                               ? "bg-[var(--button-color)] text-[var(--button-text-color)]"
-                               : "bg-[var(--accent-color)]/30 text-[var(--text-color)] hover:bg-[var(--accent-color)]/50"
+                               ? "bg-[var(--gold-color)] text-[var(--ink-on-gold)]"
+                               : "bg-[var(--surface-1)] border border-[var(--border-soft)] text-[var(--text-muted)] hover:border-[var(--border-gold)] hover:text-[var(--text-default)]"
                            }`}
                 onClick={() => handlePageClick(pageNum + 1)}
                 aria-current={isActive ? "page" : undefined}
@@ -450,16 +488,17 @@ function Catalog({ search, layout, sort, unitFilters }) {
       {/* Download all button */}
       <div className="flex flex-col items-center justify-center py-8">
         <button
-          className="px-6 py-3 bg-[var(--button-color)] text-[var(--button-text-color)]
-                     rounded-lg font-medium text-lg
-                     hover:bg-[var(--accent-color)] hover:text-[var(--text-color)]
+          className="px-6 py-3
+                     bg-[var(--surface-1)] border border-[var(--border-gold)]
+                     text-[var(--text-default)] rounded-lg font-medium text-sm
+                     hover:bg-[var(--surface-2)] hover:text-[var(--text-strong)]
                      transition-colors duration-200
-                     focus:outline-none focus:ring-2 focus:ring-[var(--button-color)] focus:ring-offset-2"
+                     focus:outline-none focus:ring-2 focus:ring-[var(--gold-color)] focus:ring-offset-2 focus:ring-offset-[var(--background-color)]"
           onClick={handleDownloadAllArtworks}
         >
           Download All Artwork Images as ZIP
         </button>
-        <p className="text-sm text-[var(--text-color)] mt-2">
+        <p className="text-xs text-[var(--text-muted)] mt-2">
           This will download all images from all {artPiecesData.length}{" "}
           artworks.
         </p>

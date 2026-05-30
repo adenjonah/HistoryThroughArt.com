@@ -310,11 +310,11 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
                 "circle-color": [
                   "step",
                   ["get", "point_count"],
-                  "rgba(112, 71, 163, 0.6)",
+                  "rgba(205, 161, 78, 0.6)",
                   10,
-                  "rgba(112, 71, 163, 0.8)",
+                  "rgba(205, 161, 78, 0.8)",
                   25,
-                  "rgba(112, 71, 163, 1)",
+                  "rgba(205, 161, 78, 1)",
                 ],
                 "circle-radius": [
                   "interpolate",
@@ -325,7 +325,7 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
                   50, isMobile ? 34 : 28,
                   100, isMobile ? 44 : 36,
                 ],
-                "circle-stroke-color": "rgba(255, 255, 255, 0.8)",
+                "circle-stroke-color": "rgba(11, 4, 16, 0.6)",
                 "circle-stroke-width": 2,
                 "circle-blur": 0.15,
                 "circle-opacity": 0.95,
@@ -354,10 +354,11 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
               source: "points",
               filter: ["!", ["has", "point_count"]],
               paint: {
-                "circle-color": "#7047A3",
+                "circle-color": "#cda14e",
                 "circle-radius": isMobile ? 12 : 7,
                 "circle-stroke-width": 2,
-                "circle-stroke-color": "rgba(255, 255, 255, 0.8)",
+                "circle-stroke-color": "rgba(11, 4, 16, 0.6)",
+                "circle-stroke-opacity": 1,
               },
             });
 
@@ -476,14 +477,14 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
   if (artworksLoading) {
     return (
       <div
-        className="flex items-center justify-center bg-[var(--foreground-color)]
+        className="flex items-center justify-center bg-[var(--surface-1)]
           rounded-2xl p-5 text-center min-h-[300px] md:min-h-[400px]"
         style={{
           width: size?.width || "100%",
           height: size?.height || "100%",
         }}
       >
-        <p className="text-[var(--text-color)] animate-pulse text-sm md:text-base px-4">
+        <p className="text-[var(--text-muted)] animate-pulse text-sm md:text-base px-4">
           Loading map data...
         </p>
       </div>
@@ -494,14 +495,14 @@ const MapBox = ({ center, zoom, style, size, onMapTypeChange, mapType: initialMa
   if (mapError) {
     return (
       <div
-        className="flex flex-col items-center justify-center gap-3 bg-[var(--surface-2)]
-          ring-1 ring-[var(--border-color)] rounded-2xl p-6 text-center min-h-[300px] md:min-h-[400px]"
+        className="flex flex-col items-center justify-center gap-3 bg-[var(--surface-1)]
+          rounded-2xl p-6 text-center min-h-[300px] md:min-h-[400px]"
         style={{
           width: size?.width || "100%",
           height: size?.height || "100%",
         }}
       >
-        <MapPinned className="w-8 h-8 text-[var(--text-muted)]" aria-hidden="true" />
+        <MapPinned className="w-8 h-8 text-[var(--gold-color)]" aria-hidden="true" />
         <p className="text-[var(--text-default)] text-sm md:text-base max-w-xs">
           Map preview is unavailable right now.
         </p>

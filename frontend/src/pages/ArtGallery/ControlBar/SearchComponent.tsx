@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import SortComponent from "./SortComponent";
-import { Input } from "@/components/ui/input";
 import { ChevronDown } from "lucide-react";
 import { getContentAreaNameByKey } from "../../../data/contentAreas";
 
@@ -61,16 +60,25 @@ function SearchComponent({
 
   return (
     <div className="grid grid-cols-12 gap-2 sm:gap-3">
-      {/* Search Input */}
-      <div className="col-span-12 lg:col-span-7">
+      {/* Search Input — inset pill on background-color with gold border */}
+      <div className="col-span-12 lg:col-span-7 relative">
         <label htmlFor="gallery-search" className="sr-only">Search artworks</label>
-        <Input
+        {/* Gold search icon */}
+        <span
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--gold-color)] pointer-events-none select-none"
+          aria-hidden="true"
+          style={{ fontSize: "15px", lineHeight: 1 }}
+        >
+          ⌕
+        </span>
+        <input
           id="gallery-search"
           type="search"
-          className="min-h-[44px]
-                     bg-[var(--background-color)] border-[var(--accent-color)]/50
-                     text-[var(--text-color)] placeholder:text-[var(--text-color)]/50
-                     focus-visible:ring-[var(--button-color)]"
+          className="w-full min-h-[44px] pl-9 pr-4 py-2
+                     bg-[var(--background-color)] border border-[var(--border-gold)] rounded-lg
+                     text-sm text-[var(--text-default)] placeholder:text-[var(--text-muted)]
+                     focus:outline-none focus:ring-2 focus:ring-[var(--gold-color)] focus:ring-offset-0
+                     transition-colors"
           placeholder="Search by ID, name, year, location..."
           value={search}
           onChange={handleSearchChange}
@@ -81,15 +89,14 @@ function SearchComponent({
         </span>
       </div>
 
-      {/* Filter Dropdown */}
+      {/* Filter Dropdown — inset pill */}
       <div className="col-span-6 lg:col-span-2 relative" ref={dropdownRef}>
         <button
           className="flex items-center justify-between w-full min-h-[44px] px-4 py-2
-                     border border-[var(--accent-color)]/50 rounded-lg
-                     bg-[var(--background-color)] text-[var(--text-color)]
-                     hover:bg-[var(--accent-color)]/20 transition-colors
-                     focus:outline-none focus:ring-2 focus:ring-[var(--button-color)]
-                     text-sm sm:text-base"
+                     border border-[var(--border-gold)] rounded-lg
+                     bg-[var(--background-color)] text-sm text-[var(--text-default)]
+                     hover:bg-[var(--surface-2)] transition-colors
+                     focus:outline-none focus:ring-2 focus:ring-[var(--gold-color)] focus:ring-offset-0"
           onClick={() => setDropdownOpen((o) => !o)}
           aria-expanded={dropdownOpen}
           aria-haspopup="listbox"
@@ -97,14 +104,15 @@ function SearchComponent({
           aria-label="Filter by content area"
         >
           <span>
-            Filters{activeFilterCount > 0 && (
-              <span className="ml-1.5 bg-[var(--button-color)] text-white text-xs px-1.5 py-0.5 rounded-full">
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="ml-1.5 bg-[var(--gold-color)] text-[var(--ink-on-gold)] text-xs px-1.5 py-0.5 rounded-full font-semibold">
                 {activeFilterCount}
               </span>
             )}
           </span>
           <ChevronDown
-            className={`ml-2 w-4 h-4 opacity-70 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+            className={`ml-2 w-4 h-4 text-[var(--text-muted)] transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
             aria-hidden="true"
           />
         </button>
@@ -115,8 +123,8 @@ function SearchComponent({
             id="filter-listbox"
             aria-label="Content area filters"
             className="absolute mt-1 w-full min-w-[220px] z-20
-                       bg-[var(--background-color)] border border-[var(--accent-color)]/40
-                       rounded-lg shadow-xl shadow-black/40
+                       bg-[var(--surface-1)] border border-[var(--border-gold)]
+                       rounded-lg shadow-xl shadow-black/50
                        max-h-[300px] overflow-y-auto
                        animate-in fade-in-0 zoom-in-95 duration-100"
           >
@@ -128,9 +136,9 @@ function SearchComponent({
                   role="option"
                   aria-selected={isChecked}
                   tabIndex={0}
-                  className="p-3 hover:bg-[var(--accent-color)]/20 cursor-pointer
-                             focus:bg-[var(--accent-color)]/20 focus:outline-none
-                             text-sm text-[var(--text-color)]"
+                  className="p-3 hover:bg-[var(--surface-2)] cursor-pointer
+                             focus:bg-[var(--surface-2)] focus:outline-none
+                             text-sm text-[var(--text-default)]"
                   onClick={() => handleFilterChange(unit)}
                   onKeyDown={(e) => handleListItemKeyDown(e, unit)}
                 >
@@ -139,13 +147,13 @@ function SearchComponent({
                     <span
                       className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
                         isChecked
-                          ? "bg-[var(--button-color)] border-[var(--button-color)]"
-                          : "border-[var(--accent-color)] bg-transparent"
+                          ? "bg-[var(--gold-color)] border-[var(--gold-color)]"
+                          : "border-[var(--border-gold)] bg-transparent"
                       }`}
                       aria-hidden="true"
                     >
                       {isChecked && (
-                        <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
+                        <svg className="w-2.5 h-2.5 text-[var(--ink-on-gold)]" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M2 6l3 3 5-5" />
                         </svg>
                       )}
@@ -159,7 +167,7 @@ function SearchComponent({
         )}
       </div>
 
-      {/* Sort */}
+      {/* Sort — inset pill, delegated to SortComponent */}
       <div className="col-span-6 lg:col-span-3">
         <SortComponent sort={sort} setSort={setSort} setClearFilters={setClearFilters} />
       </div>

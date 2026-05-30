@@ -289,13 +289,13 @@ function VideoPlayer({ id }) {
               className={`rounded-lg p-4 h-full max-h-[400px] lg:max-h-[calc(56.25vw*0.75)] overflow-hidden flex flex-col ${
                 prefs.highContrast
                   ? "bg-black"
-                  : "bg-[var(--background-color)]"
+                  : "bg-[var(--surface-1)] border border-[var(--border-soft)]"
               }`}
             >
               <div className="flex justify-between items-center mb-3">
                 <h3
                   className={`font-semibold ${
-                    prefs.highContrast ? "text-white" : "text-[var(--text-color)]"
+                    prefs.highContrast ? "text-white" : "text-[var(--text-strong)]"
                   }`}
                 >
                   Transcript
@@ -304,7 +304,7 @@ function VideoPlayer({ id }) {
                   className={`transition-colors ${
                     prefs.highContrast
                       ? "text-white/70 hover:text-white"
-                      : "text-[var(--text-color)]/70 hover:text-[var(--text-color)]"
+                      : "text-[var(--text-muted)] hover:text-[var(--text-default)]"
                   }`}
                   onClick={handleToggleTranscript}
                   aria-label="Hide transcript"
@@ -329,7 +329,7 @@ function VideoPlayer({ id }) {
                 aria-label="Video transcript"
                 onKeyDown={handleTranscriptKeyDown}
                 onScroll={handleTranscriptScroll}
-                className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-[var(--accent-color)] scrollbar-track-transparent"
+                className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-thin scrollbar-thumb-[var(--surface-3)] scrollbar-track-transparent"
               >
                 {getFilteredTranscript().map((entry) => {
                   const isActive =
@@ -347,8 +347,8 @@ function VideoPlayer({ id }) {
                             ? "bg-yellow-400 text-black focus:ring-yellow-400"
                             : "bg-gray-800 text-white hover:bg-gray-700 focus:ring-white"
                           : isActive
-                            ? "bg-[var(--foreground-color)]/40 text-[var(--text-color)] focus:ring-[var(--foreground-color)]"
-                            : "bg-[var(--accent-color)]/20 text-[var(--text-color)]/80 hover:bg-[var(--accent-color)]/30 focus:ring-[var(--foreground-color)]"
+                            ? "bg-[var(--surface-3)] text-[var(--text-strong)] focus:ring-[var(--gold-color)]"
+                            : "bg-[var(--surface-2)] text-[var(--text-default)] hover:bg-[var(--surface-3)] focus:ring-[var(--gold-color)]"
                       }`}
                       onClick={() => handleTranscriptClick(entry.start)}
                       onFocus={() => setFocusedIndex(entry.originalIndex)}
@@ -360,7 +360,7 @@ function VideoPlayer({ id }) {
                             ? isActive
                               ? "text-black"
                               : "text-yellow-400"
-                            : "text-[var(--foreground-color)]"
+                            : "text-[var(--gold-soft)]"
                         }`}
                       >
                         <span className="sr-only">Timestamp: </span>
@@ -381,23 +381,24 @@ function VideoPlayer({ id }) {
       {/* Mobile: Bottom drawer */}
       <div className={`
         lg:hidden fixed bottom-0 left-0 right-0 z-50
-        bg-[var(--background-color)] rounded-t-2xl
+        bg-[var(--surface-1)] rounded-t-2xl
         transition-transform duration-300 ease-out
         ${visibleTranscript ? 'translate-y-0' : 'translate-y-full'}
         max-h-[60vh] overflow-hidden
-        shadow-[0_-4px_20px_rgba(0,0,0,0.3)]
+        shadow-[0_-4px_20px_rgba(0,0,0,0.5)]
+        border-t border-[var(--border-soft)]
       `}>
         {/* Drag handle */}
         <div className="flex justify-center py-3">
-          <div className="w-12 h-1.5 bg-[var(--text-color)]/30 rounded-full" />
+          <div className="w-12 h-1.5 bg-[var(--text-muted)]/30 rounded-full" />
         </div>
         {/* Header */}
         <div className="flex justify-between items-center px-4 pb-3">
-          <h3 className="text-[var(--text-color)] font-semibold">
+          <h3 className="text-[var(--text-strong)] font-semibold">
             Transcript
           </h3>
           <button
-            className="text-[var(--text-color)]/70 hover:text-[var(--text-color)] transition-colors p-1"
+            className="text-[var(--text-muted)] hover:text-[var(--text-default)] transition-colors p-1"
             onClick={handleToggleTranscript}
             aria-label="Hide transcript"
           >
@@ -414,13 +415,13 @@ function VideoPlayer({ id }) {
                   key={index}
                   className={`transcript-entry w-full text-left p-2 rounded-lg transition-all duration-200 ${
                     isActive
-                      ? "bg-[var(--foreground-color)]/40 text-[var(--text-color)]"
-                      : "bg-[var(--accent-color)]/20 text-[var(--text-color)]/80 hover:bg-[var(--accent-color)]/30"
+                      ? "bg-[var(--surface-3)] text-[var(--text-strong)]"
+                      : "bg-[var(--surface-2)] text-[var(--text-default)] hover:bg-[var(--surface-3)]"
                   }`}
                   onClick={() => handleTranscriptClick(entry.start)}
                   aria-current={isActive ? "true" : undefined}
                 >
-                  <span className="text-xs font-mono text-[var(--foreground-color)] mr-2">
+                  <span className="text-xs font-mono text-[var(--gold-soft)] mr-2">
                     <span className="sr-only">Timestamp: </span>
                     {ConvertToMins(entry.start)}
                   </span>
@@ -435,10 +436,11 @@ function VideoPlayer({ id }) {
       <div className="flex flex-wrap justify-center items-center gap-3 mt-4">
         {/* Transcript Toggle */}
         <button
-          className="px-4 py-2 rounded-lg font-medium transition-all duration-200
-                     bg-[var(--button-color)] hover:bg-[var(--accent-color)]
-                     text-[var(--button-text-color)]
-                     flex items-center gap-2"
+          className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
+            visibleTranscript
+              ? "bg-[var(--gold-color)] text-[var(--ink-on-gold)] hover:bg-[var(--gold-soft)]"
+              : "bg-[var(--surface-2)] text-[var(--text-default)] border border-[var(--border-gold)] hover:bg-[var(--surface-3)]"
+          }`}
           onClick={handleToggleTranscript}
           aria-pressed={visibleTranscript}
           aria-label={visibleTranscript ? "Hide video transcript" : "Show video transcript"}
@@ -469,8 +471,8 @@ function VideoPlayer({ id }) {
                 onClick={() => handleVideoSelection(index)}
                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                   index === selectedVideo
-                    ? "bg-[var(--button-color)] text-[var(--button-text-color)]"
-                    : "bg-[var(--accent-color)]/30 text-[var(--text-color)] hover:bg-[var(--accent-color)]/50"
+                    ? "bg-[var(--gold-color)] text-[var(--ink-on-gold)]"
+                    : "bg-[var(--surface-2)] text-[var(--text-default)] border border-[var(--border-gold)] hover:bg-[var(--surface-3)]"
                 }`}
               >
                 Video {index + 1}

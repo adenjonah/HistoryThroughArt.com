@@ -35,7 +35,7 @@ function ControlBar({
   const areFiltersActive = Object.values(unitFilters).some((filter) => filter);
 
   return (
-    <div className="bg-[var(--foreground-color)] rounded-xl shadow-lg p-4 sm:p-6 max-w-6xl mx-auto">
+    <div className="bg-[var(--surface-1)] border border-[var(--border-gold)] rounded-xl p-4 sm:p-5">
       <SearchComponent
         search={search}
         setSearch={setSearch}

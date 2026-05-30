@@ -239,8 +239,8 @@ function PhotoGallery({ id }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-8 rounded-xl bg-[var(--accent-color)]/20">
-        <p className="text-[var(--text-color)] opacity-70 animate-pulse">
+      <div className="flex items-center justify-center p-8 rounded-xl bg-[var(--surface-1)] border border-[var(--border-soft)]">
+        <p className="text-[var(--text-muted)] animate-pulse">
           Loading images...
         </p>
       </div>
@@ -249,8 +249,8 @@ function PhotoGallery({ id }) {
 
   if (!hasImages || artImages.length === 0) {
     return (
-      <div className="flex items-center justify-center p-8 rounded-xl bg-[var(--accent-color)]/20">
-        <p className="text-[var(--text-color)] opacity-70">
+      <div className="flex items-center justify-center p-8 rounded-xl bg-[var(--surface-1)] border border-[var(--border-soft)]">
+        <p className="text-[var(--text-muted)]">
           No images available for this exhibit.
         </p>
       </div>
@@ -259,8 +259,8 @@ function PhotoGallery({ id }) {
 
   return (
     <div className="h-full">
-      <div className="bg-[var(--accent-color)]/20 rounded-xl p-4 sm:p-6 h-full">
-        {/* Image Container with ARIA attributes for accessibility */}
+      <div className="bg-[var(--surface-1)] rounded-xl p-4 sm:p-6 h-full border border-[var(--border-soft)]">
+        {/* Main image carousel with ARIA attributes for accessibility */}
         <div
           ref={carouselRef}
           className="relative max-w-[500px] mx-auto"
@@ -281,10 +281,17 @@ function PhotoGallery({ id }) {
                 aria-roledescription="slide"
                 aria-label={`Image ${index + 1} of ${artImages.length}`}
               >
-                <div className="rounded-lg overflow-hidden shadow-lg">
+                {/* Main image — gold border */}
+                <div
+                  className="rounded-lg overflow-hidden"
+                  style={{
+                    border: "2px solid var(--gold-color)",
+                    boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
+                  }}
+                >
                   {failedImages.has(index) ? (
-                    <div className="aspect-square bg-[var(--accent-color)]/30 flex items-center justify-center rounded-lg">
-                      <span className="text-[var(--text-color)]/50 text-center px-4">
+                    <div className="aspect-square bg-[var(--surface-2)] flex items-center justify-center rounded-lg">
+                      <span className="text-[var(--text-muted)] text-center px-4">
                         Image unavailable
                       </span>
                     </div>
@@ -311,15 +318,15 @@ function PhotoGallery({ id }) {
             Showing image {slideIndex} of {artImages.length}
           </span>
 
-          {/* Navigation Arrows - increased touch targets (min 44px) */}
+          {/* Navigation Arrows — gold-soft text, dark glass bg */}
           {artImages.length > 1 && (
             <>
               <button
                 className="absolute left-0 sm:left-2 top-1/2 -translate-y-1/2
                            w-11 h-11 sm:w-10 sm:h-10 rounded-full
-                           bg-black/50 hover:bg-black/70
-                           text-white flex items-center justify-center
-                           transition-colors duration-200"
+                           bg-black/60 hover:bg-black/80
+                           text-[var(--gold-soft)] flex items-center justify-center
+                           transition-colors duration-200 text-xl"
                 onClick={() => pushSlides(-1)}
                 aria-label={`Previous image, currently on ${slideIndex} of ${artImages.length}`}
               >
@@ -328,9 +335,9 @@ function PhotoGallery({ id }) {
               <button
                 className="absolute right-0 sm:right-2 top-1/2 -translate-y-1/2
                            w-11 h-11 sm:w-10 sm:h-10 rounded-full
-                           bg-black/50 hover:bg-black/70
-                           text-white flex items-center justify-center
-                           transition-colors duration-200"
+                           bg-black/60 hover:bg-black/80
+                           text-[var(--gold-soft)] flex items-center justify-center
+                           transition-colors duration-200 text-xl"
                 onClick={() => pushSlides(1)}
                 aria-label={`Next image, currently on ${slideIndex} of ${artImages.length}`}
               >
@@ -340,20 +347,35 @@ function PhotoGallery({ id }) {
           )}
         </div>
 
-        {/* Dot Indicators */}
+        {/* Thumbnail row — active thumb: 2px gold border; others: border-soft */}
         {artImages.length > 1 && (
-          <div className="flex justify-center gap-2 mt-4">
-            {artImages.map((_, index) => (
+          <div className="flex justify-center gap-2 mt-4 flex-wrap">
+            {artImages.map((imageName, index) => (
               <button
                 key={index}
-                className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                  slideIndex === index + 1
-                    ? "bg-[var(--button-color)] scale-110"
-                    : "bg-[var(--text-color)]/30 hover:bg-[var(--text-color)]/50"
-                }`}
+                className="rounded overflow-hidden transition-all duration-200
+                           focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gold-color)]"
+                style={{
+                  border:
+                    slideIndex === index + 1
+                      ? "2px solid var(--gold-color)"
+                      : "1px solid var(--border-soft)",
+                  opacity: slideIndex === index + 1 ? 1 : 0.6,
+                }}
                 onClick={() => setSlideIndex(index + 1)}
                 aria-label={`Go to image ${index + 1}`}
-              />
+                aria-current={slideIndex === index + 1 ? "true" : undefined}
+              >
+                {!failedImages.has(index) && imageName ? (
+                  <img
+                    src={getImagePath(imageName)}
+                    alt={`Thumbnail ${index + 1}`}
+                    className="w-14 h-14 object-cover"
+                  />
+                ) : (
+                  <div className="w-14 h-14 bg-[var(--surface-2)]" />
+                )}
+              </button>
             ))}
           </div>
         )}
@@ -362,8 +384,8 @@ function PhotoGallery({ id }) {
         <div className="flex flex-wrap justify-center gap-3 mt-6">
           <button
             className="px-4 py-2 rounded-lg
-                       bg-[var(--button-color)] hover:bg-[var(--accent-color)]
-                       text-[var(--button-text-color)] font-medium
+                       bg-[var(--gold-color)] hover:bg-[var(--gold-soft)]
+                       text-[var(--ink-on-gold)] font-medium
                        transition-colors duration-200
                        flex items-center gap-2"
             onClick={handleDownload}
@@ -388,8 +410,8 @@ function PhotoGallery({ id }) {
           {artImages.length > 1 && (
             <button
               className="px-4 py-2 rounded-lg
-                         bg-[var(--accent-color)] hover:bg-[var(--button-color)]
-                         text-[var(--text-color)] font-medium
+                         bg-[var(--surface-2)] hover:bg-[var(--surface-3)]
+                         text-[var(--text-default)] border border-[var(--border-gold)] font-medium
                          transition-colors duration-200
                          flex items-center gap-2"
               onClick={handleDownloadZip}

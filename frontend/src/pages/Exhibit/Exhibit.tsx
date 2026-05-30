@@ -6,7 +6,6 @@ import MiniMap from "./MiniMap";
 import Identifiers from "./Identifiers";
 import { korusOrder } from "../../data/korusOrder";
 import { useArtwork } from "../../hooks/useSanityData";
-import { Button } from "@/components/ui/button";
 import { Volume2 } from "lucide-react";
 
 function Exhibit() {
@@ -76,37 +75,45 @@ function Exhibit() {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* Header */}
+      {/* Header — centered title row: gold "ID." + serif name + audio chip */}
       <header className="mb-8">
-        <div className="flex items-center justify-center gap-3 flex-wrap">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[var(--text-color)] text-center">
-            <span className="text-[var(--foreground-color)] font-medium">
-              {artPiece.id}.
-            </span>{" "}
+        <div className="flex items-baseline justify-center gap-3 flex-wrap">
+          <span
+            className="font-display text-3xl sm:text-4xl text-[var(--gold-color)]"
+            aria-hidden="true"
+          >
+            {artPiece.id}.
+          </span>
+          <h1 className="font-display text-3xl sm:text-4xl tracking-tight text-[var(--text-strong)] text-center">
             {artPiece.name}
           </h1>
-          <Button
-            variant="outline"
-            size="icon"
-            className="rounded-full bg-[var(--accent-color)] border-transparent hover:bg-[var(--button-color)]"
+          {/* Audio / pronounce chip */}
+          <button
+            className="flex items-center justify-center w-10 h-10 rounded-full
+                       bg-[var(--surface-2)] border border-[var(--border-gold)]
+                       text-[var(--gold-soft)] hover:bg-[var(--surface-3)]
+                       transition-colors duration-200 flex-shrink-0"
             onClick={pronounceTitle}
             aria-label={`Pronounce ${artPiece.name}`}
             title="Pronounce artwork name"
           >
-            <Volume2 className="w-5 h-5 text-[var(--text-color)]" />
-          </Button>
+            <Volume2 className="w-4 h-4" />
+          </button>
         </div>
       </header>
 
-      {/* Video */}
-      <section className="mb-10">
-        <div className="bg-[var(--accent-color)]/20 rounded-xl p-4 sm:p-6">
+      {/* Video — subtle purple-tint rounded container */}
+      <section className="mb-8">
+        <div
+          className="rounded-xl p-4 sm:p-5 border border-[var(--border-soft)]"
+          style={{ background: "rgba(85,40,111,0.12)" }}
+        >
           <VideoPlayer id={exhibitID.toString()} />
         </div>
       </section>
 
       {/* Identifiers + Photo Gallery */}
-      <section className="mb-10">
+      <section className="mb-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           <div className="order-2 lg:order-1">
             <Identifiers artPiece={artPiece} />
@@ -118,48 +125,61 @@ function Exhibit() {
       </section>
 
       {/* Map */}
-      <section className="mb-10">
-        <div className="bg-[var(--accent-color)]/20 rounded-xl p-4 sm:p-6">
-          <MiniMap
-            mapType={mapType}
-            setMapType={setMapType}
-            artPiece={artPiece}
-          />
-        </div>
+      <section className="mb-8">
+        <MiniMap
+          mapType={mapType}
+          setMapType={setMapType}
+          artPiece={artPiece}
+        />
       </section>
 
-      {/* Navigation */}
-      <nav className="mt-8 sm:mt-12 mb-8">
-        <div className="bg-[var(--background-color)] rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
-          <div className="flex justify-center items-center gap-3 sm:gap-6 md:gap-8">
-            <Button
-              onClick={() => handleNavigation(getPreviousID())}
-              className="flex-1 max-w-[160px] sm:max-w-[200px] min-h-[48px] px-3 sm:px-6 touch-manipulation"
-              size="lg"
-            >
-              <span className="text-lg sm:text-xl mr-1">←</span>
-              <span className="hidden sm:inline">Previous</span>
-              <span className="sm:hidden text-sm">Prev</span>
-            </Button>
+      {/* Prev / Next navigation bar */}
+      <nav className="mt-6 mb-8" aria-label="Artwork navigation">
+        <div className="bg-[var(--surface-1)] rounded-xl px-5 py-4 flex items-center justify-center gap-6 sm:gap-8">
+          <button
+            onClick={() => handleNavigation(getPreviousID())}
+            className="flex-1 max-w-[170px] min-h-[44px] px-4 sm:px-6 rounded
+                       bg-[var(--gold-color)] text-[var(--ink-on-gold)]
+                       font-medium text-sm sm:text-base
+                       hover:bg-[var(--gold-soft)] transition-colors duration-200
+                       flex items-center justify-center gap-1 touch-manipulation"
+            aria-label="Previous artwork"
+          >
+            <span aria-hidden="true">←</span>
+            <span className="hidden sm:inline">Previous</span>
+            <span className="sm:hidden">Prev</span>
+          </button>
 
-            <div className="text-sm sm:text-base text-[var(--text-color)] opacity-70 hidden md:block">
-              {korusOrder.indexOf(exhibitID) + 1} / {korusOrder.length}
-            </div>
-
-            <Button
-              onClick={() => handleNavigation(getNextID())}
-              className="flex-1 max-w-[160px] sm:max-w-[200px] min-h-[48px] px-3 sm:px-6 touch-manipulation"
-              size="lg"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span className="sm:hidden text-sm">Next</span>
-              <span className="text-lg sm:text-xl ml-1">→</span>
-            </Button>
+          {/* mono position counter */}
+          <div
+            className="hidden md:block text-[var(--text-muted)] text-sm whitespace-nowrap"
+            style={{ fontFamily: "var(--font-mono)" }}
+            aria-label={`Artwork ${korusOrder.indexOf(exhibitID) + 1} of ${korusOrder.length}`}
+          >
+            {korusOrder.indexOf(exhibitID) + 1} / {korusOrder.length}
           </div>
 
-          <div className="mt-3 sm:mt-4 text-center text-xs sm:text-sm text-[var(--text-color)] opacity-70 md:hidden">
-            Artwork {korusOrder.indexOf(exhibitID) + 1} of {korusOrder.length}
-          </div>
+          <button
+            onClick={() => handleNavigation(getNextID())}
+            className="flex-1 max-w-[170px] min-h-[44px] px-4 sm:px-6 rounded
+                       bg-[var(--gold-color)] text-[var(--ink-on-gold)]
+                       font-medium text-sm sm:text-base
+                       hover:bg-[var(--gold-soft)] transition-colors duration-200
+                       flex items-center justify-center gap-1 touch-manipulation"
+            aria-label="Next artwork"
+          >
+            <span className="hidden sm:inline">Next</span>
+            <span className="sm:hidden">Next</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        {/* mobile position counter */}
+        <div
+          className="mt-3 text-center text-[var(--text-muted)] text-xs md:hidden"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
+          Artwork {korusOrder.indexOf(exhibitID) + 1} of {korusOrder.length}
         </div>
       </nav>
     </div>

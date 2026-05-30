@@ -39,24 +39,24 @@ function SortComponent({ sort, setSort, setClearFilters }) {
     <Select value={sort} onValueChange={handleSortChange}>
       <SelectTrigger
         className="min-h-[44px] w-full
-                   bg-[var(--background-color)] border-[var(--accent-color)]/50
-                   text-[var(--text-color)] text-sm sm:text-base
-                   hover:bg-[var(--accent-color)]/20
-                   focus:ring-[var(--button-color)] focus:ring-offset-0"
+                   bg-[var(--background-color)] border border-[var(--border-gold)]
+                   text-[var(--text-default)] text-sm
+                   hover:bg-[var(--surface-2)] transition-colors
+                   focus:ring-2 focus:ring-[var(--gold-color)] focus:ring-offset-0"
         aria-label="Sort artworks"
       >
         <SelectValue />
       </SelectTrigger>
       <SelectContent
-        className="bg-[var(--background-color)] border-[var(--accent-color)]/40
-                   text-[var(--text-color)] shadow-xl shadow-black/40"
+        className="bg-[var(--surface-1)] border border-[var(--border-gold)]
+                   text-[var(--text-default)] shadow-xl shadow-black/50"
       >
         {SORT_OPTIONS.map(({ value, label }) => (
           <SelectItem
             key={value}
             value={value}
-            className="text-[var(--text-color)] focus:bg-[var(--accent-color)]/30
-                       focus:text-[var(--text-color)] cursor-pointer"
+            className="text-[var(--text-default)] focus:bg-[var(--surface-2)]
+                       focus:text-[var(--text-strong)] cursor-pointer"
           >
             {label}
           </SelectItem>

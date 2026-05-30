@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { Settings, RotateCcw } from "lucide-react";
 
 const FlashcardControls = ({
@@ -15,80 +14,71 @@ const FlashcardControls = ({
 }) => {
   return (
     <>
-      {/* Action Buttons */}
+      {/* Rating Buttons — Bad / Good / Great with Nocturne semantic colors */}
       <div className="action-buttons">
-        <Button
-          variant="destructive"
+        <button
           className="bad-button"
           onClick={() => onAction("bad")}
           disabled={isTransitioning}
         >
           Bad
           <span className="key-hint">1</span>
-        </Button>
-        <Button
-          variant="secondary"
+        </button>
+        <button
           className="good-button"
           onClick={() => onAction("good")}
           disabled={isTransitioning}
         >
           Good
           <span className="key-hint">2</span>
-        </Button>
-        <Button
+        </button>
+        <button
           className="great-button"
           onClick={() => onAction("great")}
           disabled={isTransitioning}
         >
           Great
           <span className="key-hint">3</span>
-        </Button>
+        </button>
       </div>
 
-      {/* Undo Button */}
-      <div className="undo-container">
-        <Button
-          variant="outline"
-          className="undo-button"
+      {/* Secondary controls — ghost style */}
+      <div className="flex gap-3 justify-center flex-wrap mb-5">
+        <button
+          className="undo-button flex items-center gap-1"
           onClick={onUndo}
           disabled={isTransitioning || !canUndo}
         >
-          <RotateCcw className="w-4 h-4 mr-1" />
+          <RotateCcw className="w-3.5 h-3.5" />
           Undo ({undoCount}/{maxUndo})
-        </Button>
-      </div>
+        </button>
 
-      {/* Reset Buttons */}
-      <div className="reset-button-container">
-        <Button
-          variant="outline"
+        <button
           className="reset-button"
           onClick={() => onReset(false)}
           disabled={isTransitioning}
         >
           Reset (Ordered)
-        </Button>
-        <Button
-          variant="outline"
+        </button>
+
+        <button
           className="reset-button shuffle-button"
           onClick={() => onReset(true)}
           disabled={isTransitioning}
         >
           Reset (Shuffled)
-        </Button>
+        </button>
       </div>
 
-      {/* Settings Button */}
-      <Button
-        variant="ghost"
-        size="icon"
+      {/* Settings gear — fixed circular button */}
+      <button
         className="settings-button"
         onClick={onToggleSettings}
         disabled={isTransitioning}
         aria-label="Open settings"
       >
         <Settings className="w-5 h-5" />
-      </Button>
+      </button>
     </>
   );
 };

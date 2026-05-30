@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import JonahHeadshot from "./jonah-headshot.webp";
 import CalebHeadshot from "./caleb-headshot.webp";
 import KorusHeadshot from "./korus-headshot.webp";
-import { Button } from "@/components/ui/button";
 import PageHeading from "../../components/PageHeading";
 
 const PEOPLE = [
@@ -29,9 +28,74 @@ const PEOPLE = [
   },
 ];
 
-function FlipCard({ person, isFlipped, onFlip }) {
-  const handleClick = (e) => {
-    if (e.target.tagName === "A" || e.target.closest("a")) return;
+interface Person {
+  id: string;
+  name: string;
+  image: string;
+  bio: string;
+  link: { href: string; label: string };
+}
+
+/** Circular headshot with purple-gold duotone treatment (grayscale + gradient overlay). */
+function DuoHeadshot({ src, alt }: { src: string; alt: string }) {
+  return (
+    <div
+      style={{
+        position: "relative",
+        width: 168,
+        height: 168,
+        borderRadius: "50%",
+        overflow: "hidden",
+        border: "2px solid var(--gold-color)",
+        margin: "0 auto",
+        flexShrink: 0,
+      }}
+    >
+      <img
+        src={src}
+        alt={alt}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "top",
+          filter: "grayscale(100%) brightness(1.04) contrast(1.02)",
+          display: "block",
+        }}
+      />
+      {/* Gold-to-purple duotone color blend */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(150deg, rgba(205,161,78,0.55), rgba(85,40,111,0.65))",
+          mixBlendMode: "color",
+        }}
+      />
+      {/* Multiply depth layer */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(150deg, rgba(227,201,135,0.18), rgba(25,7,34,0.35))",
+          mixBlendMode: "multiply",
+        }}
+      />
+    </div>
+  );
+}
+
+interface FlipCardProps {
+  person: Person;
+  isFlipped: boolean;
+  onFlip: (id: string) => void;
+}
+
+function FlipCard({ person, isFlipped, onFlip }: FlipCardProps) {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).tagName === "A" || (e.target as HTMLElement).closest("a")) return;
     onFlip(person.id);
   };
 
@@ -43,31 +107,50 @@ function FlipCard({ person, isFlipped, onFlip }) {
         } lg:group-hover:[transform:rotateY(180deg)]`}
         onClick={handleClick}
       >
-        {/* Front */}
-        <div className="absolute inset-0 [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg flex flex-col items-center justify-center text-center">
-          <img
-            src={person.image}
-            alt={person.name}
-            className="h-44 w-44 sm:h-52 sm:w-52 object-cover object-top rounded-full mb-4 ring-2 ring-[var(--accent-color)]"
-          />
-          <h2 className="text-xl sm:text-2xl text-[var(--accent-color)] font-bold">{person.name}</h2>
+        {/* Front — headshot + name */}
+        <div
+          className="absolute inset-0 [backface-visibility:hidden] rounded-xl flex flex-col items-center justify-center text-center p-6"
+          style={{
+            background: "var(--surface-1)",
+            border: "1px solid var(--border-gold)",
+          }}
+        >
+          <DuoHeadshot src={person.image} alt={person.name} />
+          <h2
+            className="font-display mt-5 text-2xl"
+            style={{ color: "var(--gold-soft)" }}
+          >
+            {person.name}
+          </h2>
         </div>
 
-        {/* Back */}
-        <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] bg-[var(--foreground-color)] p-4 sm:p-5 rounded-xl shadow-lg text-center">
-          <div className="flex flex-col h-full justify-between">
-            <p className="text-[var(--background-color)] italic mt-6 sm:mt-8 text-sm sm:text-base">
-              {person.bio}
-            </p>
-            <Button
-              asChild
-              className="mt-4 mb-4 touch-manipulation"
-            >
-              <a href={person.link.href} target="_blank" rel="noopener noreferrer">
-                {person.link.label}
-              </a>
-            </Button>
-          </div>
+        {/* Back — bio + link */}
+        <div
+          className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden] rounded-xl p-6 text-center flex flex-col justify-between"
+          style={{
+            background: "var(--surface-1)",
+            border: "1px solid var(--border-gold)",
+          }}
+        >
+          <p
+            className="font-display italic text-sm leading-relaxed mt-4"
+            style={{ color: "var(--text-default)" }}
+          >
+            {person.bio}
+          </p>
+          <a
+            href={person.link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center self-center mb-2 px-6 py-3 rounded-full text-sm font-medium transition-opacity hover:opacity-80 touch-manipulation"
+            style={{
+              background: "var(--gold-color)",
+              color: "var(--ink-on-gold)",
+              textDecoration: "none",
+            }}
+          >
+            {person.link.label}
+          </a>
         </div>
       </div>
     </div>
@@ -75,17 +158,20 @@ function FlipCard({ person, isFlipped, onFlip }) {
 }
 
 function About() {
-  const [flippedCards, setFlippedCards] = useState({});
+  const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
 
-  const handleFlip = (id) => {
+  const handleFlip = (id: string) => {
     setFlippedCards((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <div className="flex flex-col items-center justify-start text-center h-full w-full bg-[var(--background-color)] pt-6 sm:pt-10 px-4">
+    <div
+      className="flex flex-col items-center justify-start text-center h-full w-full pt-6 sm:pt-10 px-4 pb-16 sm:pb-24"
+      style={{ background: "var(--background-color)" }}
+    >
       <PageHeading title="About Us" className="mb-8" />
 
-      <div className="flex justify-center flex-wrap max-w-7xl mx-auto mb-8 gap-4 sm:gap-5 w-full">
+      <div className="flex justify-center flex-wrap max-w-7xl mx-auto mb-8 gap-4 sm:gap-6 w-full">
         {PEOPLE.map((person) => (
           <FlipCard
             key={person.id}
@@ -96,8 +182,16 @@ function About() {
         ))}
       </div>
 
-      <h2 className="text-3xl sm:text-4xl md:text-5xl text-[var(--text-color)] font-bold mb-4">Our Story</h2>
-      <p className="text-base sm:text-lg text-[var(--text-color)] max-w-[90%] sm:max-w-2xl mx-auto mb-8 leading-relaxed">
+      <h2
+        className="font-display text-3xl sm:text-4xl mt-4 mb-4"
+        style={{ color: "var(--text-strong)" }}
+      >
+        Our Story
+      </h2>
+      <p
+        className="text-base max-w-[90%] sm:max-w-2xl mx-auto mb-6 leading-relaxed"
+        style={{ color: "var(--text-default)" }}
+      >
         This project began in the summer of 2024 with the initial goal of creating a platform to
         centralize the educational content that Mrs. Korus had produced for her AP Art History
         classes. Jonah took AP Art History his senior year of high school and really enjoyed the
@@ -109,20 +203,34 @@ function About() {
         year.
       </p>
 
-      <p className="text-[var(--text-color)] mb-4 max-w-[90%] sm:max-w-2xl text-sm sm:text-base">
-        Reach out to us at: <br />
-        <strong>
-          <a href="mailto:HistoryThroughArt@gmail.com" className="ml-2 break-all">
-            HistoryThroughArt@gmail.com
-          </a>
-        </strong>
+      <p
+        className="mb-4 max-w-[90%] sm:max-w-2xl text-sm sm:text-base"
+        style={{ color: "var(--text-muted)" }}
+      >
+        Reach out to us at:{" "}
+        <a
+          href="mailto:HistoryThroughArt@gmail.com"
+          className="font-semibold hover:opacity-80 transition-opacity break-all"
+          style={{ color: "var(--gold-soft)" }}
+        >
+          HistoryThroughArt@gmail.com
+        </a>
       </p>
 
-      <Button asChild size="lg" className="mb-16 sm:mb-24 rounded-full touch-manipulation">
-        <a href="https://github.com/adenjonah/APAH" target="_blank" rel="noopener noreferrer">
-          View on GitHub
-        </a>
-      </Button>
+      <a
+        href="https://github.com/adenjonah/APAH"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center justify-center px-8 py-3 rounded-full text-sm font-medium transition-opacity hover:opacity-80 touch-manipulation"
+        style={{
+          background: "transparent",
+          color: "var(--text-strong)",
+          border: "1px solid var(--border-gold)",
+          textDecoration: "none",
+        }}
+      >
+        View on GitHub
+      </a>
     </div>
   );
 }

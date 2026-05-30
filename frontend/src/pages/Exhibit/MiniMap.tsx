@@ -1,6 +1,5 @@
 import MapBox from "../Map/MapBox";
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
 
 function MiniMap({ artPiece, mapType: initialMapType, setMapType: parentSetMapType }) {
   const [mapType, setMapType] = useState(initialMapType || "originated");
@@ -37,25 +36,29 @@ function MiniMap({ artPiece, mapType: initialMapType, setMapType: parentSetMapTy
 
   return (
     <div className="w-full">
-      {/* Map Type Toggle */}
+      {/* Map Type Toggle — gold fill for active, ghost border for inactive */}
       <div className="flex justify-center gap-2 mb-4">
         {[
           { value: "originated", label: "Origin Location" },
           { value: "currentlyDisplayed", label: "Currently Displayed" },
         ].map(({ value, label }) => (
-          <Button
+          <button
             key={value}
-            variant={mapType === value ? "default" : "outline"}
             onClick={() => handleMapTypeChange(value)}
-            className={mapType !== value ? "opacity-70" : ""}
+            className={`px-4 py-2 rounded text-sm font-medium transition-colors duration-200 ${
+              mapType === value
+                ? "bg-[var(--gold-color)] text-[var(--ink-on-gold)]"
+                : "bg-transparent text-[var(--text-default)] border border-[var(--border-gold)] opacity-70 hover:opacity-100"
+            }`}
+            aria-pressed={mapType === value}
           >
             {label}
-          </Button>
+          </button>
         ))}
       </div>
 
-      {/* Map Container */}
-      <div className="relative rounded-lg overflow-hidden">
+      {/* Map Container — keep real MapBox, restyle overlays */}
+      <div className="relative rounded-xl overflow-hidden border border-[var(--border-soft)]">
         <MapBox
           center={artPieceMapLocation}
           zoom={artPieceMapLocation ? 5 : 1}
@@ -64,7 +67,20 @@ function MiniMap({ artPiece, mapType: initialMapType, setMapType: parentSetMapTy
           mapType={mapType}
         />
 
-        <div className="absolute top-4 left-4 px-4 py-2 rounded-lg bg-black/60 text-white text-sm font-medium backdrop-blur-sm">
+        {/* Status pill — gold bg + ink-on-gold for "Origin Location", dark glass otherwise */}
+        <div
+          className="absolute top-4 left-4 px-4 py-2 rounded-lg text-sm font-medium backdrop-blur-sm"
+          style={{
+            background:
+              mapType === "originated" && hasOrigin
+                ? "var(--gold-color)"
+                : "rgba(0,0,0,0.6)",
+            color:
+              mapType === "originated" && hasOrigin
+                ? "var(--ink-on-gold)"
+                : "#ffffff",
+          }}
+        >
           {displayMessage}
         </div>
 
