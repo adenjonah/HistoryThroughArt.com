@@ -36,11 +36,13 @@ interface Person {
   link: { href: string; label: string };
 }
 
-/** Circular headshot with a purple-gold duotone treatment (grayscale base +
- *  gold→aubergine gradient tint). Uses a NORMAL-blend overlay on purpose:
- *  mix-blend-mode forces an isolated compositing buffer that flattens the
- *  parent's `transform-style: preserve-3d`, which silently broke the card flip.
- *  `isolation: isolate` further guarantees this headshot can't affect the 3D. */
+/** Circular headshot with a gilded gold→aubergine tint.
+ *  IMPORTANT: no CSS `filter` or `isolation`/`mix-blend-mode` here. Any of those
+ *  forces this face's subtree into a flattened compositing layer, and the
+ *  browser then stops honoring `backface-visibility: hidden` against the 3D flip
+ *  parent — which made the un-hidden front face show (mirrored) after rotation.
+ *  The tint is a plain normal-blend gradient overlay (pure paint), which keeps
+ *  the 3D flip intact. */
 function DuoHeadshot({ src, alt }: { src: string; alt: string }) {
   return (
     <div
@@ -53,7 +55,6 @@ function DuoHeadshot({ src, alt }: { src: string; alt: string }) {
         border: "2px solid var(--gold-color)",
         margin: "0 auto",
         flexShrink: 0,
-        isolation: "isolate",
       }}
     >
       <img
@@ -64,18 +65,17 @@ function DuoHeadshot({ src, alt }: { src: string; alt: string }) {
           height: "100%",
           objectFit: "cover",
           objectPosition: "top",
-          filter: "grayscale(100%) brightness(1.05) contrast(1.02) sepia(0.25)",
           display: "block",
         }}
       />
-      {/* Gold→aubergine duotone tint (normal blend — safe for 3D flip) */}
+      {/* Gold→aubergine tint (normal-blend paint — safe for the 3D flip) */}
       <div
         aria-hidden="true"
         style={{
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(150deg, rgba(205,161,78,0.42), rgba(85,40,111,0.55))",
+            "linear-gradient(150deg, rgba(205,161,78,0.30), rgba(85,40,111,0.45))",
         }}
       />
     </div>
