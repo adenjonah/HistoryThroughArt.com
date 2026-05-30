@@ -36,7 +36,11 @@ interface Person {
   link: { href: string; label: string };
 }
 
-/** Circular headshot with purple-gold duotone treatment (grayscale + gradient overlay). */
+/** Circular headshot with a purple-gold duotone treatment (grayscale base +
+ *  gold→aubergine gradient tint). Uses a NORMAL-blend overlay on purpose:
+ *  mix-blend-mode forces an isolated compositing buffer that flattens the
+ *  parent's `transform-style: preserve-3d`, which silently broke the card flip.
+ *  `isolation: isolate` further guarantees this headshot can't affect the 3D. */
 function DuoHeadshot({ src, alt }: { src: string; alt: string }) {
   return (
     <div
@@ -49,6 +53,7 @@ function DuoHeadshot({ src, alt }: { src: string; alt: string }) {
         border: "2px solid var(--gold-color)",
         margin: "0 auto",
         flexShrink: 0,
+        isolation: "isolate",
       }}
     >
       <img
@@ -59,28 +64,18 @@ function DuoHeadshot({ src, alt }: { src: string; alt: string }) {
           height: "100%",
           objectFit: "cover",
           objectPosition: "top",
-          filter: "grayscale(100%) brightness(1.04) contrast(1.02)",
+          filter: "grayscale(100%) brightness(1.05) contrast(1.02) sepia(0.25)",
           display: "block",
         }}
       />
-      {/* Gold-to-purple duotone color blend */}
+      {/* Gold→aubergine duotone tint (normal blend — safe for 3D flip) */}
       <div
         aria-hidden="true"
         style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(150deg, rgba(205,161,78,0.55), rgba(85,40,111,0.65))",
-          mixBlendMode: "color",
-        }}
-      />
-      {/* Multiply depth layer */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(150deg, rgba(227,201,135,0.18), rgba(25,7,34,0.35))",
-          mixBlendMode: "multiply",
+          background:
+            "linear-gradient(150deg, rgba(205,161,78,0.42), rgba(85,40,111,0.55))",
         }}
       />
     </div>
