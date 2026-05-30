@@ -1,67 +1,79 @@
 :root {
-  /* shadcn/ui HSL variables — mapped to dark purple brand palette */
-  --background: 278 57% 11%;
-  --foreground: 289 55% 75%;
-  --card: 278 46% 23%;
-  --card-foreground: 289 55% 75%;
-  --popover: 278 46% 23%;
-  --popover-foreground: 289 55% 75%;
-  --primary: 285 44% 38%;
-  --primary-foreground: 289 55% 75%;
-  --secondary: 291 33% 56%;
-  --secondary-foreground: 278 57% 11%;
-  --muted: 278 46% 23%;
-  --muted-foreground: 289 38% 68%;
-  --accent: 285 44% 38%;
-  --accent-foreground: 289 55% 75%;
-  --destructive: 0 84% 60%;
+  /* shadcn/ui HSL variables — mapped to the Nocturne palette
+     (deep aubergine surfaces + gilded gold). Triples are H S% L% per shadcn. */
+  --background: 280 66% 8%;          /* #190722 */
+  --foreground: 281 50% 80%;         /* #d6b4e6 */
+  --card: 277 58% 17%;               /* #311244 (surface-2) */
+  --card-foreground: 281 50% 80%;
+  --popover: 277 58% 17%;
+  --popover-foreground: 281 50% 80%;
+  --primary: 39 56% 55%;             /* gold #cda14e — gilded primary */
+  --primary-foreground: 22 53% 10%;  /* #27140a ink on gold */
+  --secondary: 275 57% 22%;          /* #3d1857 (surface-3) */
+  --secondary-foreground: 278 50% 94%;
+  --muted: 280 60% 12%;              /* #240c30 (surface-1) */
+  --muted-foreground: 275 29% 61%;   /* #a07fb8 */
+  --accent: 277 58% 17%;             /* surface-2 */
+  --accent-foreground: 278 50% 94%;
+  --destructive: 343 47% 50%;        /* garnet, harmonized */
   --destructive-foreground: 0 0% 98%;
-  --border: 285 44% 38%;
-  --input: 285 44% 28%;
-  --ring: 291 33% 56%;
+  --border: 275 57% 22%;             /* #3d1857 hairline */
+  --input: 280 60% 12%;              /* #240c30 */
+  --ring: 39 56% 55%;                /* gold focus ring */
   --radius: 0.5rem;
 
-  /* Brand tokens (keep for existing components) */
-  --background-color: #210b2c;
+  /* Brand tokens (keep for existing components) — Nocturne values */
+  --background-color: #190722;
   --accent-color: #55286f;
   --foreground-color: #bc96e6;
-  --text-color: #d8b4e2;
+  --text-color: #d6b4e6;
   --button-color: #ae759f;
   --button-text-color: #55286f;
+  --ink-on-gold: #27140a; /* dark ink for text/icons on gold fills */
 
   /* Flashcard feedback colors - semantic tokens.
      Jewel tones (garnet / antique-gold / emerald) keep the bad/good/great
      recall semantics while harmonizing with the deep-purple palette instead of
      clashing traffic-light primaries. Used by the flashcard buttons, the swipe
-     overlays, and the tutorial's rating-system legend, so they stay in sync. */
+     overlays, and the tutorial's rating-system legend, so they stay in sync.
+     *-bg = solid fill, *-text = lighter on-dark label/legend variant. */
   --fc-bad-color: #a23a5b;
-  --fc-bad-bg: rgba(162, 58, 91, 0.9);
+  --fc-bad-bg: rgba(162, 58, 91, 0.92);
+  --fc-bad-text: #d98aa3;
   --fc-good-color: #9c7531;
-  --fc-good-bg: rgba(156, 117, 49, 0.9);
+  --fc-good-bg: rgba(156, 117, 49, 0.92);
+  --fc-good-text: #e0c07f;
   --fc-great-color: #2f8662;
-  --fc-great-bg: rgba(47, 134, 98, 0.9);
+  --fc-great-bg: rgba(47, 134, 98, 0.92);
+  --fc-great-text: #7fcfa8;
 
   /* Surface tokens — use these for panel/card backgrounds.
      Elevation ramp: higher number = closer to the viewer / lighter tint. */
-  --surface-color: #2d1040; /* legacy alias == surface-1 */
-  --surface-1: #2a0f3b;
-  --surface-2: #371552;
-  --surface-3: #432069;
-  --border-color: rgba(188, 150, 230, 0.18);
+  --surface-color: #240c30; /* legacy alias == surface-1 */
+  --surface-1: #240c30;
+  --surface-2: #311244;
+  --surface-3: #3d1857;
+  /* Gilded hairline (gold-tinted) + soft lavender hairline. */
+  --border-color: rgba(205, 161, 78, 0.22);
+  --border-gold: rgba(205, 161, 78, 0.22);
+  --border-soft: rgba(214, 180, 230, 0.12);
   --page-header-gap: 1.5rem;
 
-  /* Warm gold secondary accent — gilded-frame feel; pairs with jewel tones */
-  --gold-color: #c9a24b;
+  /* Warm gold accent — gilded-frame feel; pairs with jewel tones.
+     gold = primary metal, gold-soft = brighter highlight, gold-strong = deeper. */
+  --gold-color: #cda14e;
+  --gold-soft: #e3c987;
   --gold-strong: #b88a2e;
 
-  /* Text contrast tiers (AA on the dark purple surfaces) */
-  --text-strong: #efe2f6;
-  --text-default: #d8b4e2;
-  --text-muted: #b491c9;
+  /* Text contrast tiers (AA on the deep aubergine surfaces) */
+  --text-strong: #f1e7f7; /* cream */
+  --text-default: #d6b4e6;
+  --text-muted: #a07fb8;
 
   /* Typography system */
   --font-display: "Fraunces", Georgia, "Times New Roman", serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
 
   /* Modular type scale (1.25 ratio) */
   --text-xs: 0.8rem;

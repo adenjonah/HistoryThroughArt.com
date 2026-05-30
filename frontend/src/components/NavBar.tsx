@@ -25,30 +25,42 @@ function NavBar({ menuOpened, setMenuOpened }) {
 
   return (
     <div className="relative navbar-container">
-      {/* Fixed Navbar */}
-      <nav className="fixed top-0 left-0 right-0 h-[60px] bg-[var(--accent-color)] shadow-lg z-50 border-b border-[var(--border-color)]">
+      {/* Fixed Navbar — Nocturne: glassy aubergine bar, gilded hairline */}
+      <nav className="fixed top-0 left-0 right-0 h-[60px] bg-[rgba(11,4,16,0.78)] backdrop-blur-md shadow-lg z-50 border-b border-[var(--border-gold)]">
         <div className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-full">
-            {/* Logo */}
+            {/* Logo — gold medallion + serif wordmark */}
             <Link
               to="/"
-              className="text-[var(--text-color)] text-2xl font-bold hover:text-[var(--foreground-color)] transition-colors duration-200"
+              className="group flex items-center gap-3 transition-colors duration-200"
             >
-              History Through Art
+              <span
+                className="grid place-items-center w-[30px] h-[30px] rounded-full border-[1.5px] border-[var(--gold-color)] text-[var(--gold-color)] italic"
+                style={{ fontFamily: "var(--font-display)", fontSize: 16 }}
+                aria-hidden="true"
+              >
+                H
+              </span>
+              <span
+                className="text-[var(--text-strong)] text-xl tracking-tight group-hover:text-[var(--gold-soft)] transition-colors duration-200"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                History Through Art
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-8">
+            <div className="hidden lg:flex items-center gap-7">
               {NAV_LINKS.map(({ to, label }) => (
                 <NavLink
                   key={to}
                   to={to}
                   end={to === "/"}
                   className={({ isActive }) =>
-                    `text-[var(--text-color)] transition-all duration-200 pb-0.5 ${
+                    `text-[13px] transition-all duration-200 pb-[3px] border-b-[1.5px] ${
                       isActive
-                        ? "border-b-2 border-[var(--text-color)] opacity-100"
-                        : "opacity-70 hover:opacity-100"
+                        ? "text-[var(--gold-soft)] border-[var(--gold-color)] opacity-100"
+                        : "text-[var(--text-default)] border-transparent opacity-70 hover:opacity-100 hover:text-[var(--gold-soft)]"
                     }`
                   }
                 >
@@ -62,7 +74,7 @@ function NavBar({ menuOpened, setMenuOpened }) {
               onClick={(e) => { e.stopPropagation(); setMenuOpened((o) => !o); }}
               aria-label="Toggle menu"
               aria-expanded={menuOpened}
-              className="lg:hidden p-2 rounded-lg text-[var(--text-color)] hover:text-[var(--foreground-color)] hover:bg-[var(--background-color)]/10 transition-all duration-200"
+              className="lg:hidden p-2 rounded-lg text-[var(--text-default)] hover:text-[var(--gold-soft)] hover:bg-white/5 transition-all duration-200"
             >
               {menuOpened ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -72,7 +84,7 @@ function NavBar({ menuOpened, setMenuOpened }) {
 
       {/* Mobile Menu Dropdown */}
       <div
-        className={`fixed top-[60px] left-0 right-0 bg-[var(--accent-color)] shadow-lg lg:hidden transition-all duration-300 ease-in-out z-40 ${
+        className={`fixed top-[60px] left-0 right-0 bg-[rgba(11,4,16,0.96)] backdrop-blur-md border-b border-[var(--border-gold)] shadow-lg lg:hidden transition-all duration-300 ease-in-out z-40 ${
           menuOpened ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
         }`}
       >
@@ -84,10 +96,10 @@ function NavBar({ menuOpened, setMenuOpened }) {
               end={to === "/"}
               onClick={() => setMenuOpened(false)}
               className={({ isActive }) =>
-                `min-h-[44px] flex items-center px-4 py-3 transition-colors duration-200 ${
+                `min-h-[44px] flex items-center px-4 py-3 text-[14px] transition-colors duration-200 ${
                   isActive
-                    ? "text-[var(--text-color)] bg-[var(--background-color)]/20 font-semibold"
-                    : "text-[var(--text-color)] opacity-70 hover:opacity-100 hover:bg-[var(--background-color)]/10"
+                    ? "text-[var(--gold-soft)] bg-white/5 font-semibold border-l-2 border-[var(--gold-color)]"
+                    : "text-[var(--text-default)] opacity-70 hover:opacity-100 hover:bg-white/5 border-l-2 border-transparent"
                 }`
               }
             >
