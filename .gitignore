@@ -131,3 +131,5 @@ scripts/node_modules/
 /frontend/src/data/venv
 scripts/.env
 .vercel
+
+node_modules/
