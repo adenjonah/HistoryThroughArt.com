@@ -133,3 +133,6 @@ scripts/.env
 .vercel
 
 node_modules/
+
+# Claude Code local session state
+.claude/
